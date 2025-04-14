@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Professional;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use App\Mail\ProfessionalWelcomeEmail;
+use App\Mail\AdminNotificationEmail;
+use App\Mail\ApprovalEmail;
+
+class ProfessionalController extends Controller
+{
+    /**
+     * Display the professional onboarding form.
+     */
+    public function create()
+    {
+        return view('professionals.onboarding');
+    }
+
+    /**
+     * Store a newly created professional in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:professionals',
+            'phone' => 'nullable|string|max:20',
+            'bio' => 'nullable|string',
+            'specialization' => 'nullable|string|max:255',
+            'qualification' => 'nullable|string|max:255',
+            'license_number' => 'nullable|string|max:255',
+            'license_expiry_date' => 'nullable|date',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        try {
+            $professional = new Professional();
+            $professional->first_name = $request->first_name;
+            $professional->last_name = $request->last_name;
+            $professional->email = $request->email;
+            $professional->phone = $request->phone;
+            $professional->bio = $request->bio;
+            $professional->specialization = $request->specialization;
+            $professional->qualification = $request->qualification;
+            $professional->license_number = $request->license_number;
+            $professional->license_expiry_date = $request->license_expiry_date;
+            $professional->status = 'pending';
+
+            // Handle profile photo upload
+            if ($request->hasFile('profile_photo')) {
+                $profilePhoto = $request->file('profile_photo');
+                $profilePhotoName = time() . '_' . $profilePhoto->getClientOriginalName();
+                $profilePhoto->storeAs('public/professionals/photos', $profilePhotoName);
+                $professional->profile_photo = 'professionals/photos/' . $profilePhotoName;
+            }
+
+            // Handle CV upload
+            if ($request->hasFile('cv')) {
+                $cv = $request->file('cv');
+                $cvName = time() . '_' . $cv->getClientOriginalName();
+                $cv->storeAs('public/professionals/cvs', $cvName);
+                $professional->cv = 'professionals/cvs/' . $cvName;
+            }
+
+            $professional->save();
+
+            // Send welcome email to professional
+            try {
+                Mail::to($professional->email)->send(new ProfessionalWelcomeEmail($professional));
+                Log::info('Welcome email sent successfully to ' . $professional->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send welcome email: ' . $e->getMessage());
+            }
+
+            // Send notification email to admin
+            try {
+                Mail::to(config('mail.from.address'))->send(new AdminNotificationEmail($professional));
+                Log::info('Admin notification email sent successfully');
+            } catch (\Exception $e) {
+                Log::error('Failed to send admin notification email: ' . $e->getMessage());
+            }
+
+            return redirect()->route('professionals.onboarding.success')
+                ->with('success', 'Your application has been submitted successfully. We will review it and get back to you soon.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to create professional: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while submitting your application. Please try again.');
+        }
+    }
+
+    /**
+     * Display the success page after onboarding.
+     */
+    public function onboardingSuccess()
+    {
+        return view('professionals.onboarding-success');
+    }
+
+    /**
+     * Display a listing of professionals for admin.
+     */
+    public function index()
+    {
+        try {
+            $professionals = Professional::orderBy('created_at', 'desc')->get();
+            Log::info('Retrieved ' . $professionals->count() . ' professionals for admin panel');
+            return view('admin.professionals.index', compact('professionals'));
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve professionals: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while loading professionals.');
+        }
+    }
+
+    /**
+     * Display the specified professional for admin.
+     */
+    public function show(Professional $professional)
+    {
+        return view('admin.professionals.show', compact('professional'));
+    }
+
+    /**
+     * Approve the specified professional.
+     */
+    public function approve(Professional $professional)
+    {
+        try {
+            // Generate a random password
+            $password = Str::random(10);
+            
+            // Update professional status and set password
+            $professional->status = 'approved';
+            $professional->password = Hash::make($password);
+            $professional->save();
+
+            Log::info('Professional approved: ' . $professional->email);
+
+            // Send approval email with login credentials
+            try {
+                Mail::to($professional->email)->send(new ApprovalEmail($professional, $password));
+                Log::info('Approval email sent successfully to ' . $professional->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send approval email: ' . $e->getMessage());
+                // Even if email fails, we don't want to rollback the approval
+                return redirect()->route('admin.professionals.index')
+                    ->with('warning', 'Professional approved but failed to send email. Please check the logs.');
+            }
+
+            return redirect()->route('admin.professionals.index')
+                ->with('success', 'Professional has been approved and login credentials have been sent.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to approve professional: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while approving the professional.');
+        }
+    }
+
+    /**
+     * Reject the specified professional.
+     */
+    public function reject(Professional $professional)
+    {
+        try {
+            $professional->status = 'rejected';
+            $professional->save();
+            Log::info('Professional rejected: ' . $professional->email);
+
+            return redirect()->route('admin.professionals.index')
+                ->with('success', 'Professional has been rejected.');
+        } catch (\Exception $e) {
+            Log::error('Failed to reject professional: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while rejecting the professional.');
+        }
+    }
+} 

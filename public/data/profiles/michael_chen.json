@@ -1,0 +1,49 @@
+{
+  "id": "michael_chen",
+  "name": "Dr. Michael Chen",
+  "title": "Licensed Marriage and Family Therapist",
+  "image": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+  "specializations": [
+    "Couples Therapy",
+    "Family Therapy",
+    "Relationship Issues",
+    "Communication Problems",
+    "Cultural Adjustment"
+  ],
+  "languages": [
+    "English",
+    "Mandarin"
+  ],
+  "session_types": [
+    "Video Call",
+    "Voice Call",
+    "Chat Messaging"
+  ],
+  "consultation_types": [
+    "Individual Therapy",
+    "Couples Counseling",
+    "Family Therapy"
+  ],
+  "experience": "8+ Years",
+  "rating": "4.8/5",
+  "reviews": 95,
+  "about": "Dr. Michael Chen is a licensed marriage and family therapist with over 8 years of experience helping couples and families navigate relationship challenges. He specializes in improving communication, resolving conflicts, and strengthening emotional bonds. Dr. Chen takes a culturally-sensitive approach, particularly effective for Asian and multicultural families.",
+  "education": [
+    {
+      "degree": "Doctor of Psychology (PsyD)",
+      "institution": "California School of Professional Psychology",
+      "year": "2015"
+    },
+    {
+      "degree": "Master of Science in Marriage and Family Therapy",
+      "institution": "University of Southern California",
+      "year": "2012"
+    }
+  ],
+  "certifications": [
+    "Licensed Marriage and Family Therapist (LMFT)",
+    "Certified Gottman Method Couples Therapist",
+    "Certified Emotionally Focused Therapy (EFT) Practitioner"
+  ],
+  "profile_url": "profile.html?id=michael_chen"
+} 

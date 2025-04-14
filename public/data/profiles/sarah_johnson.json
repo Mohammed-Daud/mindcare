@@ -1,0 +1,51 @@
+{
+  "id": "sarah_johnson",
+  "name": "Dr. Sarah Johnson",
+  "title": "Clinical Psychologist, PhD",
+  "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+  "specializations": [
+    "Anxiety",
+    "Depression",
+    "Trauma",
+    "PTSD",
+    "Cognitive Behavioral Therapy",
+    "Stress Management"
+  ],
+  "languages": [
+    "English",
+    "Spanish"
+  ],
+  "session_types": [
+    "Video Call",
+    "Voice Call",
+    "Chat Messaging",
+    "In-person"
+  ],
+  "consultation_types": [
+    "Individual Therapy",
+    "Group Therapy"
+  ],
+  "experience": "10+ Years",
+  "rating": "4.9/5",
+  "reviews": 127,
+  "about": "Dr. Sarah Johnson is a licensed clinical psychologist specializing in cognitive behavioral therapy with extensive experience helping clients manage anxiety, depression, and trauma-related issues. She has worked with diverse populations and is particularly skilled at adapting therapeutic approaches to meet individual client needs.",
+  "education": [
+    {
+      "degree": "Doctor of Philosophy (PhD) in Clinical Psychology",
+      "institution": "University of California, Berkeley",
+      "year": "2013"
+    },
+    {
+      "degree": "Master of Arts in Clinical Psychology",
+      "institution": "University of California, Berkeley",
+      "year": "2010"
+    }
+  ],
+  "certifications": [
+    "Licensed Clinical Psychologist",
+    "Certified Cognitive Behavioral Therapy (CBT) Practitioner",
+    "Certified EMDR Therapist",
+    "Certified Trauma-Focused CBT Specialist"
+  ],
+  "profile_url": "profile.html?id=sarah_johnson"
+} 

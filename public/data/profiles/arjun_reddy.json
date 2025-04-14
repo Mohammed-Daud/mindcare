@@ -1,0 +1,76 @@
+{
+  "id": "arjun_reddy",
+  "name": "Dr. Arjun Reddy",
+  "title": "Psychiatrist, MD",
+  "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+  "stats": {
+    "experience": "8+ Years Experience",
+    "sessions": "1500+ Sessions",
+    "rating": "4.8/5 Rating"
+  },
+  "about": "Dr. Arjun is a board-certified psychiatrist specializing in medication management for mental health conditions. With a background in both Western and integrative approaches, he provides comprehensive psychiatric care with a focus on ADHD, mood disorders, and anxiety. He believes in a collaborative treatment approach, working closely with patients to develop personalized treatment plans.",
+  "languages": [
+    {
+      "name": "Telugu",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "English",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "Kannada",
+      "proficiency": "Professional"
+    }
+  ],
+  "consultation_types": [
+    {
+      "type": "Individual Therapy",
+      "icon": "user"
+    },
+    {
+      "type": "Medication Management",
+      "icon": "pills"
+    }
+  ],
+  "session_modes": [
+    {
+      "mode": "Video Call",
+      "icon": "video"
+    },
+    {
+      "mode": "Voice Call",
+      "icon": "phone-alt"
+    }
+  ],
+  "qualifications": [
+    {
+      "degree": "MD in Psychiatry",
+      "institution": "AIIMS"
+    },
+    {
+      "certification": "Board Certified Psychiatrist"
+    },
+    {
+      "certification": "Specialized in Adult ADHD"
+    }
+  ],
+  "specializations": [
+    "ADHD",
+    "Mood Disorders",
+    "Anxiety Disorders",
+    "Depression",
+    "Bipolar Disorder",
+    "Medication Management",
+    "Psychiatric Evaluation",
+    "Adult Mental Health"
+  ],
+  "availability": {
+    "accepting_new_clients": true,
+    "session_types": ["online"]
+  },
+  "contact": {
+    "booking_url": "#",
+    "question_url": "#"
+  }
+} 

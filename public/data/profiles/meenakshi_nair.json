@@ -1,0 +1,80 @@
+{
+  "id": "meenakshi_nair",
+  "name": "Dr. Meenakshi Nair",
+  "title": "Counseling Psychologist, PsyD",
+  "image": "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+  "stats": {
+    "experience": "10+ Years Experience",
+    "sessions": "1800+ Sessions",
+    "rating": "4.9/5 Rating"
+  },
+  "about": "Dr. Meenakshi is a counseling psychologist with extensive experience in marital and family therapy. She specializes in helping couples navigate relationship challenges and families resolve conflicts. Her approach combines systemic family therapy with culturally-sensitive counseling techniques, making her particularly effective with Indian families dealing with intergenerational issues and cultural transitions.",
+  "languages": [
+    {
+      "name": "Malayalam",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "English",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "Tamil",
+      "proficiency": "Professional"
+    }
+  ],
+  "consultation_types": [
+    {
+      "type": "Couples Counseling",
+      "icon": "user-friends"
+    },
+    {
+      "type": "Family Therapy",
+      "icon": "users"
+    },
+    {
+      "type": "Individual Therapy",
+      "icon": "user"
+    }
+  ],
+  "session_modes": [
+    {
+      "mode": "Video Call",
+      "icon": "video"
+    },
+    {
+      "mode": "Chat Messaging",
+      "icon": "comment-dots"
+    }
+  ],
+  "qualifications": [
+    {
+      "degree": "PsyD in Counseling Psychology",
+      "institution": "TISS"
+    },
+    {
+      "certification": "Licensed Marriage and Family Therapist"
+    },
+    {
+      "certification": "Certified in Gottman Method Couples Therapy"
+    }
+  ],
+  "specializations": [
+    "Marital Counseling",
+    "Family Therapy",
+    "Relationship Issues",
+    "Communication Problems",
+    "Parent-Child Relationships",
+    "Cultural Adjustment",
+    "Intergenerational Conflicts",
+    "Emotional Regulation"
+  ],
+  "availability": {
+    "accepting_new_clients": true,
+    "session_types": ["online"]
+  },
+  "contact": {
+    "booking_url": "#",
+    "question_url": "#"
+  }
+} 

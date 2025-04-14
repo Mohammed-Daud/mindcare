@@ -1,0 +1,93 @@
+{
+  "professionals": [
+    {
+      "id": "priya_iyer",
+      "name": "Dr. Priya Iyer",
+      "title": "Clinical Psychologist, PhD",
+      "image": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+      "specializations": [
+        "Anxiety Disorders",
+        "Depression",
+        "Cognitive Behavioral Therapy"
+      ],
+      "experience": "12+ Years",
+      "rating": "4.9/5",
+      "profile_url": "profile.html?id=priya_iyer"
+    },
+    {
+      "id": "arjun_reddy",
+      "name": "Dr. Arjun Reddy",
+      "title": "Psychiatrist, MD",
+      "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+      "specializations": [
+        "ADHD",
+        "Mood Disorders",
+        "Anxiety Disorders"
+      ],
+      "experience": "8+ Years",
+      "rating": "4.8/5",
+      "profile_url": "profile.html?id=arjun_reddy"
+    },
+    {
+      "id": "meenakshi_nair",
+      "name": "Dr. Meenakshi Nair",
+      "title": "Counseling Psychologist, PsyD",
+      "image": "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+      "specializations": [
+        "Marital Counseling",
+        "Family Therapy",
+        "Relationship Issues"
+      ],
+      "experience": "10+ Years",
+      "rating": "4.9/5",
+      "profile_url": "profile.html?id=meenakshi_nair"
+    },
+    {
+      "id": "karthik_shetty",
+      "name": "Dr. Karthik Shetty",
+      "title": "Clinical Psychologist, PhD",
+      "image": "https://images.unsplash.com/photo-1562788869-4ed32648eb72?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+      "specializations": [
+        "Trauma",
+        "PTSD",
+        "Adolescent Issues"
+      ],
+      "experience": "9+ Years",
+      "rating": "4.8/5",
+      "profile_url": "profile.html?id=karthik_shetty"
+    },
+    {
+      "id": "michael_chen",
+      "name": "Dr. Michael Chen",
+      "title": "Licensed Marriage and Family Therapist",
+      "image": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+      "specializations": [
+        "Couples Therapy",
+        "Family Therapy",
+        "Relationship Issues"
+      ],
+      "experience": "8+ Years",
+      "rating": "4.8/5",
+      "profile_url": "profile.html?id=michael_chen"
+    },
+    {
+      "id": "sarah_johnson",
+      "name": "Dr. Sarah Johnson",
+      "title": "Clinical Psychologist, PhD",
+      "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+      "specializations": [
+        "Anxiety",
+        "Depression",
+        "Trauma"
+      ],
+      "experience": "10+ Years",
+      "rating": "4.9/5",
+      "profile_url": "profile.html?id=sarah_johnson"
+    }
+  ],
+  "metadata": {
+    "total_professionals": 6,
+    "last_updated": "2024-04-12",
+    "version": "1.0"
+  }
+} 

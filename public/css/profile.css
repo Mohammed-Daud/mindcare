@@ -1,0 +1,181 @@
+/* Professional Profile Page Specific Styles */
+.profile-hero {
+    padding: 180px 0 60px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+}
+
+.profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.profile-image {
+    flex: 1;
+    min-width: 300px;
+}
+
+.profile-image img {
+    width: 100%;
+    max-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.profile-content {
+    flex: 2;
+    min-width: 300px;
+}
+
+.profile-title h1 {
+    font-size: 36px;
+    color: var(--secondary);
+    margin-bottom: 5px;
+}
+
+.profile-title p {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.profile-badge {
+    display: inline-block;
+    background-color: var(--light);
+    color: var(--primary);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.profile-badge i {
+    margin-right: 5px;
+}
+
+.profile-about {
+    margin: 30px 0;
+}
+
+/* Details Section */
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.detail-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.detail-card h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.detail-card h3 i {
+    margin-right: 10px;
+    color: var(--accent);
+}
+
+.detail-item {
+    margin-bottom: 12px;
+    display: flex;
+}
+
+.detail-item i {
+    color: var(--accent);
+    width: 20px;
+    margin-right: 10px;
+    margin-top: 3px;
+}
+
+/* Specializations */
+.specializations {
+    margin: 50px 0;
+}
+
+.specialization-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.specialization-tag {
+    background-color: var(--light);
+    color: var(--dark);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    border-left: 3px solid var(--accent);
+}
+
+/* CTA Section */
+.profile-cta {
+    text-align: center;
+    padding: 60px 0;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border-radius: 10px;
+    margin: 50px 0;
+}
+
+.profile-cta h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .profile-hero {
+        padding: 150px 0 40px;
+    }
+    
+    .profile-container {
+        flex-direction: column;
+    }
+    
+    .profile-image {
+        text-align: center;
+    }
+    
+    .profile-image img {
+        max-width: 280px;
+    }
+    
+    .profile-cta h2 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-title h1 {
+        font-size: 28px;
+    }
+    
+    .profile-title p {
+        font-size: 16px;
+    }
+    
+    .profile-badge {
+        display: block;
+        margin-right: 0;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .specialization-tags {
+        justify-content: center;
+    }
+}

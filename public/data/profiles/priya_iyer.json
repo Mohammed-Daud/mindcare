@@ -1,0 +1,86 @@
+{
+  "id": "priya_iyer",
+  "name": "Dr. Priya Iyer",
+  "title": "Clinical Psychologist, PhD",
+  "image": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+  "stats": {
+    "experience": "12+ Years Experience",
+    "sessions": "2000+ Sessions",
+    "rating": "4.9/5 Rating"
+  },
+  "about": "Dr. Priya is a licensed clinical psychologist specializing in cognitive behavioral therapy with extensive experience helping clients manage anxiety, depression, and relationship issues. She adopts a culturally-sensitive approach tailored to Indian clients, blending Western therapeutic techniques with an understanding of Indian family dynamics and social pressures.",
+  "languages": [
+    {
+      "name": "Tamil",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "English",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "Hindi",
+      "proficiency": "Professional"
+    }
+  ],
+  "consultation_types": [
+    {
+      "type": "Individual Therapy",
+      "icon": "user"
+    },
+    {
+      "type": "Couples Counseling",
+      "icon": "user-friends"
+    },
+    {
+      "type": "Family Therapy",
+      "icon": "users",
+      "note": "Limited"
+    }
+  ],
+  "session_modes": [
+    {
+      "mode": "Video Call",
+      "icon": "video"
+    },
+    {
+      "mode": "Voice Call",
+      "icon": "phone-alt"
+    },
+    {
+      "mode": "Chat Messaging",
+      "icon": "comment-dots"
+    }
+  ],
+  "qualifications": [
+    {
+      "degree": "PhD in Clinical Psychology",
+      "institution": "NIMHANS"
+    },
+    {
+      "certification": "Licensed RCI Practitioner"
+    },
+    {
+      "certification": "Certified CBT Practitioner"
+    }
+  ],
+  "specializations": [
+    "Anxiety Disorders",
+    "Depression",
+    "Cognitive Behavioral Therapy",
+    "Stress Management",
+    "Relationship Issues",
+    "Workplace Stress",
+    "Cultural Adjustment",
+    "Self-Esteem",
+    "Women's Mental Health"
+  ],
+  "availability": {
+    "accepting_new_clients": true,
+    "session_types": ["online"]
+  },
+  "contact": {
+    "booking_url": "#",
+    "question_url": "#"
+  }
+} 

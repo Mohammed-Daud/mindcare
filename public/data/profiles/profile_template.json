@@ -1,0 +1,52 @@
+{
+  "id": "professional_id",
+  "name": "Full Name",
+  "title": "Professional Title",
+  "image": "image_url",
+  "stats": {
+    "experience": "Years of Experience",
+    "sessions": "Number of Sessions",
+    "rating": "Rating Score"
+  },
+  "about": "Professional biography and approach description",
+  "languages": [
+    {
+      "name": "Language Name",
+      "proficiency": "Proficiency Level"
+    }
+  ],
+  "consultation_types": [
+    {
+      "type": "Consultation Type",
+      "icon": "fontawesome_icon_name",
+      "note": "Optional note"
+    }
+  ],
+  "session_modes": [
+    {
+      "mode": "Session Mode",
+      "icon": "fontawesome_icon_name"
+    }
+  ],
+  "qualifications": [
+    {
+      "degree": "Degree Name",
+      "institution": "Institution Name"
+    },
+    {
+      "certification": "Certification Name"
+    }
+  ],
+  "specializations": [
+    "Specialization 1",
+    "Specialization 2"
+  ],
+  "availability": {
+    "accepting_new_clients": true,
+    "session_types": ["online", "in-person"]
+  },
+  "contact": {
+    "booking_url": "booking_page_url",
+    "question_url": "question_page_url"
+  }
+} 

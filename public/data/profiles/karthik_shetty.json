@@ -1,0 +1,76 @@
+{
+  "id": "karthik_shetty",
+  "name": "Dr. Karthik Shetty",
+  "title": "Clinical Psychologist, PhD",
+  "image": "https://images.unsplash.com/photo-1562788869-4ed32648eb72?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+  "stats": {
+    "experience": "9+ Years Experience",
+    "sessions": "1600+ Sessions",
+    "rating": "4.8/5 Rating"
+  },
+  "about": "Dr. Karthik is a clinical psychologist specializing in trauma therapy and adolescent mental health. With extensive experience in treating PTSD, anxiety disorders, and adolescent behavioral issues, he employs evidence-based approaches including EMDR and cognitive behavioral therapy. His work with teenagers focuses on building resilience, improving self-esteem, and developing healthy coping mechanisms.",
+  "languages": [
+    {
+      "name": "Kannada",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "English",
+      "proficiency": "Fluent"
+    },
+    {
+      "name": "Tulu",
+      "proficiency": "Professional"
+    }
+  ],
+  "consultation_types": [
+    {
+      "type": "Individual Therapy",
+      "icon": "user"
+    },
+    {
+      "type": "Teen Counseling",
+      "icon": "user-graduate"
+    }
+  ],
+  "session_modes": [
+    {
+      "mode": "Video Call",
+      "icon": "video"
+    },
+    {
+      "mode": "Voice Call",
+      "icon": "phone-alt"
+    }
+  ],
+  "qualifications": [
+    {
+      "degree": "PhD in Clinical Psychology",
+      "institution": "NIMHANS"
+    },
+    {
+      "certification": "Certified EMDR Therapist"
+    },
+    {
+      "certification": "Specialized in Adolescent Psychology"
+    }
+  ],
+  "specializations": [
+    "Trauma",
+    "PTSD",
+    "Adolescent Issues",
+    "Anxiety Disorders",
+    "Depression",
+    "Self-Esteem",
+    "Behavioral Issues",
+    "Academic Stress"
+  ],
+  "availability": {
+    "accepting_new_clients": true,
+    "session_types": ["online"]
+  },
+  "contact": {
+    "booking_url": "#",
+    "question_url": "#"
+  }
+} 
