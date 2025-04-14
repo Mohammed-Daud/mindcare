@@ -12,9 +12,20 @@ use Illuminate\Support\Str;
 use App\Mail\ProfessionalWelcomeEmail;
 use App\Mail\AdminNotificationEmail;
 use App\Mail\ApprovalEmail;
+use Illuminate\Support\Facades\Auth;
 
 class ProfessionalController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:professional')->only([
+            'dashboard',
+            'profile',
+            'editProfile',
+            'updateProfile'
+        ]);
+    }
+
     /**
      * Display the professional onboarding form.
      */
@@ -32,11 +43,11 @@ class ProfessionalController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:professionals',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:20|unique:professionals',
             'bio' => 'nullable|string',
             'specialization' => 'nullable|string|max:255',
             'qualification' => 'nullable|string|max:255',
-            'license_number' => 'nullable|string|max:255',
+            'license_number' => 'nullable|string|max:255|unique:professionals',
             'license_expiry_date' => 'nullable|date',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
@@ -124,9 +135,10 @@ class ProfessionalController extends Controller
     /**
      * Display the specified professional for admin.
      */
-    public function show(Professional $professional)
+    public function show($slug)
     {
-        return view('admin.professionals.show', compact('professional'));
+        $professional = Professional::where('slug', $slug)->firstOrFail();
+        return view('professionals.show', compact('professional'));
     }
 
     /**
@@ -180,6 +192,97 @@ class ProfessionalController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to reject professional: ' . $e->getMessage());
             return back()->with('error', 'An error occurred while rejecting the professional.');
+        }
+    }
+
+    public function dashboard()
+    {
+        $professional = auth()->guard('professional')->user();
+        return view('professional.dashboard', compact('professional'));
+    }
+
+    /**
+     * Display the professional's profile.
+     */
+    public function profile()
+    {
+        $professional = auth()->guard('professional')->user();
+        return view('professional.profile', compact('professional'));
+    }
+
+    /**
+     * Show the form for editing the professional's profile.
+     */
+    public function editProfile()
+    {
+        $professional = auth()->guard('professional')->user();
+        return view('professional.profile-edit', compact('professional'));
+    }
+
+    /**
+     * Update the professional's profile.
+     */
+    public function updateProfile(Request $request)
+    {
+        $professional = auth()->guard('professional')->user();
+
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'bio' => 'nullable|string',
+            'specialization' => 'nullable|string|max:255',
+            'qualification' => 'nullable|string|max:255',
+            'license_number' => 'nullable|string|max:255',
+            'license_expiry_date' => 'nullable|date',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        try {
+            $professional->first_name = $request->first_name;
+            $professional->last_name = $request->last_name;
+            $professional->phone = $request->phone;
+            $professional->bio = $request->bio;
+            $professional->specialization = $request->specialization;
+            $professional->qualification = $request->qualification;
+            $professional->license_number = $request->license_number;
+            $professional->license_expiry_date = $request->license_expiry_date;
+
+            // Handle profile photo upload
+            if ($request->hasFile('profile_photo')) {
+                // Delete old photo if exists
+                if ($professional->profile_photo) {
+                    Storage::delete('public/' . $professional->profile_photo);
+                }
+                
+                $profilePhoto = $request->file('profile_photo');
+                $profilePhotoName = time() . '_' . $profilePhoto->getClientOriginalName();
+                $profilePhoto->storeAs('public/professionals/photos', $profilePhotoName);
+                $professional->profile_photo = 'professionals/photos/' . $profilePhotoName;
+            }
+
+            // Handle CV upload
+            if ($request->hasFile('cv')) {
+                // Delete old CV if exists
+                if ($professional->cv) {
+                    Storage::delete('public/' . $professional->cv);
+                }
+                
+                $cv = $request->file('cv');
+                $cvName = time() . '_' . $cv->getClientOriginalName();
+                $cv->storeAs('public/professionals/cvs', $cvName);
+                $professional->cv = 'professionals/cvs/' . $cvName;
+            }
+
+            $professional->save();
+
+            return redirect()->route('professional.profile')
+                ->with('success', 'Profile updated successfully.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to update professional profile: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while updating your profile. Please try again.');
         }
     }
 } 

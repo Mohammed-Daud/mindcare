@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable();
+            $table->string('phone')->unique()->nullable();
             $table->text('bio')->nullable();
             $table->string('specialization')->nullable();
             $table->string('qualification')->nullable();
-            $table->string('license_number')->nullable();
+            $table->string('license_number')->unique()->nullable();
             $table->string('license_expiry_date')->nullable();
             $table->string('profile_photo')->nullable();
             $table->string('cv')->nullable();

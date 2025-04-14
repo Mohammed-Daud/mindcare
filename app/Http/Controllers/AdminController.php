@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Models\Professional;
+use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -15,6 +17,9 @@ class AdminController extends Controller
      */
     public function showLoginForm()
     {
+        if (Auth::check() && Auth::user()->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('admin.login');
     }
 
@@ -33,14 +38,20 @@ class AdminController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials) && Auth::user()->is_admin) {
-            $request->session()->regenerate();
+        if (Auth::attempt($credentials)) {
+            if (!Auth::user()->is_admin) {
+                Auth::logout();
+                throw ValidationException::withMessages([
+                    'email' => ['You do not have admin privileges.'],
+                ]);
+            }
 
+            $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
 
         throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect or you do not have admin privileges.'],
+            'email' => ['The provided credentials are incorrect.'],
         ]);
     }
 
@@ -67,6 +78,14 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $recentProfessionals = Professional::orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+            
+        $totalProfessionals = Professional::count();
+        $totalUsers = User::count();
+        $appointmentsToday = 0; // This will be implemented later
+        
+        return view('admin.dashboard', compact('recentProfessionals', 'totalProfessionals', 'totalUsers', 'appointmentsToday'));
     }
 } 

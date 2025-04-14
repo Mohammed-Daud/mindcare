@@ -25,29 +25,47 @@
         <div class="container">
             <!-- Filter Section -->
             <div class="filter-section">
-                <div class="search-box">
-                    <input type="text" name="search" placeholder="Search professionals...">
-                    <button type="button"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="filter-options">
-                    <select name="specialization">
-                        <option value="all">All Specializations</option>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                    <select name="language">
-                        <option value="all">All Languages</option>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                    <select name="session-type">
-                        <option value="all">All Session Types</option>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
+                <form action="{{ route('professionals') }}" method="GET" class="search-form">
+                    <div class="search-box">
+                        <input type="text" name="search" placeholder="Search professionals..." value="{{ request('search') }}">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="filter-options">
+                        <select name="specialization" onchange="this.form.submit()">
+                            <option value="all">All Specializations</option>
+                            @foreach($specializations as $specialization)
+                                <option value="{{ $specialization }}" {{ request('specialization') == $specialization ? 'selected' : '' }}>
+                                    {{ $specialization }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
             </div>
 
             <!-- Professionals Grid -->
             <div class="professionals-grid" id="professionalsGrid">
-                <!-- Professionals will be loaded here dynamically -->
+                @foreach($professionals as $professional)
+                <div class="professional-card">
+                    <img src="{{ $professional->profile_photo_url ?? asset('images/default-avatar.png') }}" 
+                         alt="{{ $professional->first_name }} {{ $professional->last_name }}" 
+                         class="professional-image">
+                    <div class="professional-info">
+                        <h3>{{ $professional->first_name }} {{ $professional->last_name }}</h3>
+                        <div class="title">{{ $professional->specialization }}</div>
+                        <div class="professional-badges">
+                            <span class="badge">{{ $professional->qualification }}</span>
+                        </div>
+                        <div class="professional-stats">
+                            <span><i class="fas fa-clock"></i> {{ $professional->created_at->diffForHumans() }}</span>
+                        </div>
+                        <div class="professional-actions">
+                            <a href="{{ route('professionals.show', $professional->slug) }}" class="btn-view-profile">View Profile</a>
+                            <a href="{{ route('professionals.show', $professional->slug) }}" class="btn-book">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
             </div>
 
             <!-- No Results Message -->
@@ -73,7 +91,6 @@
     @include('partials.footer')
 
     <script src="{{ asset('js/script.js') }}"></script>
-    <script src="{{ asset('js/professionals.js') }}"></script>
-    <script src="{{ asset('js/professionals-page.js') }}"></script>
+    <!-- <script src="{{ asset('js/professionals.js') }}"></script> -->
 </body>
 </html> 

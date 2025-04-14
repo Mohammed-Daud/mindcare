@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\ProfessionalController as AdminProfessionalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,7 @@ use App\Http\Controllers\AdminController;
 */
 
 Route::get('/', function () {
+    // return bcrypt('12345678');
     return view('welcome');
 })->name('home');
 
@@ -35,8 +37,9 @@ Route::get('/password/reset', function() {
     return view('auth.passwords.email');
 })->name('password.request');
 
-Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->middleware('auth')->name('profile');
+Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 Route::get('/professionals', [App\Http\Controllers\ProfileController::class, 'professionals'])->name('professionals');
+Route::get('/professionals/{slug}', [App\Http\Controllers\ProfileController::class, 'show'])->name('professionals.show');
 
 // Professional Onboarding Routes (used for registration)
 Route::get('/professional/onboarding', [ProfessionalController::class, 'create'])->name('professionals.create');
@@ -44,10 +47,21 @@ Route::post('/professional/onboarding', [ProfessionalController::class, 'store']
 Route::get('/professional/onboarding/success', [ProfessionalController::class, 'onboardingSuccess'])->name('professionals.onboarding.success');
 
 // Admin Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/professionals', [ProfessionalController::class, 'index'])->name('professionals.index');
-    Route::get('/professionals/{professional}', [ProfessionalController::class, 'show'])->name('professionals.show');
-    Route::post('/professionals/{professional}/approve', [ProfessionalController::class, 'approve'])->name('professionals.approve');
-    Route::post('/professionals/{professional}/reject', [ProfessionalController::class, 'reject'])->name('professionals.reject');
+    Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+
+    // Professional Management Routes
+    Route::resource('professionals', AdminProfessionalController::class);
+    Route::put('professionals/{professional}/status', [AdminProfessionalController::class, 'updateStatus'])->name('professionals.status');
+    Route::post('professionals/{professional}/approve', [AdminProfessionalController::class, 'approve'])->name('professionals.approve');
+    Route::post('professionals/{professional}/reject', [AdminProfessionalController::class, 'reject'])->name('professionals.reject');
+});
+
+// Professional Routes
+Route::middleware(['auth:professional'])->group(function () {
+    Route::get('/professional/dashboard', [ProfessionalController::class, 'dashboard'])->name('professional.dashboard');
+    Route::get('/professional/profile', [ProfessionalController::class, 'profile'])->name('professional.profile');
+    Route::get('/professional/profile/edit', [ProfessionalController::class, 'editProfile'])->name('professional.profile.edit');
+    Route::post('/professional/profile/update', [ProfessionalController::class, 'updateProfile'])->name('professional.profile.update');
 });

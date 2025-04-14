@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class Professional extends Authenticatable
 {
@@ -30,6 +31,7 @@ class Professional extends Authenticatable
         'cv',
         'status',
         'password',
+        'slug',
     ];
 
     /**
@@ -50,7 +52,23 @@ class Professional extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'license_expiry_date' => 'date',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($professional) {
+            $professional->slug = Str::slug($professional->first_name . '-' . $professional->last_name);
+        });
+
+        static::updating(function ($professional) {
+            if ($professional->isDirty(['first_name', 'last_name'])) {
+                $professional->slug = Str::slug($professional->first_name . '-' . $professional->last_name);
+            }
+        });
+    }
 
     /**
      * Get the full name of the professional.
@@ -70,5 +88,28 @@ class Professional extends Authenticatable
     public function isApproved()
     {
         return $this->status === 'approved';
+    }
+
+    /**
+     * Get the name for the professional.
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return $this->full_name;
+    }
+
+    /**
+     * Get the profile photo URL.
+     *
+     * @return string
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo) {
+            return asset('storage/' . $this->profile_photo);
+        }
+        return null;
     }
 } 

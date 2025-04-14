@@ -33,8 +33,8 @@ function createProfessionalCard(professional) {
                     <span><i class="fas fa-clock"></i> ${professional.experience}</span>
                 </div>
                 <div class="professional-actions">
-                    <a href="profile.html?id=${professional.id}" class="btn-view-profile">View Profile</a>
-                    <a href="profile.html?id=${professional.id}" class="btn-book">Book Session</a>
+                    <a href="/professionals/${professional.id}" class="btn-view-profile">View Profile</a>
+                    <a href="/professionals/${professional.id}" class="btn-book">Book Session</a>
                 </div>
             </div>
         </div>
@@ -114,17 +114,40 @@ document.addEventListener('DOMContentLoaded', populateProfessionalsSection);
 // DOM Elements
 const searchInput = document.querySelector('.search-box input[name="search"]');
 const filterSelects = document.querySelectorAll('.filter-options select');
-const professionalsGrid = document.querySelector('.professionals-grid');
-const noResultsMessage = document.querySelector('.no-results');
-const resetFiltersButton = document.querySelector('#resetFilters');
+const professionalsGrid = document.getElementById('professionalsGrid');
+const noResults = document.getElementById('noResults');
 
 // Initialize the page
-document.addEventListener('DOMContentLoaded', async () => {
-    // Load professionals data from JSON
-    const professionals = await loadProfessionalsData();
-    displayProfessionals(professionals);
-    setupEventListeners();
-    populateFilterOptions(professionals);
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const searchInput = document.querySelector('.search-box input[name="search"]');
+    const filterSelects = document.querySelectorAll('.filter-options select');
+    const professionalsGrid = document.getElementById('professionalsGrid');
+    const noResults = document.getElementById('noResults');
+    
+    // Show/hide no results message based on server-rendered content
+    if (professionalsGrid && noResults) {
+        if (professionalsGrid.children.length === 0) {
+            noResults.style.display = 'block';
+            professionalsGrid.style.display = 'none';
+        } else {
+            noResults.style.display = 'none';
+            professionalsGrid.style.display = 'grid';
+        }
+    }
+
+    // Reset filters
+    document.getElementById('resetFilters')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = window.location.pathname;
+    });
+
+    // Auto-submit form on filter change
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
 });
 
 // Set up event listeners for search and filters
@@ -196,12 +219,12 @@ function filterProfessionals() {
 function displayProfessionals(professionalsToShow) {
     if (professionalsToShow.length === 0) {
         professionalsGrid.style.display = 'none';
-        noResultsMessage.style.display = 'block';
+        noResults.style.display = 'block';
         return;
     }
 
     professionalsGrid.style.display = 'grid';
-    noResultsMessage.style.display = 'none';
+    noResults.style.display = 'none';
 
     professionalsGrid.innerHTML = professionalsToShow.map(professional => `
         <div class="professional-card">
@@ -217,8 +240,8 @@ function displayProfessionals(professionalsToShow) {
                     <span><i class="fas fa-clock"></i> ${professional.experience}</span>
                 </div>
                 <div class="professional-actions">
-                    <a href="profile.html?id=${professional.id}" class="btn-view-profile">View Profile</a>
-                    <a href="profile.html?id=${professional.id}" class="btn-book">Book Session</a>
+                    <a href="/professionals/${professional.id}" class="btn-view-profile">View Profile</a>
+                    <a href="/professionals/${professional.id}" class="btn-book">Book Session</a>
                 </div>
             </div>
         </div>

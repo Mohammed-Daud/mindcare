@@ -17,10 +17,16 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->is_admin) {
-            return $next($request);
+        if (!Auth::check()) {
+            return redirect()->route('admin.login');
+        }
+
+        if (!Auth::user()->is_admin) {
+            Auth::logout();
+            return redirect()->route('admin.login')
+                ->with('error', 'You do not have permission to access this area.');
         }
         
-        return redirect('/')->with('error', 'You do not have permission to access this area.');
+        return $next($request);
     }
 } 
