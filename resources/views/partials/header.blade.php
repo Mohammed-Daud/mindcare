@@ -8,34 +8,38 @@
                 <li><a href="#">Services</a></li>
                 <li><a href="#">About</a></li>
                 
-                @guest
-                    <li><a href="{{ route('professionals.create') }}" class="btn btn-outline">Join as Professional</a></li>
-                    <li><a href="#" class="btn">Book Session</a></li>
-                    <li><a href="{{ route('login') }}">Login</a></li>
-                @else
-                    @if(Auth::guard('professional')->check())
-                        <li><a href="{{ route('professional.dashboard') }}" class="btn">Dashboard</a></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                                @csrf
-                                <button type="submit" class="btn btn-outline" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
-                    @else
-                        <li><a href="#" class="btn">Book Session</a></li>
-                        <li><a href="{{ route('profile') }}">Profile</a></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                                @csrf
-                                <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
-                    @endif
-                @endguest
+                @if(!auth()->check() && !auth()->guard('client')->check() && !auth()->guard('professional')->check())
+                    <li><a href="{{ route('professionals.create') }}">Join as Professional</a></li>
+                    <li><a href="{{ route('client.login') }}">Book Session</a></li>
+                    <li><a href="{{ route('client.login') }}">Login</a></li>
+                    <li><a href="{{ route('client.register') }}">Register as Client</a></li>
+                @endif
+
+                @if(auth()->guard('client')->check())
+                    <li><a href="{{ route('client.dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ route('client.appointments') }}">My Appointments</a></li>
+                    <li><a href="{{ route('client.profile') }}">Profile</a></li>
+                    <li>
+                        <form method="POST" action="{{ route('client.logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" >
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                @endif
+
+                @if(auth()->guard('professional')->check())
+                    <li><a href="{{ route('professional.dashboard') }}" class="btn">Dashboard</a></li>
+                    <li>
+                        <form method="POST" action="{{ route('professional.logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" >
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                @endif
             </ul>
             <div class="mobile-menu">
                 <i class="fas fa-bars"></i>

@@ -3,7 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="MindCare Admin Dashboard - Professional Counseling Management">
+    <meta name="author" content="MindCare">
+    <meta name="robots" content="noindex, nofollow">
     <title>@yield('title', 'Admin Dashboard') | MindCare Admin</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -27,6 +33,25 @@
         }
         .btn-sm {
             margin: 0 2px;
+        }
+        .navbar-badge {
+            font-size: .6rem;
+            font-weight: 300;
+            padding: 2px 4px;
+            position: absolute;
+            right: 5px;
+            top: 9px;
+        }
+        .dropdown-menu-lg {
+            max-width: 300px;
+            min-width: 280px;
+            padding: 0;
+        }
+        .dropdown-menu-lg .dropdown-item {
+            padding: .5rem 1rem;
+        }
+        .dropdown-menu-lg .dropdown-divider {
+            margin: 0;
         }
     </style>
     @yield('styles')
@@ -105,6 +130,19 @@
             
             // Auto-hide alerts after 5 seconds
             $('.alert').delay(5000).fadeOut(500);
+
+            // Enable tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Enable popovers
+            $('[data-toggle="popover"]').popover();
+
+            // Handle confirmation dialogs
+            $('[data-confirm]').on('click', function(e) {
+                if (!confirm($(this).data('confirm'))) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
     @yield('scripts')

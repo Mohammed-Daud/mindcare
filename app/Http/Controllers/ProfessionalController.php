@@ -285,4 +285,42 @@ class ProfessionalController extends Controller
             return back()->with('error', 'An error occurred while updating your profile. Please try again.');
         }
     }
+
+    /**
+     * Update the professional's password.
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $professional = auth()->guard('professional')->user();
+
+        if (!Hash::check($request->current_password, $professional->password)) {
+            return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+        }
+
+        $professional->password = Hash::make($request->password);
+        $professional->save();
+
+        return back()->with('success', 'Password updated successfully.');
+    }
+
+    /**
+     * Log the professional out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request)
+    {
+        Auth::guard('professional')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
 } 

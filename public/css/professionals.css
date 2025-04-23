@@ -1,8 +1,9 @@
 /* Page Title */
 .page-title {
     background-color: #f8f9fa;
-    padding: 60px 0;
+    padding: 120px 0;
     text-align: center;
+    padding-bottom: 20px;
 }
 
 .page-title h1 {

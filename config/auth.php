@@ -40,9 +40,17 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
         'professional' => [
             'driver' => 'session',
             'provider' => 'professionals',
+        ],
+        'client' => [
+            'driver' => 'session',
+            'provider' => 'clients',
         ],
     ],
 
@@ -68,9 +76,17 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
         'professionals' => [
             'driver' => 'eloquent',
             'model' => App\Models\Professional::class,
+        ],
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Client::class,
         ],
 
         // 'users' => [
@@ -105,9 +121,21 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'admin_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
         'professionals' => [
             'provider' => 'professionals',
-            'table' => 'password_reset_tokens',
+            'table' => 'professional_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'clients' => [
+            'provider' => 'clients',
+            'table' => 'client_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

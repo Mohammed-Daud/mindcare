@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Professional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Mail\ApprovalEmail;
+use App\Mail\ProfessionalRejectionEmail;
 
 class ProfessionalController extends Controller
 {
@@ -115,13 +120,36 @@ class ProfessionalController extends Controller
      */
     public function approve(Professional $professional)
     {
-        $professional->update(['status' => 'approved']);
-        
-        // Send approval email to the professional
-        // This will be implemented later
-        
-        return redirect()->route('admin.professionals.index')
-            ->with('success', 'Professional approved successfully.');
+        try {
+            // Generate a random password
+            $password = Str::random(10);
+            
+            // Update professional status and set password
+            $professional->update([
+                'status' => 'approved',
+                'password' => Hash::make($password)
+            ]);
+
+            Log::info('Professional approved: ' . $professional->email);
+
+            // Send approval email with login credentials
+            try {
+                Mail::to($professional->email)->send(new ApprovalEmail($professional, $password));
+                Log::info('Approval email sent successfully to ' . $professional->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send approval email: ' . $e->getMessage());
+                // Even if email fails, we don't want to rollback the approval
+                return redirect()->route('admin.professionals.index')
+                    ->with('warning', 'Professional approved but failed to send email. Please check the logs.');
+            }
+
+            return redirect()->route('admin.professionals.index')
+                ->with('success', 'Professional has been approved and login credentials have been sent.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to approve professional: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while approving the professional.');
+        }
     }
 
     /**
@@ -129,12 +157,27 @@ class ProfessionalController extends Controller
      */
     public function reject(Professional $professional)
     {
-        $professional->update(['status' => 'rejected']);
-        
-        // Send rejection email to the professional
-        // This will be implemented later
-        
-        return redirect()->route('admin.professionals.index')
-            ->with('success', 'Professional rejected successfully.');
+        try {
+            $professional->update(['status' => 'rejected']);
+            Log::info('Professional rejected: ' . $professional->email);
+
+            // Send rejection email
+            try {
+                Mail::to($professional->email)->send(new ProfessionalRejectionEmail($professional));
+                Log::info('Rejection email sent successfully to ' . $professional->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send rejection email: ' . $e->getMessage());
+                // Even if email fails, we don't want to rollback the rejection
+                return redirect()->route('admin.professionals.index')
+                    ->with('warning', 'Professional rejected but failed to send email. Please check the logs.');
+            }
+
+            return redirect()->route('admin.professionals.index')
+                ->with('success', 'Professional has been rejected and notification email has been sent.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to reject professional: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while rejecting the professional.');
+        }
     }
 }

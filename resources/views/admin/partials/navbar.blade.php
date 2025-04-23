@@ -9,6 +9,8 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+        @include('admin.partials.notifications')
+        
         <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
@@ -21,6 +23,9 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
                     <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+                </a>
+                <a href="{{ route('admin.profile') }}" class="dropdown-item">
+                    <i class="fas fa-user-circle mr-2"></i> My Profile
                 </a>
                 <div class="dropdown-divider"></div>
                 <form method="POST" action="{{ route('admin.logout') }}">

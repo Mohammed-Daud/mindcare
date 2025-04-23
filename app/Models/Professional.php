@@ -112,4 +112,12 @@ class Professional extends Authenticatable
         }
         return null;
     }
+    
+    /**
+     * Get the professional's settings.
+     */
+    public function settings()
+    {
+        return $this->hasOne(ProfessionalSetting::class);
+    }
 } 

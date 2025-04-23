@@ -56,20 +56,36 @@ nav {
 .nav-links {
     display: flex;
     list-style: none;
+    margin-bottom: 0;
 }
 
 .nav-links li {
     margin-left: 30px;
 }
-
+/* like .nav-links a i want same style for submit button inside nav li */
 .nav-links a {
     text-decoration: none;
     color: var(--dark);
     font-weight: 500;
     transition: color 0.3s;
 }
+.nav-links button[type="submit"] {
+    background: none;
+    border: none;
+    color: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    background: none; border: none; color: inherit; cursor: 
+    pointer; padding: 0; 
+}
+
 
 .nav-links a:hover {
+    color: var(--primary);
+}
+
+.nav-links button[type="submit"]:hover {
     color: var(--primary);
 }
 
@@ -461,4 +477,24 @@ footer {
     .cta h2 {
         font-size: 28px;
     }
+}
+
+/* Alert Messages */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
 }

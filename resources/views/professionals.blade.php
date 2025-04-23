@@ -15,7 +15,7 @@
     <!-- Page Title -->
     <section class="page-title">
         <div class="container">
-            <h1>Our Professional Team</h1>
+            <h1 class="pt-5">Our Professional Team</h1>
             <p>Meet our licensed psychologists and psychiatrists specializing in various therapeutic approaches.</p>
         </div>
     </section>
@@ -23,6 +23,19 @@
     <!-- Professionals Section -->
     <section class="professionals-page">
         <div class="container">
+            <!-- Flash Messages -->
+            @if(session('error'))
+                <div class="alert alert-danger mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+            
+            @if(session('success'))
+                <div class="alert alert-success mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
             <!-- Filter Section -->
             <div class="filter-section">
                 <form action="{{ route('professionals') }}" method="GET" class="search-form">
@@ -61,7 +74,11 @@
                         </div>
                         <div class="professional-actions">
                             <a href="{{ route('professionals.show', $professional->slug) }}" class="btn-view-profile">View Profile</a>
-                            <a href="{{ route('professionals.show', $professional->slug) }}" class="btn-book">Book Session</a>
+                            @auth('client')
+                                <a href="{{ route('client.appointments.create', $professional->id) }}" class="btn-book">Book Session</a>
+                            @else
+                                <a href="{{ route('client.login') }}" class="btn-book">Book Session</a>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -78,14 +95,7 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Take the First Step?</h2>
-            <p>Our licensed professionals are here to help you navigate life's challenges with evidence-based therapeutic approaches.</p>
-            <a href="#" class="btn btn-light">Book Your Session Now</a>
-        </div>
-    </section>
+    
 
     <!-- Footer -->
     @include('partials.footer')

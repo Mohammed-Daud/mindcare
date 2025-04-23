@@ -24,8 +24,9 @@
             <div class="footer-column">
                 <h3>Company</h3>
                 <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Our Team</a></li>
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li><a href="{{ route('about') }}">About Us</a></li>
+                    <li><a href="{{ route('professionals') }}">Our Team</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Terms of Service</a></li>
@@ -39,6 +40,19 @@
                     <li><i class="fas fa-map-marker-alt"></i> 123 Therapy Lane, Suite 100</li>
                 </ul>
             </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li><a href="{{ route('about') }}">About Us</a></li>
+                    <li><a href="{{ route('services') }}">Services</a></li>
+                    <li><a href="{{ route('professionals') }}">Our Team</a></li>
+                    <li><a href="{{ route('contact') }}">Contact</a></li>
+                    <li><a href="{{ route('client.login') }}">Client Login</a></li>
+                    <li><a href="{{ route('professional.login') }}">Professional Login</a></li>
+                </ul>
+            </div>
+        </div>
         </div>
         <div class="copyright">
             <p>&copy; 2023 MindCare Professional Counseling. All rights reserved.</p>

@@ -18,11 +18,14 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
+        if (Auth::guard('client')->check()) {
+            return redirect()->route('client.dashboard');
+        }
         if (Auth::guard('professional')->check()) {
             return redirect()->route('professional.dashboard');
         }
         if (Auth::guard('web')->check()) {
-            return redirect('/profile');
+            return redirect('/admin/dashboard');
         }
         return view('auth.login');
     }
@@ -89,5 +92,36 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function showProfessionalLoginForm()
+    {
+        if (auth()->guard('client')->check()) {
+            return redirect()->route('client.dashboard');
+        }
+        if (auth()->guard('professional')->check()) {
+            return redirect()->route('professional.dashboard');
+        }
+        if (auth()->guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+        return view('auth.professional.login');
+    }
+
+    public function professionalLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (auth()->guard('professional')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('professional.dashboard'));
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 } 

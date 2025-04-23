@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+<div class="container pt-5">
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-8 py-5">
             <div class="card">
                 <div class="card-header">{{ __('Edit Profile') }}</div>
 
@@ -92,7 +92,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="license_expiry_date" class="form-label">{{ __('License Expiry Date') }}</label>
-                                <input id="license_expiry_date" type="date" class="form-control @error('license_expiry_date') is-invalid @enderror" name="license_expiry_date" value="{{ old('license_expiry_date', $professional->license_expiry_date) }}" autocomplete="license_expiry_date">
+                                <input id="license_expiry_date" type="date" class="form-control @error('license_expiry_date') is-invalid @enderror" name="license_expiry_date" value="{{ old('license_expiry_date', $professional->license_expiry_date ? $professional->license_expiry_date->format('Y-m-d') : '') }}" autocomplete="license_expiry_date">
                                 @error('license_expiry_date')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -102,7 +102,19 @@
 
                             <div class="col-md-6">
                                 <label for="profile_photo" class="form-label">{{ __('Profile Photo') }}</label>
-                                <input id="profile_photo" type="file" class="form-control @error('profile_photo') is-invalid @enderror" name="profile_photo" accept="image/*">
+                                <div class="profile-photo-container mb-2">
+                                    @if($professional->profile_photo)
+                                        <img src="{{ asset('storage/' . $professional->profile_photo) }}" 
+                                             alt="Profile Photo" 
+                                             class="profile-photo-preview img-thumbnail"
+                                             style="max-width: 150px; height: auto;">
+                                    @else
+                                        <div class="no-photo-placeholder" style="width: 150px; height: 150px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; border: 1px solid #dee2e6; border-radius: 4px;">
+                                            <i class="fas fa-user" style="font-size: 48px; color: #6c757d;"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <input id="profile_photo" type="file" class="form-control @error('profile_photo') is-invalid @enderror" name="profile_photo" accept="image/*" onchange="previewImage(this);">
                                 @error('profile_photo')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -124,7 +136,12 @@
                                     </span>
                                 @enderror
                                 @if($professional->cv)
-                                    <small class="form-text text-muted">Current CV will be replaced if a new one is uploaded.</small>
+                                    <div class="mt-2">
+                                        <a href="{{ asset('storage/' . $professional->cv) }}" class="btn btn-sm btn-info" target="_blank">
+                                            <i class="fas fa-download"></i> Download Current CV
+                                        </a>
+                                        <small class="form-text text-muted">Current CV will be replaced if a new one is uploaded.</small>
+                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -152,9 +169,80 @@
                             </div>
                         </div>
                     </form>
+
+                    <hr class="my-4">
+
+                    <div class="card">
+                        <div class="card-header">{{ __('Change Password') }}</div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ route('professional.profile.password') }}">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="current_password" class="form-label">{{ __('Current Password') }}</label>
+                                        <input id="current_password" type="password" class="form-control @error('current_password') is-invalid @enderror" name="current_password" required>
+                                        @error('current_password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="password" class="form-label">{{ __('New Password') }}</label>
+                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required>
+                                        @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="password_confirmation" class="form-label">{{ __('Confirm New Password') }}</label>
+                                        <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-0">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-primary">
+                                            {{ __('Change Password') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+
+@push('scripts')
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.querySelector('.profile-photo-preview');
+            if (preview) {
+                preview.src = e.target.result;
+            } else {
+                var container = document.querySelector('.profile-photo-container');
+                container.innerHTML = `<img src="${e.target.result}" alt="Profile Photo Preview" class="profile-photo-preview img-thumbnail" style="max-width: 150px; height: auto;">`;
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+@endpush 
