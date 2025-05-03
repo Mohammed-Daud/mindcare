@@ -60,7 +60,7 @@
             <div class="professionals-grid" id="professionalsGrid">
                 @foreach($professionals as $professional)
                 <div class="professional-card">
-                    <img src="{{ $professional->profile_photo_url ?? asset('images/default-avatar.png') }}" 
+                    <img src="{{ $professional->profile_photo_url }}" 
                          alt="{{ $professional->first_name }} {{ $professional->last_name }}" 
                          class="professional-image">
                     <div class="professional-info">

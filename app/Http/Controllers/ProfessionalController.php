@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Professional;
+use App\Models\ProfessionalLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -31,7 +32,8 @@ class ProfessionalController extends Controller
      */
     public function create()
     {
-        return view('professionals.onboarding');
+        $proficiencyLevels = ProfessionalLanguage::getProficiencyLevels();
+        return view('professionals.onboarding', compact('proficiencyLevels'));
     }
 
     /**
@@ -98,6 +100,18 @@ class ProfessionalController extends Controller
             }
 
             $professional->save();
+            
+            // Save languages if provided
+            if ($request->has('languages') && is_array($request->languages)) {
+                foreach ($request->languages as $index => $language) {
+                    if (!empty($language) && isset($request->proficiency[$index]) && !empty($request->proficiency[$index])) {
+                        $professional->languages()->create([
+                            'language' => $language,
+                            'proficiency' => $request->proficiency[$index]
+                        ]);
+                    }
+                }
+            }
 
             // Send welcome email to professional
             try {
@@ -231,7 +245,8 @@ class ProfessionalController extends Controller
     public function editProfile()
     {
         $professional = auth()->guard('professional')->user();
-        return view('professional.profile-edit', compact('professional'));
+        $proficiencyLevels = ProfessionalLanguage::getProficiencyLevels();
+        return view('professional.profile-edit', compact('professional', 'proficiencyLevels'));
     }
 
     /**
@@ -312,6 +327,22 @@ class ProfessionalController extends Controller
             }
 
             $professional->save();
+            
+            // Update languages
+            if ($request->has('languages') && is_array($request->languages)) {
+                // Delete existing languages
+                $professional->languages()->delete();
+                
+                // Add new languages
+                foreach ($request->languages as $index => $language) {
+                    if (!empty($language) && isset($request->proficiency[$index]) && !empty($request->proficiency[$index])) {
+                        $professional->languages()->create([
+                            'language' => $language,
+                            'proficiency' => $request->proficiency[$index]
+                        ]);
+                    }
+                }
+            }
 
             return redirect()->route('professional.profile')
                 ->with('success', 'Profile updated successfully.');

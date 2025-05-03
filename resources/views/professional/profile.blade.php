@@ -17,7 +17,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center">
-                                <img src="{{ $professional->profile_photo_url ?? asset('images/default-avatar.png') }}" 
+                                <img src="{{ $professional->profile_photo_url }}" 
                                      class="rounded-circle mb-3" 
                                      style="width: 150px; height: 150px; object-fit: cover;">
                                 <h4>{{ $professional->first_name }} {{ $professional->last_name }}</h4>

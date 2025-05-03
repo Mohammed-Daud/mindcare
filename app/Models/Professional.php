@@ -113,7 +113,7 @@ class Professional extends Authenticatable
         if ($this->profile_photo) {
             return asset('storage/' . $this->profile_photo);
         }
-        return null;
+        return asset('images/default-avatar.svg');
     }
     
     /**
@@ -122,5 +122,13 @@ class Professional extends Authenticatable
     public function settings()
     {
         return $this->hasOne(ProfessionalSetting::class);
+    }
+    
+    /**
+     * Get the languages for the professional.
+     */
+    public function languages()
+    {
+        return $this->hasMany(ProfessionalLanguage::class);
     }
 } 

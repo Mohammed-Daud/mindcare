@@ -122,6 +122,38 @@
         .text-center a:hover {
             text-decoration: underline;
         }
+        
+        /* Language section styling */
+        .language-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .language-item .form-control {
+            flex: 1;
+        }
+        .language-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .btn-add-language {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-remove-language {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -252,6 +284,54 @@
                                 </span>
                             @enderror
                         </div>
+                        
+                        <div class="form-group">
+                            <label>Languages Known</label>
+                            <div id="languages-container">
+                                @if(old('languages'))
+                                    @foreach(old('languages') as $index => $language)
+                                        <div class="language-item">
+                                            <input type="text" class="form-control" name="languages[]" placeholder="Language" value="{{ $language }}">
+                                            <select class="form-control" name="proficiency[]">
+                                                @foreach($proficiencyLevels as $value => $label)
+                                                    <option value="{{ $value }}" {{ old('proficiency.'.$index) == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                @endforeach
+                                            </select>
+                                            <button type="button" class="btn-remove-language" onclick="removeLanguage(this)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="language-item">
+                                        <input type="text" class="form-control" name="languages[]" placeholder="Language">
+                                        <select class="form-control" name="proficiency[]">
+                                            @foreach($proficiencyLevels as $value => $label)
+                                                <option value="{{ $value }}">{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn-remove-language" onclick="removeLanguage(this)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="language-controls">
+                                <button type="button" class="btn-add-language" onclick="addLanguage()">
+                                    <i class="fas fa-plus"></i> Add Another Language
+                                </button>
+                            </div>
+                            @error('languages.*')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                            @error('proficiency.*')
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
 
                         <div class="row">
                             <div class="col-md-6">
@@ -337,6 +417,36 @@
                 countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
             });
         });
+        
+        // Functions for handling languages
+        function addLanguage() {
+            const container = document.getElementById('languages-container');
+            const languageItems = container.querySelectorAll('.language-item');
+            
+            // Clone the first language item
+            const newItem = languageItems[0].cloneNode(true);
+            
+            // Clear the values
+            newItem.querySelector('input[name="languages[]"]').value = '';
+            
+            // Add the new item to the container
+            container.appendChild(newItem);
+        }
+        
+        function removeLanguage(button) {
+            const container = document.getElementById('languages-container');
+            const languageItems = container.querySelectorAll('.language-item');
+            
+            // Don't remove if it's the only one
+            if (languageItems.length > 1) {
+                button.closest('.language-item').remove();
+            } else {
+                // If it's the last one, just clear the values
+                const item = button.closest('.language-item');
+                item.querySelector('input[name="languages[]"]').value = '';
+                item.querySelector('select[name="proficiency[]"]').selectedIndex = 0;
+            }
+        }
     </script>
 </body>
 </html> 

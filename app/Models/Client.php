@@ -42,6 +42,6 @@ class Client extends Authenticatable
         if ($this->profile_photo) {
             return asset('storage/' . $this->profile_photo);
         }
-        return asset('images/default-avatar.png');
+        return asset('images/default-avatar.svg');
     }
 }
