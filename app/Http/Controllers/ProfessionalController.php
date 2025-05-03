@@ -43,7 +43,8 @@ class ProfessionalController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:professionals',
-            'phone' => 'nullable|string|max:20|unique:professionals',
+            'country_code' => 'required|string|max:5',
+            'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string',
             'specialization' => 'nullable|string|max:255',
             'qualification' => 'nullable|string|max:255',
@@ -52,13 +53,27 @@ class ProfessionalController extends Controller
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
+        
+        // Check if the combination of country_code and phone already exists
+        if ($request->phone) {
+            $existingProfessional = Professional::where('country_code', $request->country_code)
+                ->where('phone', $request->phone)
+                ->first();
+                
+            if ($existingProfessional) {
+                return back()->withErrors(['phone' => 'The phone number with this country code already exists.'])
+                    ->withInput();
+            }
+        }
 
         try {
             $professional = new Professional();
             $professional->first_name = $request->first_name;
             $professional->last_name = $request->last_name;
             $professional->email = $request->email;
+            $professional->country_code = $request->country_code;
             $professional->phone = $request->phone;
+            $professional->is_phone_verified = false; // Default to not verified
             $professional->bio = $request->bio;
             $professional->specialization = $request->specialization;
             $professional->qualification = $request->qualification;
@@ -229,6 +244,7 @@ class ProfessionalController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'country_code' => 'required|string|max:5',
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string',
             'specialization' => 'nullable|string|max:255',
@@ -238,10 +254,30 @@ class ProfessionalController extends Controller
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
+        
+        // Check if the combination of country_code and phone already exists for other professionals
+        if ($request->phone) {
+            $existingProfessional = Professional::where('country_code', $request->country_code)
+                ->where('phone', $request->phone)
+                ->where('id', '!=', $professional->id)
+                ->first();
+                
+            if ($existingProfessional) {
+                return back()->withErrors(['phone' => 'The phone number with this country code already exists.'])
+                    ->withInput();
+            }
+        }
 
         try {
             $professional->first_name = $request->first_name;
             $professional->last_name = $request->last_name;
+            $professional->country_code = $request->country_code;
+            
+            // If phone number changed, set is_phone_verified to false
+            if ($professional->phone != $request->phone) {
+                $professional->is_phone_verified = false;
+            }
+            
             $professional->phone = $request->phone;
             $professional->bio = $request->bio;
             $professional->specialization = $request->specialization;

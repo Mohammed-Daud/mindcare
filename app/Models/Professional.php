@@ -21,7 +21,9 @@ class Professional extends Authenticatable
         'first_name',
         'last_name',
         'email',
+        'country_code',
         'phone',
+        'is_phone_verified',
         'bio',
         'specialization',
         'qualification',
@@ -53,6 +55,7 @@ class Professional extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'license_expiry_date' => 'date',
+        'is_phone_verified' => 'boolean',
     ];
 
     protected static function boot()

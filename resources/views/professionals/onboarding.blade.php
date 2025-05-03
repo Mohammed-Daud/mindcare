@@ -6,6 +6,8 @@
     <title>Professional Onboarding | MindCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
     <style>
         .onboarding-section {
             padding: 150px 0 80px;
@@ -81,6 +83,17 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        
+        /* Phone input styling */
+        .iti {
+            width: 100%;
+        }
+        .phone-input-container {
+            display: flex;
+        }
+        .phone-input-container .iti {
+            flex: 1;
+        }
         .text-muted {
             color: #6c757d;
             font-size: 14px;
@@ -120,7 +133,7 @@
         <div class="container">
             <div class="onboarding-container">
                 <div class="onboarding-header">
-                    <h1>Professional Onboarding</h1>
+                    <h1>Professional Onboarding..</h1>
                     <p>Join our team of mental health professionals</p>
                 </div>
                 <div class="onboarding-body">
@@ -167,8 +180,16 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}">
+                                    <div class="phone-input-container">
+                                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}">
+                                        <input type="hidden" name="country_code" id="country_code" value="{{ old('country_code', '+91') }}">
+                                    </div>
                                     @error('phone')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                    @error('country_code')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -288,6 +309,32 @@
             input.addEventListener("change", function() {
                 var fileName = this.value.split("\\").pop();
                 this.nextElementSibling.innerHTML = fileName;
+            });
+        });
+        
+        // Initialize the international telephone input
+        document.addEventListener('DOMContentLoaded', function() {
+            var phoneInput = document.querySelector("#phone");
+            var countryCodeInput = document.querySelector("#country_code");
+            
+            var iti = window.intlTelInput(phoneInput, {
+                initialCountry: "in", // Set India as default
+                separateDialCode: true,
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
+                preferredCountries: ["in", "us", "gb", "ca", "au"]
+            });
+            
+            // Set the initial country code value
+            countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
+            
+            // Update the country code when the user changes it
+            phoneInput.addEventListener("countrychange", function() {
+                countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
+            });
+            
+            // Handle form submission to ensure the country code is included
+            document.querySelector("form").addEventListener("submit", function() {
+                countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
             });
         });
     </script>
