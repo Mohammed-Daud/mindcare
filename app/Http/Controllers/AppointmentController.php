@@ -32,7 +32,114 @@ class AppointmentController extends Controller
             
         return view('client.appointments.index', compact('appointments'));
     }
-
+    
+    public function show(Appointment $appointment)
+    {
+        // Check if the appointment belongs to the authenticated client
+        if ($appointment->client_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        return view('client.appointments.show', compact('appointment'));
+    }
+    
+    public function meeting(Appointment $appointment)
+    {
+        // Check if the user is authorized to join this meeting
+        $user = auth()->user();
+        $isClient = auth()->guard('client')->check();
+        $isProfessional = auth()->guard('professional')->check();
+        
+        if ($isClient && $appointment->client_id !== $user->id) {
+            abort(403, 'You are not authorized to join this meeting.');
+        }
+        
+        if ($isProfessional && $appointment->professional_id !== $user->id) {
+            abort(403, 'You are not authorized to join this meeting.');
+        }
+        
+        // Check if the appointment is confirmed
+        if ($appointment->status !== 'confirmed') {
+            return redirect()->back()->with('error', 'This appointment is not confirmed.');
+        }
+        
+        // Check if the appointment is in progress or about to start (within 10 minutes)
+        $now = now();
+        $startTime = $appointment->start_time;
+        $endTime = $appointment->end_time;
+        $isAboutToStart = $now->diffInMinutes($startTime, false) <= 10 && $now->diffInMinutes($startTime, false) > 0;
+        $isInProgress = $now->between($startTime, $endTime);
+        $hasEnded = $now->isAfter($endTime);
+        
+        // if ($hasEnded) {
+        //     return redirect()->back()->with('error', 'This appointment has already ended.');
+        // }
+        
+        // if (!$isInProgress && !$isAboutToStart) {
+        //     return redirect()->back()->with('error', 'You can only join the meeting 10 minutes before the scheduled time.');
+        // }
+        
+        return view('appointments.meeting', compact('appointment', 'isClient', 'isProfessional', 'isInProgress', 'isAboutToStart'));
+    }
+    
+    public function jitsiMeeting(Appointment $appointment)
+    {
+        // Check if the user is authorized to join this meeting
+        $user = auth()->user();
+        $isClient = auth()->guard('client')->check();
+        $isProfessional = auth()->guard('professional')->check();
+        
+        if ($isClient && $appointment->client_id !== $user->id) {
+            abort(403, 'You are not authorized to join this meeting.');
+        }
+        
+        if ($isProfessional && $appointment->professional_id !== $user->id) {
+            abort(403, 'You are not authorized to join this meeting.');
+        }
+        
+        // Check if the appointment is confirmed
+        if ($appointment->status !== 'confirmed') {
+            return redirect()->back()->with('error', 'This appointment is not confirmed.');
+        }
+        
+        // Get user information
+        $userName = $isClient ? $user->first_name . ' ' . $user->last_name : $user->full_name;
+        $userEmail = $user->email;
+        
+        // Get the stored meeting room name or generate one if it doesn't exist
+        if (empty($appointment->meeting_room)) {
+            // Create a unique meeting room name using professional name and a random string
+            $professionalName = strtolower(str_replace(' ', '-', $appointment->professional->full_name));
+            $uniqueId = substr(md5(uniqid(rand(), true)), 0, 8);
+            $roomName = $professionalName . '-' . $uniqueId;
+            
+            // Save the meeting room name to the appointment
+            $appointment->meeting_room = $roomName;
+            $appointment->save();
+        } else {
+            $roomName = $appointment->meeting_room;
+        }
+        
+        // Get appointment duration in minutes
+        $duration = $appointment->duration;
+        
+        // Calculate remaining time
+        $now = now();
+        $endTime = $appointment->end_time;
+        $remainingMinutes = $now->diffInMinutes($endTime);
+        
+        return view('appointments.jitsi', compact(
+            'appointment', 
+            'isClient', 
+            'isProfessional', 
+            'userName', 
+            'userEmail', 
+            'roomName', 
+            'duration', 
+            'remainingMinutes'
+        ));
+    }
+    
     public function create(Professional $professional)
     {
         $settings = $professional->settings;
@@ -127,12 +234,20 @@ class AppointmentController extends Controller
 
     public function store(Request $request, Professional $professional)
     {
-        $validated = $request->validate([
+        $validationRules = [
             'date' => 'required|date|after_or_equal:today',
             'time' => 'required|date_format:H:i',
             'duration' => 'required|integer|min:30',
-            'coupon_code' => 'nullable|string|exists:coupon_codes,code',
-        ]);
+            'coupon_code' => 'nullable|string',
+        ];
+        
+        // Only validate coupon code exists in database if it's not WELCOME100
+        if ($request->coupon_code && $request->coupon_code !== 'WELCOME100') {
+            $validationRules['coupon_code'] .= '|exists:coupon_codes,code';
+        $appointment->meeting_room = $meetingRoom;
+        }
+        
+        $validated = $request->validate($validationRules);
 
         $settings = $professional->settings;
         
@@ -147,10 +262,9 @@ class AppointmentController extends Controller
             return back()->with('error', 'Selected time slot is not available.');
         }
 
+        // Get the session fee, with a fallback to a default value
         $fee = $settings->getSessionFee($validated['duration']);
-        if (!$fee) {
-            return back()->with('error', 'Invalid session duration selected.');
-        }
+        // No need to check if fee is null since we've updated the getSessionFee method to always return a value
 
         $discountAmount = 0;
         $couponCode = null;

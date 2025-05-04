@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Professional;
 use App\Models\ProfessionalLanguage;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -14,6 +15,7 @@ use App\Mail\ProfessionalWelcomeEmail;
 use App\Mail\AdminNotificationEmail;
 use App\Mail\ApprovalEmail;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ProfessionalController extends Controller
 {
@@ -389,5 +391,65 @@ class ProfessionalController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+    
+    /**
+     * Display the professional's appointments.
+     */
+    public function appointments()
+    {
+        $professional = auth()->guard('professional')->user();
+        
+        $appointments = Appointment::where('professional_id', $professional->id)
+            ->with('client')
+            ->orderBy('start_time', 'desc')
+            ->paginate(10);
+            
+        return view('professional.appointments.index', compact('appointments'));
+    }
+    
+    /**
+     * Display the specified appointment.
+     */
+    public function showAppointment(Appointment $appointment)
+    {
+        $professional = auth()->guard('professional')->user();
+        
+        // Check if the appointment belongs to the authenticated professional
+        if ($appointment->professional_id !== $professional->id) {
+            abort(403);
+        }
+        
+        return view('professional.appointments.show', compact('appointment'));
+    }
+    
+    /**
+     * Update the status of an appointment.
+     */
+    public function updateAppointmentStatus(Request $request, Appointment $appointment)
+    {
+        $professional = auth()->guard('professional')->user();
+        
+        // Check if the appointment belongs to the authenticated professional
+        if ($appointment->professional_id !== $professional->id) {
+            abort(403);
+        }
+        
+        $request->validate([
+            'status' => 'required|in:confirmed,cancelled,completed',
+        ]);
+        
+        $appointment->status = $request->status;
+        
+        if ($request->status === 'cancelled') {
+            // Add any cancellation logic here
+        } elseif ($request->status === 'completed') {
+            // Add any completion logic here
+        }
+        
+        $appointment->save();
+        
+        return redirect()->route('professional.appointments.show', $appointment)
+            ->with('success', 'Appointment status updated successfully.');
     }
 } 

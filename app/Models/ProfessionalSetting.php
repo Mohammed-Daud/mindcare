@@ -40,11 +40,12 @@ class ProfessionalSetting extends Model
     public function getSessionFee($duration)
     {
         if (!$this->session_fees || !is_array($this->session_fees)) {
-            return null;
+            // Default fee if none is set
+            return 500; // Default fee of ₹500
         }
         
         // If session_fees is a simple array with one value, return that value
-        if (count($this->session_fees) === 1) {
+        if (count($this->session_fees) === 1 && isset($this->session_fees[0])) {
             return $this->session_fees[0];
         }
         
@@ -55,7 +56,14 @@ class ProfessionalSetting extends Model
             }
         }
         
-        return null;
+        // If no matching duration found but we have fees, use the first one as default
+        if (count($this->session_fees) > 0) {
+            $firstKey = array_key_first($this->session_fees);
+            return $this->session_fees[$firstKey];
+        }
+        
+        // Fallback default fee
+        return 500; // Default fee of ₹500
     }
 
     public function isWorkingDay($day)

@@ -128,6 +128,7 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     // Add appointments routes
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
     Route::get('/appointments/create/{professional}', [AppointmentController::class, 'create'])->name('appointments.create');
+    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::post('/appointments/{professional}', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::put('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::put('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
@@ -139,6 +140,16 @@ Route::get('/appointments/check-availability/{professional}', [AppointmentContro
     ->name('appointments.check-availability');
 Route::post('/appointments/check-availability/{professional}', [AppointmentController::class, 'checkAvailability'])
     ->name('appointments.check-availability');
+
+// Appointment Meeting
+Route::get('/appointments/{appointment}/meeting', [AppointmentController::class, 'meeting'])
+    ->name('appointments.meeting')
+    ->middleware('auth:client,professional');
+
+// Jitsi Meeting
+Route::get('/appointments/{appointment}/jitsi', [AppointmentController::class, 'jitsiMeeting'])
+    ->name('appointments.jitsi')
+    ->middleware('auth:client,professional');
 
 // Debug route - Remove after fixing the issue
 Route::get('/debug-settings/{professional}', function($professional) {

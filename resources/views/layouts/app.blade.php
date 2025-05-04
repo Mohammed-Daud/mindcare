@@ -29,7 +29,7 @@
     <!-- Header -->
     @include('partials.header')
     
-    <main class="py-4">
+    <main class="py-4" style="padding-top: 80px;">
         @yield('content')
     </main>
     

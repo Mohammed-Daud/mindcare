@@ -19,6 +19,9 @@ class Appointment extends Model
         'discount_amount',
         'coupon_code',
         'notes',
+        'reschedule_count',
+        'last_rescheduled_at',
+        'meeting_room',
     ];
 
     protected $casts = [
@@ -26,6 +29,8 @@ class Appointment extends Model
         'end_time' => 'datetime',
         'fee' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'last_rescheduled_at' => 'datetime',
+        'reschedule_count' => 'integer',
     ];
 
     public function client()
