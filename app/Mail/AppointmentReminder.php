@@ -48,7 +48,7 @@ class AppointmentReminder extends Mailable
                 'startTime' => $this->appointment->start_time->format('g:i A'),
                 'endTime' => $this->appointment->end_time->format('g:i A'),
                 'duration' => $this->appointment->duration,
-                'sessionUrl' => url('/session/' . $this->appointment->id),
+                'sessionUrl' => route('appointments.jitsi', $this->appointment),
             ],
         );
     }

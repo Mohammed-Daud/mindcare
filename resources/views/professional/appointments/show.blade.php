@@ -180,7 +180,7 @@
                                 </div>
                                 
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                    <a href="{{ route('appointments.meeting', $appointment) }}" class="btn btn-success btn-lg">
+                                    <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-success btn-lg">
                                         <i class="fas fa-video me-2"></i> Join Meeting
                                     </a>
                                 </div>

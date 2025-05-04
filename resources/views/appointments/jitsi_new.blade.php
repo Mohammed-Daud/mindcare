@@ -73,27 +73,9 @@
                             @endif
                         </div>
                         <div>
-                            <button id="exit-meeting-btn" class="btn btn-sm btn-outline-danger me-2">
-                                <i class="fas fa-sign-out-alt me-1"></i> Exit Meeting
-                            </button>
-                            <button id="exit-meeting-btn" class="btn btn-sm btn-outline-danger me-2 exit-link" style="display: none;">
-                                <i class="fas fa-sign-out-alt me-1"></i> Exit Meeting
-                            </button>
-                            <button id="exit-meeting-btn" class="btn btn-sm btn-outline-danger me-2 exit-link" style="display: none; exit-link" style="display: none;">
-                                <i class="fas fa-sign-out-alt me-1"></i> Exit Meeting
-                            </button>
-                            <button id="exit-meeting-btn" class="btn btn-sm btn-outline-danger me-2 exit-link" style="display: none; exit-link" style="display: none;">
-                                <i class="fas fa-sign-out-alt me-1"></i> Exit Meeting
-                            </button>
-                            @if($isClient)
-                            <a href="{{ route('client.appointments') }}" class="btn btn-sm btn-outline-secondary exit-link" style="display: none; exit-link" style="display: none;">
+                            <a href="{{ route('client.appointments') }}" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-1"></i> Back to Appointments
                             </a>
-                            @else
-                            <a href="{{ route('professional.appointments') }}" class="btn btn-sm btn-outline-secondary exit-link" style="display: none;">
-                                <i class="fas fa-arrow-left me-1"></i> Back to Appointments
-                            </a>
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -145,37 +127,6 @@
     </div>
 </div>
 
-<!-- Exit Meeting Confirmation Modal -->
-<div class="modal fade" id="exitMeetingModal" tabindex="-1" aria-labelledby="exitMeetingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="exitMeetingModalLabel">
-                    <i class="fas fa-exclamation-triangle me-2"></i> Leave Meeting?
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="d-flex">
-                    <div class="flex-shrink-0 me-3">
-                        <i class="fas fa-video-slash fa-3x text-warning"></i>
-                    </div>
-                    <div>
-                        <h5>Meeting Still in Progress</h5>
-                        <p>Your meeting is still active. Are you sure you want to leave?</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stay in Meeting</button>
-                <button type="button" class="btn btn-danger" id="confirm-exit-btn">
-                    <i class="fas fa-sign-out-alt me-2"></i> Leave Meeting
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Meeting End Warning Modal -->
 <div class="modal fade" id="meetingEndModal" tabindex="-1" aria-labelledby="meetingEndModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -204,37 +155,6 @@
     </div>
 </div>
 
-<!-- Exit Meeting Confirmation Modal -->
-<div class="modal fade" id="exitMeetingModal" tabindex="-1" aria-labelledby="exitMeetingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="exitMeetingModalLabel">
-                    <i class="fas fa-exclamation-triangle me-2"></i> Leave Meeting?
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="d-flex">
-                    <div class="flex-shrink-0 me-3">
-                        <i class="fas fa-video-slash fa-3x text-warning"></i>
-                    </div>
-                    <div>
-                        <h5>Meeting Still in Progress</h5>
-                        <p>Your meeting is still active. Are you sure you want to leave?</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stay in Meeting</button>
-                <button type="button" class="btn btn-danger" id="confirm-exit-btn">
-                    <i class="fas fa-sign-out-alt me-2"></i> Leave Meeting
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Meeting Ended Modal -->
 <div class="modal fade" id="meetingEndedModal" tabindex="-1" aria-labelledby="meetingEndedModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
@@ -255,15 +175,9 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-center">
-                @if($isClient)
                 <a href="{{ route('client.appointments') }}" class="btn btn-primary px-4">
                     <i class="fas fa-calendar-alt me-2"></i> Go to Appointments
                 </a>
-                @else
-                <a href="{{ route('professional.appointments') }}" class="btn btn-primary px-4">
-                    <i class="fas fa-calendar-alt me-2"></i> Go to Appointments
-                </a>
-                @endif
             </div>
         </div>
     </div>
@@ -274,19 +188,6 @@
 <script src='https://8x8.vc/vpaas-magic-cookie-e7d1c43a42d34e6a8c80763f4424055a/external_api.js'></script>
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
-        // Set up confirmation when leaving the page during an active meeting
-        let meetingActive = false;
-        let isIntentionalExit = false;
-        
-        window.addEventListener('beforeunload', function(e) {
-            if (meetingActive && !isIntentionalExit) {
-                // Standard way of showing a confirmation dialog when leaving the page
-                e.preventDefault();
-                e.returnValue = 'Your meeting is still in progress. Are you sure you want to leave?';
-                return e.returnValue;
-            }
-        });
-        
         // Initialize Jitsi API
         const api = new JitsiMeetExternalAPI("8x8.vc", {
             roomName: "vpaas-magic-cookie-e7d1c43a42d34e6a8c80763f4424055a/{{ $roomName }}",
@@ -299,8 +200,6 @@
                 requireDisplayName: true,
                 enableWelcomePage: false,
                 prejoinPageEnabled: false,
-            isIntentionalExit = true;
-            meetingActive = false;
                 startWithAudioMuted: false,
                 startWithVideoMuted: false,
                 disableDeepLinking: true
@@ -321,9 +220,7 @@
                 ],
                 SHOW_JITSI_WATERMARK: false,
                 SHOW_WATERMARK_FOR_GUESTS: false,
-              isIntentionalExit = true;
-            meetingActive = false;
-              DEFAULT_BACKGROUND: '#ffffff',
+                DEFAULT_BACKGROUND: '#ffffff',
                 DEFAULT_REMOTE_DISPLAY_NAME: 'MindCare User',
                 TOOLBAR_ALWAYS_VISIBLE: true
             }
@@ -345,157 +242,7 @@
             // Calculate minutes and seconds
             const minutes = Math.floor(diff / 60);
             const seconds = diff % 60;
-               meetingActive = true;
-        });
-           meetingActive = true;
-        });
-        
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
             
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-            
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none' 
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-               meetingActive = true;
-        });
-        
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-            
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none' 
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none' 
             // Update timer display
             const timerDisplay = document.getElementById('timer-display');
             timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -536,69 +283,17 @@
         
         // Handle meeting end
         api.addListener('readyToClose', () => {
-            isIntentionalExit = true;
-            meetingActive = false;
-            @if($isClient)
             window.location.href = "{{ route('client.appointments') }}";
-            @else
-            window.location.href = "{{ route('professional.appointments') }}";
-            @endif
         });
         
         // Handle video conference joined event
         api.addListener('videoConferenceJoined', () => {
             console.log('User has joined the meeting');
-            meetingActive = true;
-        });
-        
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
         });
         
         // Handle errors
         api.addListener('error', (error) => {
             console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-            
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none';
         });
         
         // Common variables

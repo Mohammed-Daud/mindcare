@@ -65,11 +65,247 @@
                     <div class="row mt-4">
                         <div class="col-12">
                             <a href="{{ route('professional.profile.edit') }}" class="btn btn-primary me-2">
-                                Edit Profile
+                                <i class="fas fa-user-edit me-1"></i> <i class="fas fa-user-edit me-1"></i> <i class="fas fa-user-edit me-1"></i> <i class="fas fa-user-edit me-1"></i> Edit Profile
                             </a>
-                            <a href="{{ route('professional.settings.edit') }}" class="btn btn-secondary">
-                                Manage Availability
+                            <a href="{{ route('professional.appointments') }}" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-1"></i> My Appointments
                             </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Appointments Preview -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Upcoming Appointments</h5>
+                        </div>
+                        <div class="card-body">
+                            @php
+                                $upcomingAppointments = $professional->appointments()
+                                    ->where('status', 'confirmed')
+                                    ->where('start_time', '>', now())
+                                    ->orderBy('start_time', 'asc')
+                                    ->take(3)
+                                    ->get();
+                            @endphp
+                            
+                            @if($upcomingAppointments->count() > 0)
+                                <div class="list-group">
+                                    @foreach($upcomingAppointments as $appointment)
+                                        <div class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $appointment->client->first_name }} {{ $appointment->client->last_name }}</h6>
+                                                    <p class="mb-1 text-muted">
+                                                        <i class="far fa-calendar me-1"></i> {{ $appointment->start_time->format('D, M d, Y') }}
+                                                        <i class="far fa-clock ms-2 me-1"></i> {{ $appointment->start_time->format('g:i A') }} - {{ $appointment->end_time->format('g:i A') }}
+                                                    </p>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <a href="{{ route('professional.appointments.show', $appointment) }}" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    @if($appointment->start_time->isPast() && $appointment->end_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-video"></i> Join
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('professional.appointments') }}" class="btn btn-outline-primary">
+                                        View All Appointments <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="far fa-calendar-alt fa-3x text-muted mb-3"></i>
+                                    <h5>No Upcoming Appointments</h5>
+                                    <p class="text-muted">You don't have any upcoming appointments scheduled.</p>
+                                </div>
+                            @endif
+                          <i class="fas fa-cog me-1"></i>   <a href="{{ route('professional.appointments') }}" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-1"></i> My Appointments
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Appointments Preview -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Upcoming Appointments</h5>
+                        </div>
+                        <div class="card-body">
+                            @php
+                                $upcomingAppointments = $professional->appointments()
+                                    ->where('status', 'confirmed')
+                                    ->where('start_time', '>', now())
+                                    ->orderBy('start_time', 'asc')
+                                    ->take(3)
+                                    ->get();
+                            @endphp
+                            
+                            @if($upcomingAppointments->count() > 0)
+                                <div class="list-group">
+                                    @foreach($upcomingAppointments as $appointment)
+                                        <div class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $appointment->client->first_name }} {{ $appointment->client->last_name }}</h6>
+                                                    <p class="mb-1 text-muted">
+                                                        <i class="far fa-calendar me-1"></i> {{ $appointment->start_time->format('D, M d, Y') }}
+                                                        <i class="far fa-clock ms-2 me-1"></i> {{ $appointment->start_time->format('g:i A') }} - {{ $appointment->end_time->format('g:i A') }}
+                                                    </p>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <a href="{{ route('professional.appointments.show', $appointment) }}" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    @if($appointment->start_time->isPast() && $appointment->end_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-video"></i> Join
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('professional.appointments') }}" class="btn btn-outline-primary">
+                                        View All Appointments <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="far fa-calendar-alt fa-3x text-muted mb-3"></i>
+                                    <h5>No Upcoming Appointments</h5>
+                                    <p class="text-muted">You don't have any upcoming appointments scheduled.</p>
+                                </div>
+                            @endif
+                            <i class="fas fa-cog me-1"></i> <a href="{{ route('professional.settings.edit') }}" class="btn btn-secondary me-2 me-2">
+                           <i class="fas fa-cog me-1"></i>      <i class="fas fa-cog me-1"></i> Manage Availability
+                            </a>
+                            <a href="{{ route('professional.appointments') }}" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-1"></i> My Appointments
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Appointments Preview -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Upcoming Appointments</h5>
+                        </div>
+                        <div class="card-body">
+                            @php
+                                $upcomingAppointments = $professional->appointments()
+                                    ->where('status', 'confirmed')
+                                    ->where('start_time', '>', now())
+                                    ->orderBy('start_time', 'asc')
+                                    ->take(3)
+                                    ->get();
+                            @endphp
+                            
+                            @if($upcomingAppointments->count() > 0)
+                                <div class="list-group">
+                                    @foreach($upcomingAppointments as $appointment)
+                                        <div class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $appointment->client->first_name }} {{ $appointment->client->last_name }}</h6>
+                                                    <p class="mb-1 text-muted">
+                                                        <i class="far fa-calendar me-1"></i> {{ $appointment->start_time->format('D, M d, Y') }}
+                                                        <i class="far fa-clock ms-2 me-1"></i> {{ $appointment->start_time->format('g:i A') }} - {{ $appointment->end_time->format('g:i A') }}
+                                                    </p>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <a href="{{ route('professional.appointments.show', $appointment) }}" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    @if($appointment->start_time->isPast() && $appointment->end_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-video"></i> Join
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('professional.appointments') }}" class="btn btn-outline-primary">
+                                        View All Appointments <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="far fa-calendar-alt fa-3x text-muted mb-3"></i>
+                                    <h5>No Upcoming Appointments</h5>
+                                    <p class="text-muted">You don't have any upcoming appointments scheduled.</p>
+                                </div>
+                            @endif
+                            <a href="{{ route('professional.appointments') }}" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-1"></i> My Appointments
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Appointments Preview -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Upcoming Appointments</h5>
+                        </div>
+                        <div class="card-body">
+                            @php
+                                $upcomingAppointments = $professional->appointments()
+                                    ->where('status', 'confirmed')
+                                    ->where('start_time', '>', now())
+                                    ->orderBy('start_time', 'asc')
+                                    ->take(3)
+                                    ->get();
+                            @endphp
+                            
+                            @if($upcomingAppointments->count() > 0)
+                                <div class="list-group">
+                                    @foreach($upcomingAppointments as $appointment)
+                                        <div class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $appointment->client->first_name }} {{ $appointment->client->last_name }}</h6>
+                                                    <p class="mb-1 text-muted">
+                                                        <i class="far fa-calendar me-1"></i> {{ $appointment->start_time->format('D, M d, Y') }}
+                                                        <i class="far fa-clock ms-2 me-1"></i> {{ $appointment->start_time->format('g:i A') }} - {{ $appointment->end_time->format('g:i A') }}
+                                                    </p>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <a href="{{ route('professional.appointments.show', $appointment) }}" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    @if($appointment->start_time->isPast() && $appointment->end_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-video"></i> Join
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('professional.appointments') }}" class="btn btn-outline-primary">
+                                        View All Appointments <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="far fa-calendar-alt fa-3x text-muted mb-3"></i>
+                                    <h5>No Upcoming Appointments</h5>
+                                    <p class="text-muted">You don't have any upcoming appointments scheduled.</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -180,8 +180,24 @@
                                                     </a>
                                                     
                                                     @if($appointment->status === 'confirmed' && $appointment->start_time->isPast() && $appointment->end_time->isFuture())
-                                                        <a href="{{ route('appointments.meeting', $appointment) }}" class="btn btn-sm btn-success">
-                                                            <i class="fas fa-video me-1"></i> Join
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-video me-1"></i> Join Meeting
+                                                        </a>
+                                                    @elseif($appointment->status === 'confirmed' && $appointment->start_time->diffInMinutes(now(), false) > -15 && $appointment->start_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-outline-success">
+                                                            <i class="fas fa-video me-1"></i> Join Early Meeting
+                                                        </a>
+                                                    @elseif($appointment->status === 'confirmed' && $appointment->start_time->diffInMinutes(now(), false) > -15 && $appointment->start_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-outline-success">
+                                                            <i class="fas fa-video me-1"></i> Join Early Meeting
+                                                        </a>
+                                                    @elseif($appointment->status === 'confirmed' && $appointment->start_time->diffInMinutes(now(), false) > -15 && $appointment->start_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-outline-success">
+                                                            <i class="fas fa-video me-1"></i> Join Early Meeting
+                                                        </a>
+                                                    @elseif($appointment->status === 'confirmed' && $appointment->start_time->diffInMinutes(now(), false) > -15 && $appointment->start_time->isFuture())
+                                                        <a href="{{ route('appointments.jitsi', $appointment) }}" class="btn btn-sm btn-outline-success">
+                                                            <i class="fas fa-video me-1"></i> Join Early
                                                         </a>
                                                     @endif
                                                     

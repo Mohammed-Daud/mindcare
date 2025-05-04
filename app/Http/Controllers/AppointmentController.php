@@ -20,7 +20,7 @@ class AppointmentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:client')->except(['checkAvailability']);
+        $this->middleware('auth:client')->except(['checkAvailability', 'jitsiMeeting']);
     }
 
     public function index()
@@ -84,11 +84,20 @@ class AppointmentController extends Controller
     
     public function jitsiMeeting(Appointment $appointment)
     {
-        // Check if the user is authorized to join this meeting
-        $user = auth()->user();
+        // Check if user is authenticated
         $isClient = auth()->guard('client')->check();
         $isProfessional = auth()->guard('professional')->check();
         
+        // If not authenticated, redirect to client login page with return URL
+        if (!$isClient && !$isProfessional) {
+            // Store the redirect URL in the session
+            session(['redirect_url' => url('/appointments/' . $appointment->id . '/jitsi')]);
+            return redirect()->route('client.login')->with('message', 'Please log in to join the meeting.');
+        }
+        
+        $user = $isClient ? auth()->guard('client')->user() : auth()->guard('professional')->user();
+        
+        // Check if the authenticated user is authorized to join this meeting
         if ($isClient && $appointment->client_id !== $user->id) {
             abort(403, 'You are not authorized to join this meeting.');
         }

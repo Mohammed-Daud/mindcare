@@ -148,8 +148,22 @@ Route::get('/appointments/{appointment}/meeting', [AppointmentController::class,
 
 // Jitsi Meeting
 Route::get('/appointments/{appointment}/jitsi', [AppointmentController::class, 'jitsiMeeting'])
-    ->name('appointments.jitsi')
+    ->name('appointments.jitsi');
+    
+// Validate meeting access (web route version)
+Route::post('/validate-meeting-access', [App\Http\Controllers\Api\MeetingController::class, 'validateMeetingAccess'])
+    ->name('validate.meeting.access')
     ->middleware('auth:client,professional');
+    
+// Debug route to check authentication status
+Route::get('/check-auth', function() {
+    return response()->json([
+        'client_auth' => auth()->guard('client')->check(),
+        'professional_auth' => auth()->guard('professional')->check(),
+        'client_id' => auth()->guard('client')->check() ? auth()->guard('client')->id() : null,
+        'professional_id' => auth()->guard('professional')->check() ? auth()->guard('professional')->id() : null,
+    ]);
+});
 
 // Debug route - Remove after fixing the issue
 Route::get('/debug-settings/{professional}', function($professional) {

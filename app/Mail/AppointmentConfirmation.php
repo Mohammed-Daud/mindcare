@@ -51,7 +51,7 @@ class AppointmentConfirmation extends Mailable
                 'fee' => $this->appointment->fee,
                 'discount' => $this->appointment->discount_amount,
                 'finalFee' => $this->appointment->final_fee,
-                'sessionUrl' => url('/session/' . $this->appointment->id),
+                'sessionUrl' => route('appointments.jitsi', $this->appointment),
             ],
         );
     }

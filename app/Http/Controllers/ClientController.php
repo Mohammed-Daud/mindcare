@@ -78,6 +78,14 @@ class ClientController extends Controller
 
         if (auth()->guard('client')->attempt($credentials)) {
             $request->session()->regenerate();
+            
+            // Check if there's a redirect URL in the session
+            if ($request->session()->has('redirect_url')) {
+                $redirectUrl = $request->session()->get('redirect_url');
+                $request->session()->forget('redirect_url');
+                return redirect($redirectUrl);
+            }
+            
             return redirect()->intended(route('client.dashboard'));
         }
 

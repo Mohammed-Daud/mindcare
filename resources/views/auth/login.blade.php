@@ -75,6 +75,16 @@
         <div class="auth-container">
             <h2 class="auth-title">Login to Your Account</h2>
             
+            @if(session('message'))
+            <div class="alert alert-info mb-4" style="background-color: #d1ecf1; color: #0c5460; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+                <i class="fas fa-info-circle me-2"></i> {{ session('message') }}
+            </div>
+            @endif
+            
+            @if(session('redirect_url'))
+            <input type="hidden" name="redirect_url" value="{{ session('redirect_url') }}">
+            @endif
+            
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 

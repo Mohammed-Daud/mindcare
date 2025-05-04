@@ -14,6 +14,16 @@
                             {{ session('success') }}
                         </div>
                     @endif
+                    
+                    @if(session('message'))
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> {{ session('message') }}
+                        </div>
+                    @endif
+                    
+                    @if(session('redirect_url'))
+                        <input type="hidden" name="redirect_url" value="{{ session('redirect_url') }}">
+                    @endif
 
                     <form method="POST" action="{{ route('client.login') }}">
                         @csrf

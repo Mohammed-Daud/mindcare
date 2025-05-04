@@ -50,7 +50,7 @@ class AppointmentStartingSoon extends Notification implements ShouldQueue
                 ? "Professional: Dr. {$otherParty->first_name} {$otherParty->last_name}"
                 : "Client: {$otherParty->name}")
             ->line('Please ensure you are ready for the session.')
-            ->action('Join Session', url('/session/' . $this->appointment->id));
+            ->action('Join Session', route('appointments.jitsi', $this->appointment));
     }
 
     /**
