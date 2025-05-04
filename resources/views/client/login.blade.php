@@ -53,7 +53,10 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Login</button>
-                            <a href="{{ route('client.register') }}" class="btn btn-link">Don't have an account? Register</a>
+                            <div class="d-flex justify-content-between mt-3">
+                                <a href="{{ route('password.request') }}" class="btn btn-link ps-0">Forgot Your Password?</a>
+                                <a href="{{ route('client.register') }}" class="btn btn-link">Don't have an account? Register</a>
+                            </div>
                         </div>
                     </form>
                 </div>

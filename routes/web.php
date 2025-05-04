@@ -52,10 +52,16 @@ Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('adm
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
-// Password Reset Routes (placeholder for now)
-Route::get('/password/reset', function() {
-    return view('auth.passwords.email');
-})->name('password.request');
+// Password Reset Routes
+Route::get('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [\App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.update');
+
+// Direct Password Reset Routes (for when email is not working)
+Route::get('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'showForm'])->name('password.direct');
+Route::post('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'generateLink'])->name('password.direct.generate');
+Route::post('/password/direct-reset/update', [\App\Http\Controllers\DirectPasswordResetController::class, 'resetPassword'])->name('password.direct.reset');
 
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 Route::get('/professionals', [App\Http\Controllers\ProfileController::class, 'professionals'])->name('professionals');
@@ -178,3 +184,43 @@ Route::get('/debug-settings/{professional}', function($professional) {
         'max_reschedule_count' => $settings->max_reschedule_count ?? 0,
     ]);
 })->name('debug.settings');
+
+// Test email route - Remove after testing
+Route::get('/test-email', function() {
+    try {
+        // Display PHP mail configuration
+        echo "<h3>PHP Mail Configuration</h3>";
+        echo "<pre>";
+        print_r(ini_get_all('mail'));
+        echo "</pre>";
+        
+        // Display Laravel mail configuration
+        echo "<h3>Laravel Mail Configuration</h3>";
+        echo "Driver: " . config('mail.default') . "<br>";
+        echo "Host: " . config('mail.mailers.smtp.host') . "<br>";
+        echo "Port: " . config('mail.mailers.smtp.port') . "<br>";
+        echo "Username: " . config('mail.mailers.smtp.username') . "<br>";
+        echo "Password: " . (config('mail.mailers.smtp.password') ? '[SET]' : '[NOT SET]') . "<br>";
+        echo "Encryption: " . config('mail.mailers.smtp.encryption') . "<br>";
+        echo "From Address: " . config('mail.from.address') . "<br>";
+        echo "From Name: " . config('mail.from.name') . "<br>";
+        
+        $email = request('email', 'test@example.com');
+        $resetUrl = url("/password/reset/test-token?email={$email}");
+        
+        echo "<h3>Sending Test Email</h3>";
+        echo "To: {$email}<br>";
+        echo "Reset URL: {$resetUrl}<br>";
+        
+        // Create the mailable instance
+        $mailable = new \App\Mail\PasswordReset($resetUrl, 'user');
+        
+        // Send the email
+        \Illuminate\Support\Facades\Mail::to($email)->send($mailable);
+        
+        return "<h3>Success!</h3>Email sent to {$email}. Check your inbox or spam folder.<br>If using Mailtrap, check your Mailtrap inbox.";
+    } catch (\Exception $e) {
+        return "<h3>Error!</h3>Error sending email: " . $e->getMessage() . 
+               "<br><br>Stack trace:<pre>" . $e->getTraceAsString() . "</pre>";
+    }
+});

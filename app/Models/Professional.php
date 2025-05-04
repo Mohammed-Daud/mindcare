@@ -131,4 +131,12 @@ class Professional extends Authenticatable
     {
         return $this->hasMany(ProfessionalLanguage::class);
     }
+    
+    /**
+     * Get the appointments for the professional.
+     */
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 } 

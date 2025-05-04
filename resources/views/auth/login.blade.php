@@ -127,6 +127,10 @@
                     Forgot Your Password?
                 </a>
                 <br>
+                <a href="{{ route('password.direct') }}" style="color: #dc3545;">
+                    Direct Password Reset (No Email)
+                </a>
+                <br>
                 <a href="{{ route('professionals.create') }}">
                     Are you a professional? Join our platform
                 </a>

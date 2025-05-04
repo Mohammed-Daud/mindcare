@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | MindCare Professional Counseling</title>
+    <title>Direct Password Reset | MindCare Professional Counseling</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <style>
@@ -65,6 +65,22 @@
             margin-top: 5px;
             font-size: 14px;
         }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
     </style>
 </head>
 <body>
@@ -73,7 +89,11 @@
     
     <div class="container">
         <div class="auth-container">
-            <h2 class="auth-title">Reset Password</h2>
+            <h2 class="auth-title">Direct Password Reset</h2>
+            
+            <div class="alert alert-info">
+                This is a direct password reset tool for testing purposes. Use this if email delivery is not working.
+            </div>
             
             @if (session('status'))
                 <div class="alert alert-success" role="alert">
@@ -81,7 +101,7 @@
                 </div>
             @endif
             
-            <form method="POST" action="{{ url('/password/email') }}">
+            <form method="POST" action="{{ route('password.direct.generate') }}">
                 @csrf
                 
                 <div class="form-group">
@@ -95,17 +115,13 @@
                 </div>
                 
                 <button type="submit" class="btn-primary">
-                    Send Password Reset Link
+                    Generate Reset Link
                 </button>
             </form>
             
             <div class="auth-links">
                 <a href="{{ route('login') }}">
                     Back to Login
-                </a>
-                <br>
-                <a href="{{ route('password.direct') }}" style="color: #dc3545;">
-                    Try Direct Password Reset (No Email)
                 </a>
             </div>
         </div>
@@ -114,4 +130,4 @@
     <!-- Footer -->
     @include('partials.footer')
 </body>
-</html> 
+</html>
