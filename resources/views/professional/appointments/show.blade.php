@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-12 col-md-8 mb-4">
                     <div class="card shadow-sm h-100">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header" style="background-color: var(--primary); color: white;">
                             <h5 class="mb-0">
                                 <i class="fas fa-calendar-check me-2"></i> 
                                 Appointment #{{ $appointment->id }}
@@ -212,7 +212,7 @@
                 
                 <div class="col-12 col-md-4 mb-4">
                     <div class="card shadow-sm h-100">
-                        <div class="card-header bg-light">
+                        <div class="card-header" style="background-color: var(--primary); color: white;">
                             <h5 class="mb-0">
                                 <i class="fas fa-user me-2"></i> Client Details
                             </h5>

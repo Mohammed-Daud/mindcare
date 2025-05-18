@@ -5,7 +5,7 @@
     <div class="row justify-content-center pt-5">
         <div class="col-md-8 py-5">
             <div class="card">
-                <div class="card-header">{{ __('Edit Profile') }}</div>
+                <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Edit Profile') }}</div>
 
                 <div class="card-body">
                     @if (session('success'))
@@ -173,7 +173,7 @@
                     <hr class="my-4">
 
                     <div class="card">
-                        <div class="card-header">{{ __('Change Password') }}</div>
+                        <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Change Password') }}</div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('professional.profile.password') }}">
                                 @csrf

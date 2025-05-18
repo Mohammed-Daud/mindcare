@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12 mb-4">
                         <div class="card shadow rounded-3 border-0 overflow-hidden">
-                            <div class="card-header bg-gradient-primary text-white py-3">
+                            <div class="card-header" style="background-color: var(--primary); color: white;">
                                 <h5 class="mb-0 fw-bold"><i class="fas fa-calendar-check me-2"></i> Upcoming Appointments</h5>
                             </div>
                             <div class="card-body p-0">
@@ -122,7 +122,7 @@
                 </div>
                 
                 <div class="card shadow rounded-3 border-0 overflow-hidden mt-4">
-                    <div class="card-header bg-gradient-secondary text-white py-3">
+                    <div class="card-header" style="background-color: var(--primary); color: white;">
                         <h5 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i> All Appointments</h5>
                     </div>
                     <div class="card-body p-0">

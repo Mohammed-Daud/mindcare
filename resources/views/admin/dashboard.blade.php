@@ -19,9 +19,7 @@
     </div>
     
     <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Recent Professionals</h3>
-        </div>
+        <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Admin Dashboard') }}</div>
         <div class="card-body p-0">
             <table class="table">
                 <thead>

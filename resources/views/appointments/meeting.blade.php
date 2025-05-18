@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10 pt-3 pt-md-4">
             <div class="card shadow-lg border-0 rounded-3 overflow-hidden">
-                <div class="card-header bg-gradient-primary text-white py-3">
+                <div class="card-header" style="background-color: var(--primary); color: white;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">
                             <i class="fas fa-video me-2"></i> Virtual Meeting Room

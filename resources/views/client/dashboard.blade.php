@@ -25,9 +25,7 @@
         
         <div class="col-md-8">
             <div class="card shadow mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Dashboard</h5>
-                </div>
+                <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Client Dashboard') }}</div>
                 <div class="card-body">
                     <h4>Welcome, {{ $client->first_name }}!</h4>
                     <p>This is your client dashboard. Here you can manage your appointments, view your profile, and more.</p>

@@ -6,9 +6,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Update Profile</h3>
-            </div>
+            <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Admin Profile') }}</div>
             <div class="card-body">
                 <form action="{{ route('admin.profile.update') }}" method="POST">
                     @csrf
@@ -44,9 +42,7 @@
 
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Change Password</h3>
-            </div>
+            <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Change Password') }}</div>
             <div class="card-body">
                 <form action="{{ route('admin.password.update') }}" method="POST">
                     @csrf

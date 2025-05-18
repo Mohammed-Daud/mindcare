@@ -5,7 +5,7 @@
     <div class="row justify-content-center py-5">
         <div class="col-md-8 py-5">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header" style="background-color: var(--primary); color: white;">
                     <h4 class="mb-0">Client Login</h4>
                 </div>
                 <div class="card-body">
