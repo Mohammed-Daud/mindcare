@@ -6,7 +6,7 @@
         <div class="col-12 pt-3 pt-md-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                 <div>
-                    <h2 class="mb-0 fw-bold text-primary">My Appointments</h2>
+                    <h6 class="mb-0 fw-bold" style="color: var(--accent);">My Appointments</h6>
                     <p class="text-muted mb-0 d-none d-md-block">Manage your therapy sessions and consultations</p>
                 </div>
                 <a href="{{ route('professionals') }}" class="btn btn-primary btn-lg shadow-sm">
@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="col-12 mb-4">
                         <div class="card shadow rounded-3 border-0 overflow-hidden">
-                            <div class="card-header bg-gradient-primary text-white py-3">
+                            <div class="card-header" style="background-color: var(--primary); color: white;">
                                 <i class="fas fa-calendar-check me-2"></i> 
                                 Upcoming Appointments
                             </div>
@@ -134,8 +134,8 @@
                 </div>
                 
                 <div class="card shadow rounded-3 border-0 overflow-hidden mt-4">
-                    <div class="card-header bg-gradient-secondary text-white py-3">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i> All Appointments</h5>
+                    <div class="card-header" style="background-color: var(--primary); color: white;">
+                        <i class="fas fa-history me-2"></i> All Appointments
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">

@@ -2,11 +2,11 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-5">
         <div class="col-md-8">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Edit Profile</h4>
+                <div class="card-header" style="background-color: var(--primary); color: white;">
+                    Edit Profile
                 </div>
                 <div class="card-body">
                     @if(session('success'))

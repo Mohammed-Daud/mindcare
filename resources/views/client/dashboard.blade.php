@@ -5,8 +5,8 @@
     <div class="row py-5">
         <div class="col-md-4">
             <div class="card shadow mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Profile Information</h5>
+                <div class="card-header" style="background-color: var(--primary); color: white;">
+                    Profile Information
                 </div>
                 <div class="card-body text-center">
                     @if($client->profile_photo)

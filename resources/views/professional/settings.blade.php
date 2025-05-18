@@ -23,23 +23,53 @@
                         <div class="mb-4">
                             <h5>Session Settings</h5>
                             <div class="session-settings">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Session Durations (minutes)</label>
-                                        <div class="input-group mb-2">
-                                            <input type="number" class="form-control" name="session_durations[]" value="{{ old('session_durations.0', $settings->session_durations[0] ?? 30) }}" min="30" step="30" required>
-                                            <input type="number" class="form-control" name="session_fees[]" value="{{ old('session_fees.0', $settings->session_fees[0] ?? '') }}" placeholder="Fee" min="0" step="0.01" required>
-                                            <button type="button" class="btn btn-outline-secondary add-duration">+</button>
+                                <div id="session-durations-container">
+                                    @if($settings && isset($settings->session_durations) && isset($settings->session_fees))
+                                        @foreach($settings->session_durations as $index => $duration)
+                                            <div class="row mb-3 session-duration-row">
+                                                <div class="col-md-6">
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" name="session_durations[]" 
+                                                               value="{{ old("session_durations.$index", $duration) }}" 
+                                                               min="30" step="30" required>
+                                                        <span class="input-group-text">minutes</span>
+                                                        <input type="number" class="form-control" name="session_fees[]" 
+                                                               value="{{ old("session_fees.$index", $settings->session_fees[$index] ?? '') }}" 
+                                                               placeholder="Fee" min="0" step="0.01" required>
+                                                        <span class="input-group-text">₹</span>
+                                                        @if($index > 0)
+                                                            <button type="button" class="btn btn-outline-danger remove-duration">-</button>
+                                                        @else
+                                                            <button type="button" class="btn btn-outline-secondary add-duration">+</button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="row mb-3 session-duration-row">
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" name="session_durations[]" 
+                                                           value="{{ old('session_durations.0', 30) }}" 
+                                                           min="30" step="30" required>
+                                                    <span class="input-group-text">minutes</span>
+                                                    <input type="number" class="form-control" name="session_fees[]" 
+                                                           value="{{ old('session_fees.0', '') }}" 
+                                                           placeholder="Fee" min="0" step="0.01" required>
+                                                    <span class="input-group-text">₹</span>
+                                                    <button type="button" class="btn btn-outline-secondary add-duration">+</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        @error('session_durations')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                        @error('session_fees')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                                    @endif
                                 </div>
-                                <div id="additional-durations"></div>
+                                @error('session_durations')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('session_fees')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 
@@ -191,29 +221,33 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.dispatchEvent(new Event('change'));
     });
 
-    // Handle adding new session durations
-    const addDurationBtn = document.querySelector('.add-duration');
-    const additionalDurations = document.getElementById('additional-durations');
+    // Handle session durations
+    const sessionDurationsContainer = document.getElementById('session-durations-container');
     
-    addDurationBtn.addEventListener('click', function() {
-        const newRow = document.createElement('div');
-        newRow.className = 'row mb-3';
-        newRow.innerHTML = `
-            <div class="col-md-6">
-                <div class="input-group mb-2">
-                    <input type="number" class="form-control" name="session_durations[]" min="30" step="30" required>
-                    <input type="number" class="form-control" name="session_fees[]" placeholder="Fee" min="0" step="0.01" required>
-                    <button type="button" class="btn btn-outline-danger remove-duration">-</button>
+    // Add new duration
+    sessionDurationsContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-duration')) {
+            const newRow = document.createElement('div');
+            newRow.className = 'row mb-3 session-duration-row';
+            newRow.innerHTML = `
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="session_durations[]" 
+                               value="30" min="30" step="30" required>
+                        <span class="input-group-text">minutes</span>
+                        <input type="number" class="form-control" name="session_fees[]" 
+                               placeholder="Fee" min="0" step="0.01" required>
+                        <span class="input-group-text">₹</span>
+                        <button type="button" class="btn btn-outline-danger remove-duration">-</button>
+                    </div>
                 </div>
-            </div>
-        `;
-        additionalDurations.appendChild(newRow);
-    });
-
-    // Handle removing session durations
-    additionalDurations.addEventListener('click', function(e) {
+            `;
+            sessionDurationsContainer.appendChild(newRow);
+        }
+        
+        // Remove duration
         if (e.target.classList.contains('remove-duration')) {
-            e.target.closest('.row').remove();
+            e.target.closest('.session-duration-row').remove();
         }
     });
 });
