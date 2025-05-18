@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class PasswordResetController extends Controller
 {
@@ -90,8 +91,8 @@ class PasswordResetController extends Controller
                 }
                 Log::info("Stored token in database for {$email}");
                 
-                // Create the reset URL
-                $resetUrl = url("/password/reset/{$token}?email={$email}");
+                // Create the reset URL with properly encoded email
+                $resetUrl = url("/password/reset/{$token}?email=" . urlencode($email));
                 Log::info("Reset URL for {$email}: {$resetUrl}");
                 
                 // Log mail configuration
@@ -141,6 +142,8 @@ class PasswordResetController extends Controller
      */
     public function showResetForm(Request $request, $token)
     {
+        // dd($request->all());
+        // Get and decode the email parameter
         $email = $request->query('email');
         
         Log::info("Password reset form accessed with token: {$token} and email: {$email}");
@@ -166,20 +169,32 @@ class PasswordResetController extends Controller
             }
             
             // Compare the token using hash_equals to prevent timing attacks
-            if (!$resetToken || !hash_equals($resetToken->token, $token)) {
-                Log::warning("Invalid reset token: {$token} for email: {$email}");
+            if (!$resetToken) {
+                Log::warning("No token found in database for email: {$email}");
                 return redirect()->route('password.request')
                     ->withErrors(['email' => 'Invalid password reset token.']);
             }
             
+            // Log the token comparison for debugging
+            Log::info("Token comparison - URL token: " . substr($token, 0, 10) . "... DB token: " . substr($resetToken->token, 0, 10) . "...");
+            
+            if (!hash_equals($resetToken->token, $token)) {
+                Log::warning("Token mismatch for email: {$email}");
+                return redirect()->route('password.request')
+                    ->withErrors(['email' => 'Invalid password reset token.']);
+            }
+
+            // dd();
+            
             // Check if the token is expired (60 minutes)
-            if ($resetToken->created_at->addMinutes(60)->isPast()) {
+            if (Carbon::parse($resetToken->created_at)->addMinutes(60)->isPast()) {
                 Log::warning("Expired reset token: {$token} for email: {$email}, created at: {$resetToken->created_at}");
                 return redirect()->route('password.request')
                     ->withErrors(['email' => 'Password reset token has expired.']);
             }
             
             Log::info("Valid reset token found, showing reset form for email: {$email}");
+            // Pass the raw email to the view (it will be encoded in the hidden field)
             return view('auth.passwords.reset', ['token' => $token, 'email' => $email]);
             
         } catch (\Exception $e) {
@@ -203,20 +218,29 @@ class PasswordResetController extends Controller
             'password' => 'required|confirmed|min:8',
         ]);
         
+        // Make sure to use the decoded email
         $email = $request->email;
         $token = $request->token;
         
         try {
             // Verify that the token exists for this email
             $resetToken = PasswordResetToken::where('email', $email)->first();
-            
             // Compare the token using hash_equals to prevent timing attacks
-            if (!$resetToken || !hash_equals($resetToken->token, $token)) {
+            if (!$resetToken) {
+                Log::warning("No token found in database for email: {$email} during reset");
+                return back()->withErrors(['email' => 'Invalid password reset token.']);
+            }
+            
+            // Log the token comparison for debugging
+            Log::info("Reset method - Token comparison - Form token: " . substr($token, 0, 10) . "... DB token: " . substr($resetToken->token, 0, 10) . "...");
+            
+            if (!hash_equals($resetToken->token, $token)) {
+                Log::warning("Token mismatch for email: {$email} during reset");
                 return back()->withErrors(['email' => 'Invalid password reset token.']);
             }
             
             // Check if the token is expired (60 minutes)
-            if ($resetToken->created_at->addMinutes(60)->isPast()) {
+            if (Carbon::parse($resetToken->created_at)->addMinutes(60)->isPast()) {
                 return back()->withErrors(['email' => 'Password reset token has expired.']);
             }
             
@@ -224,31 +248,26 @@ class PasswordResetController extends Controller
             
             // Try to update password in each user type table
             // First check if it's a regular user
-            $user = User::where('email', $email)->first();
+
+            switch ($resetToken->user_type) {
+                case 'client':
+                    $user = Client::where('email', $email)->first();
+                    break;
+                case 'professional':
+                    $user = Professional::where('email', $email)->first();
+                    break;
+                default:
+                    $user = User::where('email', $email)->first();
+                    break;
+            }
+            
             if ($user) {
                 $user->password = Hash::make($request->password);
                 $user->save();
                 $passwordUpdated = true;
-                Log::info("Password reset successful for user: {$email}");
+                Log::info("Password reset successful for {$resetToken->user_type}: {$email}");
             }
             
-            // Then check if it's a professional
-            $professional = Professional::where('email', $email)->first();
-            if ($professional) {
-                $professional->password = Hash::make($request->password);
-                $professional->save();
-                $passwordUpdated = true;
-                Log::info("Password reset successful for professional: {$email}");
-            }
-            
-            // Check if it's a client
-            $client = Client::where('email', $email)->first();
-            if ($client) {
-                $client->password = Hash::make($request->password);
-                $client->save();
-                $passwordUpdated = true;
-                Log::info("Password reset successful for client: {$email}");
-            }
             
             // Delete the token
             $resetToken->delete();
@@ -256,9 +275,13 @@ class PasswordResetController extends Controller
             if (!$passwordUpdated) {
                 Log::warning("Password reset token used but no matching user found for email: {$email}");
             }
-            
-            return redirect()->route('login')
-                ->with('status', 'Your password has been reset successfully!');
+            if ($resetToken->user_type == 'client') {
+                return redirect()->route('client.login')->with('message', 'Your password has been reset successfully!');
+            } elseif ($resetToken->user_type == 'professional') {
+                return redirect()->route('professional.login')->with('message', 'Your password has been reset successfully!');
+            } else {
+                return redirect()->route('admin.login')->with('message', 'Your password has been reset successfully!');
+            }
                 
         } catch (\Exception $e) {
             Log::error("Password reset error: " . $e->getMessage());

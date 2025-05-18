@@ -46,7 +46,19 @@ class ProfessionalController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:professionals',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (\App\Models\User::where('email', $value)->exists() ||
+                        \App\Models\Client::where('email', $value)->exists() ||
+                        \App\Models\Professional::where('email', $value)->exists()) {
+                        $fail('This email address is already registered.');
+                    }
+                },
+            ],
             'country_code' => 'required|string|max:5',
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string',

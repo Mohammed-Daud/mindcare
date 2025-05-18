@@ -123,19 +123,19 @@ return [
         ],
         'admins' => [
             'provider' => 'admins',
-            'table' => 'admin_password_reset_tokens',
+            'table' => 'password_reset_tokens', // Using the main table with user_type
             'expire' => 60,
             'throttle' => 60,
         ],
         'professionals' => [
             'provider' => 'professionals',
-            'table' => 'professional_password_reset_tokens',
+            'table' => 'password_reset_tokens', // Using the main table with user_type
             'expire' => 60,
             'throttle' => 60,
         ],
         'clients' => [
             'provider' => 'clients',
-            'table' => 'client_password_reset_tokens',
+            'table' => 'password_reset_tokens', // Using the main table with user_type
             'expire' => 60,
             'throttle' => 60,
         ],

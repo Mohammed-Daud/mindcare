@@ -9,7 +9,7 @@
     <style>
         .auth-container {
             max-width: 400px;
-            margin: 50px auto;
+            margin: auto;
             padding: 30px;
             background-color: #fff;
             border-radius: 8px;

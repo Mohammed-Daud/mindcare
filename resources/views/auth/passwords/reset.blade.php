@@ -9,11 +9,12 @@
     <style>
         .auth-container {
             max-width: 400px;
-            margin: 50px auto;
+            margin: 100px auto;
             padding: 30px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top:150px
         }
         .auth-title {
             text-align: center;

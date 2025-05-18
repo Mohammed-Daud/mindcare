@@ -43,9 +43,9 @@ Route::get('/contact', function () {
 })->name('contact');
 
 // Authentication Routes
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Admin Authentication Routes
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');

@@ -9,11 +9,12 @@
     <style>
         .auth-container {
             max-width: 400px;
-            margin: 50px auto;
+            margin: 100px auto;
             padding: 30px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 150px;
         }
         .auth-title {
             text-align: center;
@@ -71,7 +72,7 @@
     <!-- Header -->
     @include('partials.header')
     
-    <div class="container">
+    <div class="container my-5">
         <div class="auth-container">
             <h2 class="auth-title">Reset Password</h2>
             
@@ -104,9 +105,9 @@
                     Back to Login
                 </a>
                 <br>
-                <a href="{{ route('password.direct') }}" style="color: #dc3545;">
+                <!-- <a href="{{ route('password.direct') }}" style="color: #dc3545;">
                     Try Direct Password Reset (No Email)
-                </a>
+                </a> -->
             </div>
         </div>
     </div>

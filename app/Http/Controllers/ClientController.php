@@ -26,7 +26,19 @@ class ClientController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:clients',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (\App\Models\User::where('email', $value)->exists() ||
+                        \App\Models\Client::where('email', $value)->exists() ||
+                        \App\Models\Professional::where('email', $value)->exists()) {
+                        $fail('This email address is already registered.');
+                    }
+                },
+            ],
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'required|string|max:20',
             'address' => 'required|string',
