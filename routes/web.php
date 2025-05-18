@@ -107,6 +107,7 @@ Route::middleware(['auth:professional'])->prefix('professional')->name('professi
     Route::get('/profile', [ProfessionalController::class, 'profile'])->name('profile');
     Route::get('/profile/edit', [ProfessionalController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [ProfessionalController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [ProfessionalController::class, 'updatePassword'])->name('profile.password');
     Route::get('/settings', [ProfessionalSettingController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [ProfessionalSettingController::class, 'update'])->name('settings.update');
     Route::get('/appointments', [ProfessionalController::class, 'appointments'])->name('appointments');

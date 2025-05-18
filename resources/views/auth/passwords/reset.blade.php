@@ -87,6 +87,7 @@
                 
                 <input type="hidden" name="token" value="{{ $token }}">
                 <input type="hidden" name="email" value="{{ $email }}">
+                <input type="hidden" name="user_type" value="{{ request()->query('usertype', 'user') }}">
                 
                 <div class="form-group">
                     <label for="password">New Password</label>
@@ -109,7 +110,16 @@
             </form>
             
             <div class="auth-links">
-                <a href="{{ route('login') }}">
+                @php
+                    $userType = request()->query('usertype', 'user');
+                    $loginRoute = match($userType) {
+                        'professional' => 'professional.login',
+                        'client' => 'client.login',
+                        'admin' => 'admin.login',
+                        default => 'login'
+                    };
+                @endphp
+                <a href="{{ route($loginRoute) }}">
                     Back to Login
                 </a>
             </div>

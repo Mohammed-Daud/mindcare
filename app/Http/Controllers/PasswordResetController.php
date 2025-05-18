@@ -39,21 +39,23 @@ class PasswordResetController extends Controller
         $email = $request->email;
         $userType = null;
         $userFound = false;
+        $status = "Server error, please try again later.";
         
         Log::info("Password reset requested for email: {$email}");
         
         // Check if the email exists in any of our user tables
-        if (User::where('email', $email)->exists()) {
+        // set user type based 
+        if ($request->user_type == 'user') {
             $userType = 'user';
-            $userFound = true;
+            $userFound = User::where('email', $email)->exists();
             Log::info("Found user with email: {$email}");
-        } elseif (Professional::where('email', $email)->exists()) {
+        } elseif ( $request->user_type == 'professional' ) {
             $userType = 'professional';
-            $userFound = true;
+            $userFound = Professional::where('email', $email)->exists();
             Log::info("Found professional with email: {$email}");
-        } elseif (Client::where('email', $email)->exists()) {
+        } elseif ( $request->user_type == 'client' ) {
             $userType = 'client';
-            $userFound = true;
+            $userFound = Client::where('email', $email)->exists();
             Log::info("Found client with email: {$email}");
         }
         
@@ -92,7 +94,7 @@ class PasswordResetController extends Controller
                 Log::info("Stored token in database for {$email}");
                 
                 // Create the reset URL with properly encoded email
-                $resetUrl = url("/password/reset/{$token}?email=" . urlencode($email));
+                $resetUrl = url("/password/reset/{$token}?email=" . urlencode($email) . "&usertype=" . $userType);
                 Log::info("Reset URL for {$email}: {$resetUrl}");
                 
                 // Log mail configuration
@@ -114,6 +116,8 @@ class PasswordResetController extends Controller
                     // For debugging, let's also log the token to make it easier to test
                     Log::info("For testing purposes, reset token for {$email} is: {$token}");
                     
+                    $status = "We have emailed your password reset link!";
+
                 } catch (\Exception $e) {
                     Log::error("Failed to send password reset email: " . $e->getMessage());
                     Log::error("Stack trace: " . $e->getTraceAsString());
@@ -126,10 +130,10 @@ class PasswordResetController extends Controller
             }
         } else {
             Log::info("No user found with email: {$email}");
+            $status = "No user found with email: {$email}";
         }
-        
         // For security reasons, we always show success message even if email doesn't exist
-        $status = "We have emailed your password reset link!";
+        
         
         return back()->with('status', $status);
     }

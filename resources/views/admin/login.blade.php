@@ -110,8 +110,14 @@
             </div>
             
             <button type="submit" class="btn-admin">
-                Login to Admin Panel
+                Login
             </button>
+            
+            <div class="auth-links mt-3 text-center">
+                <a href="{{ route('password.request', ['usertype' => 'admin']) }}">
+                    Forgot Your Password?
+                </a>
+            </div>
         </form>
         
         <div class="back-to-site">

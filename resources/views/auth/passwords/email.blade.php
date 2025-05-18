@@ -84,6 +84,7 @@
             
             <form method="POST" action="{{ url('/password/email') }}">
                 @csrf
+                <input type="hidden" name="user_type" value="{{ request()->query('usertype', 'user') }}">
                 
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -101,7 +102,15 @@
             </form>
             
             <div class="auth-links">
-                <a href="{{ route('login') }}">
+                @php
+                    $userType = request()->query('usertype', 'user');
+                    $loginRoute = match($userType) {
+                        'professional' => 'professional.login',
+                        'client' => 'client.login',
+                        default => 'login'
+                    };
+                @endphp
+                <a href="{{ route($loginRoute) }}">
                     Back to Login
                 </a>
                 <br>
