@@ -20,17 +20,7 @@
             </div>
 
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <img src="{{ $professional->profile_photo_url }}" alt="{{ $professional->full_name }}" class="rounded-circle" width="40" height="40">
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h5 class="mb-0">Book with {{ $professional->first_name }} {{ $professional->last_name }}</h5>
-                            <p class="mb-0 small text-white-50">{{ $professional->specialization }}</p>
-                        </div>
-                    </div>
-                </div>
+                <div class="card-header" style="background-color: var(--primary); color: white;">{{ __('Schedule Appointment') }}</div>
                 <div class="card-body">
                     @if(session('error'))
                         <div class="alert alert-danger">

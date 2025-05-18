@@ -17,7 +17,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12 mb-3 pt-2 mt-4">
             <div class="card shadow-lg border-0 rounded-3">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                <div class="card-header" style="background-color: var(--primary); color: white;">
                     <h5 class="mb-0 fw-bold">
                         <i class="fas fa-video me-2"></i> 
                         @if($isClient)

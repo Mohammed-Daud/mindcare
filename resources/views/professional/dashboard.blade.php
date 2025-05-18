@@ -79,7 +79,7 @@
                     <!-- Upcoming Appointments Preview -->
                     <div class="card mt-4">
                         <div class="card-header" style="background-color: var(--primary); color: white;">
-                            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Upcoming Appointments</h5>
+                            <i class="fas fa-calendar-alt me-2"></i>Upcoming Appointments
                         </div>
                         <div class="card-body">
                             @php

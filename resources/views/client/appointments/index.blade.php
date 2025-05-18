@@ -31,7 +31,8 @@
                     <div class="col-12 mb-4">
                         <div class="card shadow rounded-3 border-0 overflow-hidden">
                             <div class="card-header bg-gradient-primary text-white py-3">
-                                <h5 class="mb-0 fw-bold"><i class="fas fa-calendar-check me-2"></i> Upcoming Appointments</h5>
+                                <i class="fas fa-calendar-check me-2"></i> 
+                                Upcoming Appointments
                             </div>
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush">
