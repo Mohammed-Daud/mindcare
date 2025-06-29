@@ -107,6 +107,7 @@
                     $loginRoute = match($userType) {
                         'professional' => 'professional.login',
                         'client' => 'client.login',
+                        'admin' => 'admin.login',
                         default => 'login'
                     };
                 @endphp
