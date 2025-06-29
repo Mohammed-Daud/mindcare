@@ -372,7 +372,7 @@
                     </form>
 
                     <div class="mt-3 text-center">
-                        <p>Already have an account? <a href="{{ route('login') }}">Login</a></p>
+                        <p>Already have an account? <a href="{{ route('professional.login') }}">Login</a></p>
                     </div>
                 </div>
             </div>
