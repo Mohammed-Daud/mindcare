@@ -42,6 +42,19 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
+Route::get('/home2', function () {
+    return view('home2');
+})->name('home2');
+
+
+
+// Doctors Page
+Route::get('/doctors', function () {
+    return view('doctors');
+})->name('doctors');
+
+
+
 // Authentication Routes
 // Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 // Route::post('/login', [AuthController::class, 'login']);
@@ -80,7 +93,7 @@ Route::post('/professional/login', [AuthController::class, 'professionalLogin'])
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
-    
+
     // Add admin profile routes
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
     Route::put('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
@@ -131,7 +144,7 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout', [ClientController::class, 'logout'])->name('logout');
-    
+
     // Add appointments routes
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
     Route::get('/appointments/create/{professional}', [AppointmentController::class, 'create'])->name('appointments.create');
@@ -156,12 +169,12 @@ Route::get('/appointments/{appointment}/meeting', [AppointmentController::class,
 // Jitsi Meeting
 Route::get('/appointments/{appointment}/jitsi', [AppointmentController::class, 'jitsiMeeting'])
     ->name('appointments.jitsi');
-    
+
 // Validate meeting access (web route version)
 Route::post('/validate-meeting-access', [App\Http\Controllers\Api\MeetingController::class, 'validateMeetingAccess'])
     ->name('validate.meeting.access')
     ->middleware('auth:client,professional');
-    
+
 // Debug route to check authentication status
 Route::get('/check-auth', function() {
     return response()->json([
@@ -194,7 +207,7 @@ Route::get('/test-email', function() {
         echo "<pre>";
         print_r(ini_get_all('mail'));
         echo "</pre>";
-        
+
         // Display Laravel mail configuration
         echo "<h3>Laravel Mail Configuration</h3>";
         echo "Driver: " . config('mail.default') . "<br>";
@@ -205,23 +218,23 @@ Route::get('/test-email', function() {
         echo "Encryption: " . config('mail.mailers.smtp.encryption') . "<br>";
         echo "From Address: " . config('mail.from.address') . "<br>";
         echo "From Name: " . config('mail.from.name') . "<br>";
-        
+
         $email = request('email', 'test@example.com');
         $resetUrl = url("/password/reset/test-token?email={$email}");
-        
+
         echo "<h3>Sending Test Email</h3>";
         echo "To: {$email}<br>";
         echo "Reset URL: {$resetUrl}<br>";
-        
+
         // Create the mailable instance
         $mailable = new \App\Mail\PasswordReset($resetUrl, 'user');
-        
+
         // Send the email
         \Illuminate\Support\Facades\Mail::to($email)->send($mailable);
-        
+
         return "<h3>Success!</h3>Email sent to {$email}. Check your inbox or spam folder.<br>If using Mailtrap, check your Mailtrap inbox.";
     } catch (\Exception $e) {
-        return "<h3>Error!</h3>Error sending email: " . $e->getMessage() . 
+        return "<h3>Error!</h3>Error sending email: " . $e->getMessage() .
                "<br><br>Stack trace:<pre>" . $e->getTraceAsString() . "</pre>";
     }
 });

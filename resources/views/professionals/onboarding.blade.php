@@ -83,7 +83,7 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        
+
         /* Phone input styling */
         .iti {
             width: 100%;
@@ -122,7 +122,7 @@
         .text-center a:hover {
             text-decoration: underline;
         }
-        
+
         /* Language section styling */
         .language-item {
             display: flex;
@@ -171,7 +171,7 @@
                 <div class="onboarding-body">
                     <form action="{{ route('professionals.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -284,7 +284,7 @@
                                 </span>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Languages Known</label>
                             <div id="languages-container">
@@ -372,7 +372,7 @@
                     </form>
 
                     <div class="mt-3 text-center">
-                        <p>Already have an account? <a href="{{ route('login') }}">Login</a></p>
+                        <p>Already have an account? <a href="{{ route('professional.login') }}">Login</a></p>
                     </div>
                 </div>
             </div>
@@ -391,52 +391,52 @@
                 this.nextElementSibling.innerHTML = fileName;
             });
         });
-        
+
         // Initialize the international telephone input
         document.addEventListener('DOMContentLoaded', function() {
             var phoneInput = document.querySelector("#phone");
             var countryCodeInput = document.querySelector("#country_code");
-            
+
             var iti = window.intlTelInput(phoneInput, {
                 initialCountry: "in", // Set India as default
                 separateDialCode: true,
                 utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
                 preferredCountries: ["in", "us", "gb", "ca", "au"]
             });
-            
+
             // Set the initial country code value
             countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
-            
+
             // Update the country code when the user changes it
             phoneInput.addEventListener("countrychange", function() {
                 countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
             });
-            
+
             // Handle form submission to ensure the country code is included
             document.querySelector("form").addEventListener("submit", function() {
                 countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
             });
         });
-        
+
         // Functions for handling languages
         function addLanguage() {
             const container = document.getElementById('languages-container');
             const languageItems = container.querySelectorAll('.language-item');
-            
+
             // Clone the first language item
             const newItem = languageItems[0].cloneNode(true);
-            
+
             // Clear the values
             newItem.querySelector('input[name="languages[]"]').value = '';
-            
+
             // Add the new item to the container
             container.appendChild(newItem);
         }
-        
+
         function removeLanguage(button) {
             const container = document.getElementById('languages-container');
             const languageItems = container.querySelectorAll('.language-item');
-            
+
             // Don't remove if it's the only one
             if (languageItems.length > 1) {
                 button.closest('.language-item').remove();
@@ -449,4 +449,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
