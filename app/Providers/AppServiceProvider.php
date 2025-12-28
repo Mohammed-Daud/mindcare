@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Force HTTPS in production, but not for ngrok URLs in local environment
         if (config('app.env') === 'production' || 
-            (config('app.env') === 'local' && !str_contains(request()->getHost(), 'ngrok-free.app'))) {
+            (config('app.env') !== 'local' && !str_contains(request()->getHost(), 'ngrok-free.app'))) {
             URL::forceScheme('https');
         }
     }
