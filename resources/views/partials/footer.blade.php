@@ -55,7 +55,7 @@
         </div>
         </div>
         <div class="copyright">
-            <p>&copy; 2023 MindCare Professional Counseling. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} MindCare Professional Counseling. All rights reserved.</p>
         </div>
     </div>
 </footer>

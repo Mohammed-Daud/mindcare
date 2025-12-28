@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('professionals', function (Blueprint $table) {
-            $table->string('country_code')->default('+91')->after('email'); // Default to India country code
+            $table->string('country_code', 5)->default('+91')->after('email'); // Reduced length for country code
             $table->boolean('is_phone_verified')->default(false)->after('phone');
             
             // Drop the unique constraint on phone column
             $table->dropUnique(['phone']);
             
             // Add a unique constraint on the combination of country_code and phone
+            $table->string('phone', 20)->change(); // Explicitly set phone length
             $table->unique(['country_code', 'phone']);
         });
     }

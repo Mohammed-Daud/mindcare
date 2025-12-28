@@ -273,434 +273,199 @@
 @push('scripts')
 <script src='https://8x8.vc/vpaas-magic-cookie-e7d1c43a42d34e6a8c80763f4424055a/external_api.js'></script>
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        // Set up confirmation when leaving the page during an active meeting
-        let meetingActive = false;
-        let isIntentionalExit = false;
-        
-        window.addEventListener('beforeunload', function(e) {
-            if (meetingActive && !isIntentionalExit) {
-                // Standard way of showing a confirmation dialog when leaving the page
-                e.preventDefault();
-                e.returnValue = 'Your meeting is still in progress. Are you sure you want to leave?';
-                return e.returnValue;
-            }
-        });
-        
-        // Initialize Jitsi API
-        const api = new JitsiMeetExternalAPI("8x8.vc", {
-            roomName: "vpaas-magic-cookie-e7d1c43a42d34e6a8c80763f4424055a/{{ $roomName }}",
-            parentNode: document.querySelector('#jaas-container'),
-            userInfo: {
-                displayName: '{{ $userName }}',
-                email: '{{ $userEmail }}'
-            },
-            configOverwrite: {
-                requireDisplayName: true,
-                enableWelcomePage: false,
-                prejoinPageEnabled: false,
-            isIntentionalExit = true;
-            meetingActive = false;
-                startWithAudioMuted: false,
-                startWithVideoMuted: false,
-                disableDeepLinking: true
-            },
-            interfaceConfigOverwrite: {
-                TOOLBAR_BUTTONS: [
-                    'microphone', 
-                    'camera', 
-                    'chat',
-                    'hangup', 
-                    'recording',
-                    'raisehand',
-                    'tileview', 
-                    'videobackgroundblur', 
-                    'mute-everyone',
-                    'fullscreen',
-                    'settings'
-                ],
-                SHOW_JITSI_WATERMARK: false,
-                SHOW_WATERMARK_FOR_GUESTS: false,
-              isIntentionalExit = true;
-            meetingActive = false;
-              DEFAULT_BACKGROUND: '#ffffff',
-                DEFAULT_REMOTE_DISPLAY_NAME: 'MindCare User',
-                TOOLBAR_ALWAYS_VISIBLE: true
-            }
-        });
+document.addEventListener('DOMContentLoaded', function () {
+    let meetingActive = false;
+    let isIntentionalExit = false;
 
-        // Set up timer functionality
-        const duration = {{ $duration }};
-        const endTime = new Date('{{ $appointment->end_time->toIso8601String() }}');
-        const warningTime = 5; // minutes before end to show warning
-        let warningShown = false;
-        
-        // Update timer every second
-        const timerInterval = setInterval(updateTimer, 1000);
-        
-        function updateTimer() {
-            const now = new Date();
-            const diff = Math.max(0, Math.floor((endTime - now) / 1000)); // difference in seconds
-            
-            // Calculate minutes and seconds
-            const minutes = Math.floor(diff / 60);
-            const seconds = diff % 60;
-               meetingActive = true;
-        });
-           meetingActive = true;
-        });
-        
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-            
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none' 
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-               meetingActive = true;
-        });
-        
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-            
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none' 
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none' 
-            // Update timer display
-            const timerDisplay = document.getElementById('timer-display');
-            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Change timer color based on remaining time
-            const timerElement = document.getElementById('meeting-timer');
-            if (minutes <= 5) {
-                timerElement.classList.remove('bg-light', 'text-primary');
-                timerElement.classList.add('bg-warning', 'text-dark');
-            }
-            
-            // Show warning 5 minutes before end (only once)
-            if (minutes === warningTime && seconds === 0 && !warningShown) {
-                warningShown = true;
-                const warningModal = new bootstrap.Modal(document.getElementById('meetingEndModal'));
-                warningModal.show();
-                
-                // Try to play notification sound if available
-                try {
-                    const audio = new Audio('/sounds/notification.mp3');
-                    audio.play().catch(e => console.log('Audio play failed:', e));
-                } catch (error) {
-                    console.log('Notification sound not available');
-                }
-            }
-            
-            // End meeting when time is up
-            if (diff <= 0) {
-                clearInterval(timerInterval);
-                api.executeCommand('hangup');
-                const endedModal = new bootstrap.Modal(document.getElementById('meetingEndedModal'));
-                endedModal.show();
-            }
+    window.addEventListener('beforeunload', function (e) {
+        if (meetingActive && !isIntentionalExit) {
+            e.preventDefault();
+            e.returnValue = 'Your meeting is still in progress. Are you sure you want to leave?';
+            return e.returnValue;
         }
-        
-        // Initial timer update
-        updateTimer();
-        
-        // Handle meeting end
-        api.addListener('readyToClose', () => {
-            isIntentionalExit = true;
-            meetingActive = false;
-            @if($isClient)
-            window.location.href = "{{ route('client.appointments') }}";
-            @else
-            window.location.href = "{{ route('professional.appointments') }}";
-            @endif
-        });
-        
-        // Handle video conference joined event
-        api.addListener('videoConferenceJoined', () => {
-            console.log('User has joined the meeting');
-            meetingActive = true;
-        });
-        
-        // Handle participant left event
-        api.addListener('participantLeft', () => {
-            console.log('Participant left the meeting');
-        });
-        
-        // Handle errors
-        api.addListener('error', (error) => {
-            console.error('Jitsi Meet error:', error);
-        });
-        
-        // Set up exit meeting button
-        const exitMeetingBtn = document.getElementById('exit-meeting-btn');
-        const exitLinks = document.querySelectorAll('.exit-link');
-        
-        // Set up exit confirmation modal
-        const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
-        const confirmExitBtn = document.getElementById('confirm-exit-btn');
-        
-        exitMeetingBtn.addEventListener('click', function() {
-            if (meetingActive) {
-                // Show the confirmation modal
-                exitMeetingModal.show();
-            } else {
-                // If meeting is not active, just show the exit links
-                exitLinks.forEach(link => {
-                    link.style.display = 'inline-block';
-                });
-                
-                // Hide the exit button
-                exitMeetingBtn.style.display = 'none';
-            }
-        });
-        
-        // Handle confirm exit button click
-        confirmExitBtn.addEventListener('click', function() {
-            isIntentionalExit = true;
-            api.executeCommand('hangup');
-            
-            // Hide the modal
-            exitMeetingModal.hide();
-            
-            // Show the appropriate exit link
-            exitLinks.forEach(link => {
-                link.style.display = 'inline-block';
-            });
-            
-            // Hide the exit button
-            exitMeetingBtn.style.display = 'none';
-        });
-        
-        // Common variables
-        const meetingLinkInput = document.getElementById('meeting-link-input');
-        const meetingLink = meetingLinkInput.value;
-        
-        // Professional-only code for copy functionality
-        @if($isProfessional)
-        const copyButton = document.getElementById('copy-meeting-link');
-        const copySuccess = document.getElementById('copy-success');
-        
-        // Check authentication status
-        fetch('/check-auth')
-            .then(response => response.json())
-            .then(authData => {
-                console.log('Authentication status:', authData);
-            })
-            .catch(error => {
-                console.error('Error checking auth status:', error);
-            });
-        
-        // Add click event listener to copy button
-        copyButton.addEventListener('click', function() {
-            // Get CSRF token from hidden input
-            const csrfToken = document.getElementById('csrf-token').value;
-            console.log('Using CSRF token:', csrfToken);
-            
-            // Check if user is authenticated and associated with the meeting
-            fetch('/validate-meeting-access', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                credentials: 'same-origin', // Include cookies in the request
-                body: JSON.stringify({
-                    appointment_id: {{ $appointment->id }},
-                    room_name: '{{ $roomName }}'
-                })
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('API response:', data);
-                if (data.success) {
-                    // User is authenticated and associated with the meeting
-                    navigator.clipboard.writeText(meetingLink)
-                        .then(() => {
-                            // Show success message
-                            copySuccess.style.display = 'inline';
-                            
-                            // Hide success message after 3 seconds
-                            setTimeout(() => {
-                                copySuccess.style.display = 'none';
-                            }, 3000);
-                        })
-                        .catch(err => {
-                            console.error('Failed to copy: ', err);
-                            // Fallback for older browsers
-                            fallbackCopyTextToClipboard(meetingLink);
-                        });
-                } else {
-                    // User is not authenticated or not associated with the meeting
-                    console.error('Authentication failed:', data.message);
-                    alert(data.message || 'You are not authorized to copy this meeting link.');
-                }
-            })
-            .catch(error => {
-                console.error('Error validating meeting access:', error);
-                alert('An error occurred while validating your access to this meeting.');
-            });
-        });
-        
-        // Fallback copy method for older browsers
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
+    });
+
+    // Initialize Jitsi API
+    const api = new JitsiMeetExternalAPI("8x8.vc", {
+        roomName: "vpaas-magic-cookie-e7d1c43a42d34e6a8c80763f4424055a/{{ $roomName }}",
+        parentNode: document.querySelector('#jaas-container'),
+        userInfo: {
+            displayName: '{{ $userName }}',
+            email: '{{ $userEmail }}'
+        },
+        configOverwrite: {
+            requireDisplayName: true,
+            enableWelcomePage: false,
+            prejoinPageEnabled: false,
+            startWithAudioMuted: false,
+            startWithVideoMuted: false,
+            disableDeepLinking: true
+        },
+        interfaceConfigOverwrite: {
+            TOOLBAR_BUTTONS: [
+                'microphone', 'camera', 'chat', 'hangup', 'recording', 'raisehand',
+                'tileview', 'videobackgroundblur', 'mute-everyone', 'fullscreen', 'settings'
+            ],
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_WATERMARK_FOR_GUESTS: false,
+            DEFAULT_BACKGROUND: '#ffffff',
+            DEFAULT_REMOTE_DISPLAY_NAME: 'MindCare User',
+            TOOLBAR_ALWAYS_VISIBLE: true
+        }
+    });
+
+    const duration = {{ $duration }};
+    const endTime = new Date('{{ $appointment->end_time->toIso8601String() }}');
+    const warningTime = 5;
+    let warningShown = false;
+
+    const timerDisplay = document.getElementById('timer-display');
+    const timerElement = document.getElementById('meeting-timer');
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    function updateTimer() {
+        const now = new Date();
+        const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+        const minutes = Math.floor(diff / 60);
+        const seconds = diff % 60;
+
+        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        if (minutes <= 5) {
+            timerElement.classList.remove('bg-light', 'text-primary');
+            timerElement.classList.add('bg-warning', 'text-dark');
+        }
+
+        if (minutes === warningTime && seconds === 0 && !warningShown) {
+            warningShown = true;
+            const warningModal = new bootstrap.Modal(document.getElementById('meetingEndModal'));
+            warningModal.show();
             try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    copySuccess.style.display = 'inline';
-                    setTimeout(() => {
-                        copySuccess.style.display = 'none';
-                    }, 3000);
-                }
-            } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
+                new Audio('/sounds/notification.mp3').play().catch(e => console.log('Audio error:', e));
+            } catch (error) {
+                console.log('Notification sound not available');
             }
-            
-            document.body.removeChild(textArea);
         }
+
+        if (diff <= 0) {
+            clearInterval(timerInterval);
+            api.executeCommand('hangup');
+            const endedModal = new bootstrap.Modal(document.getElementById('meetingEndedModal'));
+            endedModal.show();
+        }
+    }
+
+    updateTimer();
+
+    api.addListener('videoConferenceJoined', () => {
+        console.log('User has joined the meeting');
+        meetingActive = true;
+    });
+
+    api.addListener('participantLeft', () => {
+        console.log('Participant left the meeting');
+    });
+
+    api.addListener('error', (error) => {
+        console.error('Jitsi Meet error:', error);
+    });
+
+    api.addListener('readyToClose', () => {
+        isIntentionalExit = true;
+        meetingActive = false;
+        @if($isClient)
+        window.location.href = "{{ route('client.appointments') }}";
+        @else
+        window.location.href = "{{ route('professional.appointments') }}";
         @endif
     });
+
+    const exitMeetingBtn = document.getElementById('exit-meeting-btn');
+    const exitLinks = document.querySelectorAll('.exit-link');
+    const exitMeetingModal = new bootstrap.Modal(document.getElementById('exitMeetingModal'));
+    const confirmExitBtn = document.getElementById('confirm-exit-btn');
+
+    exitMeetingBtn.addEventListener('click', function () {
+        if (meetingActive) {
+            exitMeetingModal.show();
+        } else {
+            exitLinks.forEach(link => link.style.display = 'inline-block');
+            exitMeetingBtn.style.display = 'none';
+        }
+    });
+
+    confirmExitBtn.addEventListener('click', function () {
+        isIntentionalExit = true;
+        api.executeCommand('hangup');
+        exitMeetingModal.hide();
+        exitLinks.forEach(link => link.style.display = 'inline-block');
+        exitMeetingBtn.style.display = 'none';
+    });
+
+    const meetingLinkInput = document.getElementById('meeting-link-input');
+    const meetingLink = meetingLinkInput?.value;
+
+    @if($isProfessional)
+    const copyButton = document.getElementById('copy-meeting-link');
+    const copySuccess = document.getElementById('copy-success');
+    const csrfToken = document.getElementById('csrf-token').value;
+
+    copyButton?.addEventListener('click', function () {
+        fetch('/validate-meeting-access', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                appointment_id: {{ $appointment->id }},
+                room_name: '{{ $roomName }}'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                navigator.clipboard.writeText(meetingLink)
+                    .then(() => {
+                        copySuccess.style.display = 'inline';
+                        setTimeout(() => copySuccess.style.display = 'none', 3000);
+                    })
+                    .catch(err => {
+                        console.error('Clipboard error:', err);
+                        fallbackCopyTextToClipboard(meetingLink);
+                    });
+            } else {
+                alert(data.message || 'You are not authorized to copy this meeting link.');
+            }
+        })
+        .catch(error => {
+            console.error('Access validation failed:', error);
+            alert('Error validating meeting access.');
+        });
+    });
+
+    function fallbackCopyTextToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            if (document.execCommand('copy')) {
+                copySuccess.style.display = 'inline';
+                setTimeout(() => copySuccess.style.display = 'none', 3000);
+            }
+        } catch (err) {
+            console.error('Fallback copy failed:', err);
+        }
+        document.body.removeChild(textArea);
+    }
+    @endif
+});
 </script>
+
 @endpush
