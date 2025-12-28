@@ -32,8 +32,8 @@ Route::get('/', function () {
 Route::middleware(['guest'])->group(function () {
     Route::get('/client/register', [ClientController::class, 'showRegistrationForm'])->name('client.register');
     Route::post('/client/register', [ClientController::class, 'register'])->name('client.register.submit');
-    Route::get('/client/login', [ClientController::class, 'showLoginForm'])->name('client.login');
-    Route::post('/client/login', [ClientController::class, 'login'])->name('client.login');
+    Route::get('/login', [ClientController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [ClientController::class, 'login'])->name('login');
 });
 
 // Email Verification Routes

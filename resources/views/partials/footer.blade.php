@@ -48,7 +48,7 @@
                     <li><a href="{{ route('services') }}">Services</a></li>
                     <li><a href="{{ route('professionals') }}">Our Team</a></li>
                     <li><a href="{{ route('contact') }}">Contact</a></li>
-                    <li><a href="{{ route('client.login') }}">Client Login</a></li>
+                    <li><a href="{{ route('login') }}">Client Login</a></li>
                     <li><a href="{{ route('professional.login') }}">Professional Login</a></li>
                 </ul>
             </div>

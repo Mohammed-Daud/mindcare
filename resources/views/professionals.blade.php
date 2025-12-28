@@ -11,7 +11,7 @@
 <body>
     <!-- Header -->
     @include('partials.header')
-    
+
     <!-- Page Title -->
     <section class="page-title">
         <div class="container">
@@ -29,13 +29,13 @@
                     {{ session('error') }}
                 </div>
             @endif
-            
+
             @if(session('success'))
                 <div class="alert alert-success mb-4">
                     {{ session('success') }}
                 </div>
             @endif
-            
+
             <!-- Filter Section -->
             <div class="filter-section">
                 <form action="{{ route('professionals') }}" method="GET" class="search-form">
@@ -60,8 +60,8 @@
             <div class="professionals-grid" id="professionalsGrid">
                 @foreach($professionals as $professional)
                 <div class="professional-card">
-                    <img src="{{ $professional->profile_photo_url }}" 
-                         alt="{{ $professional->first_name }} {{ $professional->last_name }}" 
+                    <img src="{{ $professional->profile_photo_url }}"
+                         alt="{{ $professional->first_name }} {{ $professional->last_name }}"
                          class="professional-image">
                     <div class="professional-info">
                         <h3>{{ $professional->first_name }} {{ $professional->last_name }}</h3>
@@ -77,7 +77,7 @@
                             @auth('client')
                                 <a href="{{ route('client.appointments.create', $professional->id) }}" class="btn-book">Book Session</a>
                             @else
-                                <a href="{{ route('client.login') }}" class="btn-book">Book Session</a>
+                                <a href="{{ route('login') }}" class="btn-book">Book Session</a>
                             @endauth
                         </div>
                     </div>
@@ -95,7 +95,7 @@
         </div>
     </section>
 
-    
+
 
     <!-- Footer -->
     @include('partials.footer')
@@ -103,4 +103,4 @@
     <script src="{{ asset('js/script.js') }}"></script>
     <!-- <script src="{{ asset('js/professionals.js') }}"></script> -->
 </body>
-</html> 
+</html>

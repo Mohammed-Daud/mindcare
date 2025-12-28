@@ -71,21 +71,21 @@
 <body>
     <!-- Header -->
     @include('partials.header')
-    
+
     <div class="container my-5">
         <div class="auth-container">
             <h2 class="auth-title">Reset Password</h2>
-            
+
             @if (session('status'))
                 <div class="alert alert-success" role="alert">
                     {{ session('status') }}
                 </div>
             @endif
-            
+
             <form method="POST" action="{{ url('/password/email') }}">
                 @csrf
                 <input type="hidden" name="user_type" value="{{ request()->query('usertype', 'user') }}">
-                
+
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
@@ -95,18 +95,18 @@
                         </span>
                     @enderror
                 </div>
-                
+
                 <button type="submit" class="btn-primary">
                     Send Password Reset Link
                 </button>
             </form>
-            
+
             <div class="auth-links">
                 @php
                     $userType = request()->query('usertype', 'user');
                     $loginRoute = match($userType) {
                         'professional' => 'professional.login',
-                        'client' => 'client.login',
+                        'client' => 'login',
                         'admin' => 'admin.login',
                         default => 'login'
                     };
@@ -121,8 +121,8 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Footer -->
     @include('partials.footer')
 </body>
-</html> 
+</html>

@@ -7,11 +7,11 @@
                 <li><a href="{{ route('professionals') }}">Our Team</a></li>
                 <li><a href="#">Services</a></li>
                 <li><a href="#">About</a></li>
-                
+
                 @if(!auth()->check() && !auth()->guard('client')->check() && !auth()->guard('professional')->check())
                     <li><a href="{{ route('professionals.create') }}">Join as Professional</a></li>
-                    <li><a href="{{ route('client.login') }}">Book Session</a></li>
-                    <li><a href="{{ route('client.login') }}">Login</a></li>
+                    <li><a href="{{ route('login') }}">Book Session</a></li>
+                    <li><a href="{{ route('login') }}">Login</a></li>
                     <li><a href="{{ route('client.register') }}">Register as Client</a></li>
                 @endif
 

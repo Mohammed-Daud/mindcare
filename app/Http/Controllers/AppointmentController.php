@@ -29,40 +29,40 @@ class AppointmentController extends Controller
             ->with('professional')
             ->orderBy('start_time', 'desc')
             ->paginate(10);
-            
+
         return view('client.appointments.index', compact('appointments'));
     }
-    
+
     public function show(Appointment $appointment)
     {
         // Check if the appointment belongs to the authenticated client
         if ($appointment->client_id !== auth()->id()) {
             abort(403);
         }
-        
+
         return view('client.appointments.show', compact('appointment'));
     }
-    
+
     public function meeting(Appointment $appointment)
     {
         // Check if the user is authorized to join this meeting
         $user = auth()->user();
         $isClient = auth()->guard('client')->check();
         $isProfessional = auth()->guard('professional')->check();
-        
+
         if ($isClient && $appointment->client_id !== $user->id) {
             abort(403, 'You are not authorized to join this meeting.');
         }
-        
+
         if ($isProfessional && $appointment->professional_id !== $user->id) {
             abort(403, 'You are not authorized to join this meeting.');
         }
-        
+
         // Check if the appointment is confirmed
         if ($appointment->status !== 'confirmed') {
             return redirect()->back()->with('error', 'This appointment is not confirmed.');
         }
-        
+
         // Check if the appointment is in progress or about to start (within 10 minutes)
         $now = now();
         $startTime = $appointment->start_time;
@@ -70,95 +70,95 @@ class AppointmentController extends Controller
         $isAboutToStart = $now->diffInMinutes($startTime, false) <= 10 && $now->diffInMinutes($startTime, false) > 0;
         $isInProgress = $now->between($startTime, $endTime);
         $hasEnded = $now->isAfter($endTime);
-        
+
         // if ($hasEnded) {
         //     return redirect()->back()->with('error', 'This appointment has already ended.');
         // }
-        
+
         // if (!$isInProgress && !$isAboutToStart) {
         //     return redirect()->back()->with('error', 'You can only join the meeting 10 minutes before the scheduled time.');
         // }
-        
+
         return view('appointments.meeting', compact('appointment', 'isClient', 'isProfessional', 'isInProgress', 'isAboutToStart'));
     }
-    
+
     public function jitsiMeeting(Appointment $appointment)
     {
         // Check if user is authenticated
         $isClient = auth()->guard('client')->check();
         $isProfessional = auth()->guard('professional')->check();
-        
+
         // If not authenticated, redirect to client login page with return URL
         if (!$isClient && !$isProfessional) {
             // Store the redirect URL in the session
             session(['redirect_url' => url('/appointments/' . $appointment->id . '/jitsi')]);
-            return redirect()->route('client.login')->with('message', 'Please log in to join the meeting.');
+            return redirect()->route('login')->with('message', 'Please log in to join the meeting.');
         }
-        
+
         $user = $isClient ? auth()->guard('client')->user() : auth()->guard('professional')->user();
-        
+
         // Check if the authenticated user is authorized to join this meeting
         if ($isClient && $appointment->client_id !== $user->id) {
             abort(403, 'You are not authorized to join this meeting.');
         }
-        
+
         if ($isProfessional && $appointment->professional_id !== $user->id) {
             abort(403, 'You are not authorized to join this meeting.');
         }
-        
+
         // Check if the appointment is confirmed
         if ($appointment->status !== 'confirmed') {
             return redirect()->back()->with('error', 'This appointment is not confirmed.');
         }
-        
+
         // Get user information
         $userName = $isClient ? $user->first_name . ' ' . $user->last_name : $user->full_name;
         $userEmail = $user->email;
-        
+
         // Get the stored meeting room name or generate one if it doesn't exist
         if (empty($appointment->meeting_room)) {
             // Create a unique meeting room name using professional name and a random string
             $professionalName = strtolower(str_replace(' ', '-', $appointment->professional->full_name));
             $uniqueId = substr(md5(uniqid(rand(), true)), 0, 8);
             $roomName = $professionalName . '-' . $uniqueId;
-            
+
             // Save the meeting room name to the appointment
             $appointment->meeting_room = $roomName;
             $appointment->save();
         } else {
             $roomName = $appointment->meeting_room;
         }
-        
+
         // Get appointment duration in minutes
         $duration = $appointment->duration;
-        
+
         // Calculate remaining time
         $now = now();
         $endTime = $appointment->end_time;
         $remainingMinutes = $now->diffInMinutes($endTime);
-        
+
         return view('appointments.jitsi', compact(
-            'appointment', 
-            'isClient', 
-            'isProfessional', 
-            'userName', 
-            'userEmail', 
-            'roomName', 
-            'duration', 
+            'appointment',
+            'isClient',
+            'isProfessional',
+            'userName',
+            'userEmail',
+            'roomName',
+            'duration',
             'remainingMinutes'
         ));
     }
-    
+
     public function create(Professional $professional)
     {
         $settings = $professional->settings;
-        
+
         // Check if settings exist, if not redirect with error
         if (!$settings) {
             return redirect()->route('professionals')
                 ->with('error', 'This professional has not set up their availability yet. Please try another professional.');
         }
-        
+
         return view('appointments.create', compact('professional', 'settings'));
     }
 
@@ -174,7 +174,7 @@ class AppointmentController extends Controller
 
         if (!$settings) {
             return response()->json([
-                'available' => false, 
+                'available' => false,
                 'message' => 'This professional has not set up their availability yet.'
             ]);
         }
@@ -191,7 +191,7 @@ class AppointmentController extends Controller
 
         while ($startTime->copy()->addMinutes($request->duration)->lte($endTime)) {
             $slotEnd = $startTime->copy()->addMinutes($request->duration);
-            
+
             if ($settings->isTimeSlotAvailable($startTime, $slotEnd)) {
                 $availableSlots[] = [
                     'start' => $startTime->format('H:i'),
@@ -209,17 +209,17 @@ class AppointmentController extends Controller
             if ($requestedTime) {
                 $requestedDateTime = Carbon::parse($date->format('Y-m-d') . ' ' . $requestedTime);
                 $requestedEndTime = $requestedDateTime->copy()->addMinutes($request->duration);
-                
+
                 $dayStart = Carbon::parse($date->format('Y-m-d') . ' ' . $workingHours['start']);
                 $dayEnd = Carbon::parse($date->format('Y-m-d') . ' ' . $workingHours['end']);
-                
+
                 if ($requestedDateTime->lt($dayStart) || $requestedEndTime->gt($dayEnd)) {
                     return response()->json([
                         'available' => false,
                         'message' => 'Selected time is outside working hours.'
                     ]);
                 }
-                
+
                 // Check if the specific time slot is available
                 if ($settings->isTimeSlotAvailable($requestedDateTime, $requestedEndTime)) {
                     return response()->json([
@@ -249,21 +249,21 @@ class AppointmentController extends Controller
             'duration' => 'required|integer|min:30',
             'coupon_code' => 'nullable|string',
         ];
-        
+
         // Only validate coupon code exists in database if it's not WELCOME100
         if ($request->coupon_code && $request->coupon_code !== 'WELCOME100') {
             $validationRules['coupon_code'] .= '|exists:coupon_codes,code';
         $appointment->meeting_room = $meetingRoom;
         }
-        
+
         $validated = $request->validate($validationRules);
 
         $settings = $professional->settings;
-        
+
         if (!$settings) {
             return back()->with('error', 'This professional has not set up their availability yet. Please try another professional.');
         }
-        
+
         $startTime = Carbon::parse($validated['date'] . ' ' . $validated['time']);
         $endTime = $startTime->copy()->addMinutes($validated['duration']);
 
@@ -306,13 +306,13 @@ class AppointmentController extends Controller
         // Generate PDF receipt
         $pdf = PDF::loadView('appointments.receipt', compact('appointment', 'professional'));
         $pdfPath = storage_path('app/receipts/' . $appointment->id . '.pdf');
-        
+
         // Ensure the receipts directory exists
         $receiptsDir = storage_path('app/receipts');
         if (!file_exists($receiptsDir)) {
             mkdir($receiptsDir, 0755, true);
         }
-        
+
         $pdf->save($pdfPath);
 
         // Send confirmation emails with receipt
@@ -362,7 +362,7 @@ class AppointmentController extends Controller
         foreach ($appointments as $appointment) {
             Mail::to($appointment->client->email)
                 ->send(new AppointmentReminder($appointment));
-            
+
             Mail::to($appointment->professional->email)
                 ->send(new AppointmentReminder($appointment));
         }
@@ -395,7 +395,7 @@ class AppointmentController extends Controller
 
         // Get professional settings
         $settings = $appointment->professional->settings;
-        
+
         // Check if rescheduling is allowed
         if (!$settings || !$settings->allow_client_reschedule) {
             return response()->json([

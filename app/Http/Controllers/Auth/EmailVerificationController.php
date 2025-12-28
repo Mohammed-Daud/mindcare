@@ -31,7 +31,7 @@ class EmailVerificationController extends Controller
             session()->flash('verified', true);
         }
 
-        return redirect()->route('client.login')->with('success', 'Email verified successfully! You can now log in.');
+        return redirect()->route('login')->with('success', 'Email verified successfully! You can now log in.');
     }
 
     /**

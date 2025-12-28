@@ -83,7 +83,7 @@
             </div>
             <div class="hidden sm:flex items-center gap-4">
                 <span class="text-sm font-medium text-text-muted-light dark:text-text-muted-dark">Already have an account?</span>
-                <a href="{{ route('client.login') }}" class="text-sm font-bold text-primary-dark dark:text-primary hover:text-primary dark:hover:text-white transition-colors">
+                <a href="{{ route('login') }}" class="text-sm font-bold text-primary-dark dark:text-primary hover:text-primary dark:hover:text-white transition-colors">
                     Log In
                 </a>
             </div>
@@ -229,7 +229,7 @@
                     <div class="mt-8 text-center lg:hidden">
                         <p class="text-sm text-text-muted-light dark:text-text-muted-dark">
                             Already have an account?
-                            <a class="font-bold text-primary-dark dark:text-primary hover:underline" href="{{ route('client.login') }}">Log in</a>
+                            <a class="font-bold text-primary-dark dark:text-primary hover:underline" href="{{ route('login') }}">Log in</a>
                         </p>
                     </div>
                     <!-- Trust Badges -->

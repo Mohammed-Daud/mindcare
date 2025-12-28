@@ -71,24 +71,24 @@
 <body>
     <!-- Header -->
     @include('partials.header')
-    
+
     <div class="container">
         <div class="auth-container">
             <h2 class="auth-title">Reset Password</h2>
-            
+
             @if (session('status'))
                 <div class="alert alert-success" role="alert">
                     {{ session('status') }}
                 </div>
             @endif
-            
+
             <form method="POST" action="{{ url('/password/reset') }}">
                 @csrf
-                
+
                 <input type="hidden" name="token" value="{{ $token }}">
                 <input type="hidden" name="email" value="{{ $email }}">
                 <input type="hidden" name="user_type" value="{{ request()->query('usertype', 'user') }}">
-                
+
                 <div class="form-group">
                     <label for="password">New Password</label>
                     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
@@ -98,23 +98,23 @@
                         </span>
                     @enderror
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password-confirm">Confirm Password</label>
                     <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                 </div>
-                
+
                 <button type="submit" class="btn-primary">
                     Reset Password
                 </button>
             </form>
-            
+
             <div class="auth-links">
                 @php
                     $userType = request()->query('usertype', 'user');
                     $loginRoute = match($userType) {
                         'professional' => 'professional.login',
-                        'client' => 'client.login',
+                        'client' => 'login',
                         'admin' => 'admin.login',
                         default => 'login'
                     };
@@ -125,7 +125,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Footer -->
     @include('partials.footer')
 </body>

@@ -56,4 +56,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'user_type' => 'integer',
         'status' => 'integer',
     ];
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\VerifyEmailNotification());
+    }
 }

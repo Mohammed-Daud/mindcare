@@ -14,23 +14,23 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    
+
                     @if(session('message'))
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i> {{ session('message') }}
                         </div>
                     @endif
-                    
+
                     @if(session('redirect_url'))
                         <input type="hidden" name="redirect_url" value="{{ session('redirect_url') }}">
                     @endif
 
-                    <form method="POST" action="{{ route('client.login') }}">
+                    <form method="POST" action="{{ route('login') }}">
                         @csrf
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                            <input type="email" class="form-control @error('email') is-invalid @enderror"
                                 id="email" name="email" value="{{ old('email') }}" required autofocus>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -39,7 +39,7 @@
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
                                 id="password" name="password" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -68,4 +68,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
