@@ -29,6 +29,20 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::middleware(['guest'])->group(function () {
+    Route::get('/client/register', [ClientController::class, 'showRegistrationForm'])->name('client.register');
+    Route::post('/client/register', [ClientController::class, 'register'])->name('client.register.submit');
+    Route::get('/client/login', [ClientController::class, 'showLoginForm'])->name('client.login');
+    Route::post('/client/login', [ClientController::class, 'login'])->name('client.login');
+});
+
+// Email Verification Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'show'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])->name('verification.verify');
+    Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->name('verification.send');
+});
+
 // Static Pages
 Route::get('/about', function () {
     return view('about');
@@ -130,13 +144,7 @@ Route::middleware(['auth:professional'])->prefix('professional')->name('professi
 });
 
 // Client Routes
-Route::middleware(['guest'])->group(function () {
-    Route::get('/client/register', [ClientController::class, 'showRegistrationForm'])->name('client.register');
-    Route::post('/client/register', [ClientController::class, 'register'])->name('client.register.submit');
-    Route::get('/client/login', [ClientController::class, 'showLoginForm'])->name('client.login');
-    Route::post('/client/login', [ClientController::class, 'login'])->name('client.login');
-    Route::get('/client/verify/{token}', [ClientController::class, 'verify'])->name('client.verify');
-});
+
 
 Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('dashboard');

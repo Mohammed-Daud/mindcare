@@ -3,14 +3,24 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    // User Type Constants
+    const TYPE_SUPER_ADMIN = 101;
+    const TYPE_PROFESSIONAL = 201;
+    const TYPE_CLIENT = 301;
+
+    // Status Constants
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +31,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin',
+        'user_type',
+        'status',
     ];
 
     /**
@@ -42,6 +53,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'is_admin' => 'boolean',
+        'user_type' => 'integer',
+        'status' => 'integer',
     ];
 }

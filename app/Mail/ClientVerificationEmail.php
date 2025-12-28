@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Client;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -19,7 +19,7 @@ class ClientVerificationEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(Client $client)
+    public function __construct(User $client)
     {
         $this->client = $client;
     }
