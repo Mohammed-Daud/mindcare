@@ -29,12 +29,21 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// add auth routes
+
+
 Route::middleware(['guest'])->group(function () {
     Route::get('/client/register', [ClientController::class, 'showRegistrationForm'])->name('client.register');
     Route::post('/client/register', [ClientController::class, 'register'])->name('client.register.submit');
-    Route::get('/login', [ClientController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [ClientController::class, 'login'])->name('login');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
 });
+
+
+Route::get('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [\App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.update');
 
 // Email Verification Routes
 Route::middleware(['auth'])->group(function () {
@@ -80,10 +89,10 @@ Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.logi
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 // Password Reset Routes
-Route::get('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+// Route::get('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/password/reset/{token}', [\App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
-Route::post('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.update');
+// Route::get('/password/reset/{token}', [\App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+// Route::post('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.update');
 
 // Direct Password Reset Routes (for when email is not working)
 Route::get('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'showForm'])->name('password.direct');
