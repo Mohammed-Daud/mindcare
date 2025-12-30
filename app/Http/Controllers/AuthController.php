@@ -56,6 +56,16 @@ class AuthController extends Controller
             $user = Auth::user();
             $request->session()->regenerate();
 
+            // Check if email is verified
+            if (!$user->hasVerifiedEmail()) {
+                Auth::logout();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please verify your email address before logging in.',
+                    'errors' => ['email' => ['Please verify your email address before logging in.']]
+                ], 422);
+            }
+
             // For professionals, check if approved
             if ($user->user_type === User::TYPE_PROFESSIONAL && $user->status !== User::STATUS_ACTIVE) {
                 Auth::logout();

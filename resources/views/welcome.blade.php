@@ -71,7 +71,7 @@
                         <a class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">FAQ</a>
                     </nav>
                     <div class="flex items-center gap-4">
-                        <a class="hidden sm:flex text-sm font-bold text-slate-900 dark:text-white hover:underline" href="#">Log in</a>
+                        <a class="hidden sm:flex text-sm font-bold text-slate-900 dark:text-white hover:underline" href="{{ route('login') }}">Log in</a>
                         <a class="hidden lg:inline-flex h-10 items-center justify-center rounded-full border-2 border-primary/20 bg-primary/5 px-6 text-sm font-bold text-primary transition-all hover:bg-primary hover:text-white hover:border-primary hover:shadow-md" href="{{ route('client.register') }}">
                         Patient Sign Up
                         </a>
@@ -473,6 +473,14 @@
                             <li><a class="hover:text-primary" href="#">Crisis Resources</a></li>
                             <li><a class="hover:text-primary" href="#">Privacy Policy</a></li>
                             <li><a class="hover:text-primary" href="#">Terms of Service</a></li>
+                            <li>
+                                <a class="hover:text-primary" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Logout
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -490,3 +498,6 @@
         </footer>
     </body>
 </html>
+
+<!-- Hidden Logout Form -->
+

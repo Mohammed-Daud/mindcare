@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'show'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])->name('verification.verify');
     Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->name('verification.send');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // Static Pages
@@ -78,16 +79,6 @@ Route::get('/doctors', function () {
 
 
 
-// Authentication Routes
-// Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-// Route::post('/login', [AuthController::class, 'login']);
-// Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// Admin Authentication Routes
-Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
-Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
-
 // Password Reset Routes
 // Route::get('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -115,7 +106,7 @@ Route::post('/professional/login', [AuthController::class, 'professionalLogin'])
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+
 
     // Add admin profile routes
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
@@ -149,7 +140,7 @@ Route::middleware(['auth:professional'])->prefix('professional')->name('professi
     Route::get('/appointments', [ProfessionalController::class, 'appointments'])->name('appointments');
     Route::get('/appointments/{appointment}', [ProfessionalController::class, 'showAppointment'])->name('appointments.show');
     Route::post('/appointments/{appointment}/update-status', [ProfessionalController::class, 'updateAppointmentStatus'])->name('appointments.update-status');
-    Route::post('/logout', [ProfessionalController::class, 'logout'])->name('logout');
+
 });
 
 // Client Routes
@@ -160,7 +151,7 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/logout', [ClientController::class, 'logout'])->name('logout');
+
 
     // Add appointments routes
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
