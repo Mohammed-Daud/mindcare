@@ -59,6 +59,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Psychiatric Care Login</title>
         <link href="https://fonts.googleapis.com" rel="preconnect"/>
         <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -154,42 +155,43 @@
                             <h2 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">Welcome Back</h2>
                             <p class="text-text-muted dark:text-gray-400">Please select your role to continue securely.</p>
                         </div>
-                        <!-- Role Selector (Segmented Control) -->
-                        <div class="flex flex-col gap-3">
-                            <label class="text-sm font-semibold text-text-main dark:text-white">I am a...</label>
-                            <div class="grid grid-cols-3 gap-2 p-1 bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark">
-                                <!-- Patient Role -->
-                                <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                    <input checked="" class="peer sr-only" name="role" type="radio" value="patient"/>
-                                    <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
-                                    <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">favorite</span>
-                                    <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Patient</span>
-                                </label>
-                                <!-- Doctor Role -->
-                                <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                    <input class="peer sr-only" name="role" type="radio" value="doctor"/>
-                                    <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
-                                    <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">stethoscope</span>
-                                    <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Doctor</span>
-                                </label>
-                                <!-- Admin Role -->
-                                <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                    <input class="peer sr-only" name="role" type="radio" value="admin"/>
-                                    <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
-                                    <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">admin_panel_settings</span>
-                                    <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Admin</span>
-                                </label>
+
+                        <form method="POST" action="{{ route('login') }}" id="loginForm" class="flex flex-col gap-5">
+                            <!-- Role Selector (Segmented Control) -->
+                            <div class="flex flex-col gap-3">
+                                <label class="text-sm font-semibold text-text-main dark:text-white">I am a...</label>
+                                <div class="grid grid-cols-3 gap-2 p-1 bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark">
+                                    <!-- Patient Role -->
+                                    <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
+                                        <input checked="" class="peer sr-only" name="role" type="radio" value="patient"/>
+                                        <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
+                                        <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">favorite</span>
+                                        <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Patient</span>
+                                    </label>
+                                    <!-- Doctor Role -->
+                                    <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
+                                        <input class="peer sr-only" name="role" type="radio" value="doctor"/>
+                                        <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
+                                        <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">stethoscope</span>
+                                        <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Doctor</span>
+                                    </label>
+                                    <!-- Admin Role -->
+                                    <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
+                                        <input class="peer sr-only" name="role" type="radio" value="admin"/>
+                                        <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
+                                        <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">admin_panel_settings</span>
+                                        <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Admin</span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Input Fields -->
-                        <form class="flex flex-col gap-5">
+                            <!-- Input Fields -->
                             <label class="flex flex-col gap-2">
                                 <span class="text-text-main dark:text-gray-200 text-sm font-medium">Email or Username</span>
                                 <div class="relative">
                                     <div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">
                                         <span class="material-symbols-outlined" style="font-size: 20px;">mail</span>
                                     </div>
-                                    <input class="w-full rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-11 pr-4 py-3.5 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-text-muted/60" placeholder="name@example.com" type="email"/>
+                                    <input class="w-full rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-11 pr-4 py-3.5 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-text-muted/60" placeholder="name@example.com" type="email" name="email" required autocomplete="email" autofocus/>
                                 </div>
                             </label>
                             <label class="flex flex-col gap-2">
@@ -201,16 +203,22 @@
                                     <div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">
                                         <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
                                     </div>
-                                    <input class="w-full rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-11 pr-12 py-3.5 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-text-muted/60" placeholder="••••••••" type="password"/>
-                                    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main dark:hover:text-white transition-colors" type="button">
-                                    <span class="material-symbols-outlined" style="font-size: 20px;">visibility_off</span>
+                                    <input class="w-full rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-11 pr-12 py-3.5 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-text-muted/60" placeholder="••••••••" type="password" name="password" required autocomplete="current-password" id="passwordInput"/>
+                                    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main dark:hover:text-white transition-colors" type="button" id="togglePassword">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;" id="eyeIcon">visibility_off</span>
                                     </button>
                                 </div>
                             </label>
                             <!-- Actions -->
                             <div class="flex flex-col gap-4 mt-2">
-                                <button class="flex w-full items-center justify-center rounded-xl bg-primary hover:bg-[#0fbccb] active:bg-[#0daab8] py-4 text-text-main font-bold text-base transition-all shadow-md shadow-primary/20" type="submit">
-                                Log In
+                                <button class="flex w-full items-center justify-center rounded-xl bg-primary hover:bg-[#0fbccb] active:bg-[#0daab8] py-4 text-text-main font-bold text-base transition-all shadow-md shadow-primary/20" type="submit" id="loginBtn">
+                                <span id="btnText">Log In</span>
+                                <div id="loadingSpinner" class="hidden ml-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
                                 </button>
                                 <p class="text-center text-sm text-text-muted dark:text-gray-400">
                                     Don't have an account?
@@ -227,5 +235,136 @@
                 </div>
             </main>
         </div>
+
+        <script>
+            // Password visibility toggle
+            const passwordInput = document.getElementById('passwordInput');
+            const togglePassword = document.getElementById('togglePassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                // Toggle icon
+                if (type === 'password') {
+                    eyeIcon.textContent = 'visibility_off';
+                } else {
+                    eyeIcon.textContent = 'visibility';
+                }
+            });
+
+            // Form submission with AJAX
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Get form data
+                const formData = new FormData(loginForm);
+                const data = {
+                    role: formData.get('role'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    remember: formData.get('remember') ? 1 : 0
+                };
+
+                // Show loading state
+                loginBtn.disabled = true;
+                btnText.textContent = 'Logging in...';
+                loadingSpinner.classList.remove('hidden');
+
+                // Send AJAX request
+                fetch("{{ route('login') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    // Check if response is successful (2xx status codes)
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        // Handle HTTP errors (4xx, 5xx)
+                        return response.json().then(data => {
+                            // If the server already returned JSON with errors, use it
+                            if (data.errors || data.message) {
+                                throw new Error(data.message || 'Request failed');
+                            }
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }).catch(() => {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        });
+                    }
+                })
+                .then(data => {
+                    // Handle success response
+                    console.log('Success:', data);
+
+                    if (data.success) {
+                        // Redirect on successful login
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            showNotification('Login successful!', 'success');
+                        }
+                    } else {
+                        // Handle server-returned errors
+                        if (data.errors) {
+                            // Show validation errors
+                            const errorMessages = Object.values(data.errors).flat();
+                            errorMessages.forEach(message => {
+                                showNotification(message, 'error');
+                            });
+                        } else if (data.message) {
+                            showNotification(data.message, 'error');
+                        } else {
+                            showNotification('Login failed. Please try again.', 'error');
+                        }
+                    }
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error:', error);
+
+                    // Parse error response if available
+                    if (error.response) {
+                        error.response.json().then(data => {
+                            if (data.errors) {
+                                // Show validation errors
+                                const errorMessages = Object.values(data.errors).flat();
+                                errorMessages.forEach(message => {
+                                    showNotification(message, 'error');
+                                });
+                            } else if (data.message) {
+                                showNotification(data.message, 'error');
+                            } else {
+                                showNotification('Login failed. Please try again.', 'error');
+                            }
+                        }).catch(() => {
+                            showNotification('Network error. Please check your connection and try again.', 'error');
+                        });
+                    } else if (error.message) {
+                        showNotification(error.message, 'error');
+                    } else {
+                        showNotification('Login failed. Please try again.', 'error');
+                    }
+                })
+                .finally(() => {
+                    // Reset button state
+                    loginBtn.disabled = false;
+                    btnText.textContent = 'Log In';
+                    loadingSpinner.classList.add('hidden');
+                });
+            });
+        </script>
+        <script src="{{ asset('js/functions.js') }}"></script>
     </body>
 </html>
