@@ -277,7 +277,6 @@
                 btnText.textContent = 'Logging in...';
                 loadingSpinner.classList.remove('hidden');
 
-                // Send AJAX request
                 fetch("{{ route('login') }}", {
                     method: 'POST',
                     headers: {
@@ -287,82 +286,37 @@
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => {
-                    // Check if response is successful (2xx status codes)
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        // Handle HTTP errors (4xx, 5xx)
-                        return response.json().then(data => {
-                            // If the server already returned JSON with errors, use it
-                            if (data.errors || data.message) {
-                                throw new Error(data.message || 'Request failed');
-                            }
-                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        }).catch(() => {
-                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        });
+                .then(async (response) => {
+                    const json = await response.json();
+                    if (!response.ok) {
+                        if (json.errors) {
+                            Object.values(json.errors).flat().forEach(msg => showNotification(msg, 'error'));
+                        } else if (json.message) {
+                            showNotification(json.message, 'error');
+                        }
+                        throw new Error(json.message || 'Request failed');
+                    }
+                    return json;
+                })
+                .then((data) => {
+                    if (data.success && data.redirect) {
+                        window.location.href = data.redirect;
                     }
                 })
-                .then(data => {
-                    // Handle success response
-                    console.log('Success:', data);
-
-                    if (data.success) {
-                        // Redirect on successful login
-                        if (data.redirect) {
-                            window.location.href = data.redirect;
-                        } else {
-                            showNotification('Login successful!', 'success');
-                        }
-                    } else {
-                        // Handle server-returned errors
-                        if (data.errors) {
-                            // Show validation errors
-                            const errorMessages = Object.values(data.errors).flat();
-                            errorMessages.forEach(message => {
-                                showNotification(message, 'error');
-                            });
-                        } else if (data.message) {
-                            showNotification(data.message, 'error');
-                        } else {
-                            showNotification('Login failed. Please try again.', 'error');
-                        }
-                    }
-                })
-                .catch(error => {
-                    // Handle error
-                    console.error('Error:', error);
-
-                    // Parse error response if available
-                    if (error.response) {
-                        error.response.json().then(data => {
-                            if (data.errors) {
-                                // Show validation errors
-                                const errorMessages = Object.values(data.errors).flat();
-                                errorMessages.forEach(message => {
-                                    showNotification(message, 'error');
-                                });
-                            } else if (data.message) {
-                                showNotification(data.message, 'error');
-                            } else {
-                                showNotification('Login failed. Please try again.', 'error');
-                            }
-                        }).catch(() => {
-                            showNotification('Network error. Please check your connection and try again.', 'error');
-                        });
-                    } else if (error.message) {
+                .catch((error) => {
+                    console.error('Login error:', error);
+                    if (error.message) {
                         showNotification(error.message, 'error');
                     } else {
                         showNotification('Login failed. Please try again.', 'error');
                     }
                 })
                 .finally(() => {
-                    // Reset button state
                     loginBtn.disabled = false;
                     btnText.textContent = 'Log In';
                     loadingSpinner.classList.add('hidden');
                 });
+
             });
         </script>
         <script src="{{ asset('js/functions.js') }}"></script>
