@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Patient Email Verification - MindfulCare</title>
         <link href="https://fonts.googleapis.com" rel="preconnect"/>
         <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -81,11 +82,19 @@
                     </p>
                     <!-- Action Button -->
                     <div class="space-y-4">
-                        <button class="w-full flex items-center justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-bold text-[#102022] bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200" type="button">
-                            <span class="material-symbols-outlined mr-2" style="font-size: 20px;">
-                                send
+                        <button id="resendBtn" class="w-full flex items-center justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-bold text-[#102022] bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200" type="button">
+                            <span id="btnText">
+                                <span class="material-symbols-outlined mr-2" style="font-size: 20px;">
+                                    send
+                                </span>
+                                Resend Verification Email
                             </span>
-                            Resend Verification Email
+                            <div id="loadingSpinner" class="hidden ml-2">
+                                <svg class="animate-spin h-5 w-5 text-[#102022]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
                         </button>
                         <!-- Spam Note -->
                         <div class="text-xs text-slate-500 dark:text-slate-400">
@@ -124,4 +133,71 @@
             </div>
         </footer>
     </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resendBtn = document.getElementById('resendBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            resendBtn.addEventListener('click', function() {
+                // Show loading state
+                resendBtn.disabled = true;
+                btnText.innerHTML = `
+                    <span class="material-symbols-outlined mr-2" style="font-size: 20px;">
+                        hourglass_empty
+                    </span>
+                    Sending...
+                `;
+                loadingSpinner.classList.remove('hidden');
+
+                fetch("{{ route('verification.send') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                })
+                .then(async (response) => {
+                    const json = await response.json();
+                    console.log('Resend response:', json);
+
+                    if (!response.ok) {
+                        if (json.errors) {
+                            Object.values(json.errors).flat().forEach(msg => showNotification(msg, 'error'));
+                        } else if (json.message) {
+                            showNotification(json.message, 'error');
+                        } else {
+                            showNotification('Failed to resend verification email. Please try again.', 'error');
+                        }
+                        throw new Error(json.message || 'Request failed');
+                    }
+                    return json;
+                })
+                .then((data) => {
+                    showNotification(data.message || 'Verification email sent successfully!', 'success');
+                })
+                .catch((error) => {
+                    console.error('Resend error:', error);
+                    if (error.message) {
+                        showNotification(error.message, 'error');
+                    } else {
+                        showNotification('Failed to resend verification email. Please try again.', 'error');
+                    }
+                })
+                .finally(() => {
+                    // Reset button state
+                    resendBtn.disabled = false;
+                    btnText.innerHTML = `
+                        <span class="material-symbols-outlined mr-2" style="font-size: 20px;">
+                            send
+                        </span>
+                        Resend Verification Email
+                    `;
+                    loadingSpinner.classList.add('hidden');
+                });
+            });
+        });
+    </script>
+    <script src="{{ asset('js/functions.js') }}"></script>
 </html>
