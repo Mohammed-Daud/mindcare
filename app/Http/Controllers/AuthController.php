@@ -51,30 +51,50 @@ class AuthController extends Controller
 
         $role = $request->input('role', 'patient'); // Default to patient if not specified
 
+        // First find the user to check email verification before attempting auth
+        $user = User::where('email', $request->email)->first();
+
+        // if ($user && !$user->hasVerifiedEmail()) {
+        //     // If AJAX request, return JSON with redirect URL
+        //     if ($request->expectsJson()) {
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Please verify your email address before logging in.',
+        //             'redirect' => route('verification.notice')
+        //         ], 422);
+        //     }
+
+        //     // For non-AJAX requests, redirect directly
+        //     return redirect()->route('verification.notice');
+        // }
+
         // Use default Laravel authentication
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $request->session()->regenerate();
 
-            // Check if email is verified
-            if (!$user->hasVerifiedEmail()) {
-                Auth::logout();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please verify your email address before logging in.',
-                    'errors' => ['email' => ['Please verify your email address before logging in.']]
-                ], 422);
+            if ($user && !$user->hasVerifiedEmail()) {
+                // If AJAX request, return JSON with redirect URL
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Verify your email address.',
+                        'redirect' => route('verification.notice')
+                    ], 422);
+                }
+                // For non-AJAX requests, redirect directly
+                return redirect()->route('verification.notice');
             }
 
             // For professionals, check if approved
-            if ($user->user_type === User::TYPE_PROFESSIONAL && $user->status !== User::STATUS_ACTIVE) {
-                Auth::logout();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account is not yet approved. Please wait for admin approval.',
-                    'errors' => ['email' => ['Your account is not yet approved. Please wait for admin approval.']]
-                ], 422);
-            }
+            // if ($user->user_type === User::TYPE_PROFESSIONAL && $user->status !== User::STATUS_ACTIVE) {
+            //     Auth::logout();
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Your account is not yet approved. Please wait for admin approval.',
+            //         'errors' => ['email' => ['Your account is not yet approved. Please wait for admin approval.']]
+            //     ], 422);
+            // }
 
             // Determine redirect based on user type
             $redirect = '/';

@@ -48,10 +48,19 @@ Route::post('/password/reset', [\App\Http\Controllers\PasswordResetController::c
 // Email Verification Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'show'])->name('verification.notice');
-    Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])->name('verification.verify');
-    Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->name('verification.send');
+    // Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])->name('verification.verify');
+    Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->middleware(['throttle:6,1'])->name('verification.send');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/home');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Route::get('/email/verify', function () {
+//     return view('auth.verify-email');
+// })->middleware('auth')->name('verification.notice');
 
 // Static Pages
 Route::get('/about', function () {

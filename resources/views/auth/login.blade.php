@@ -288,7 +288,18 @@
                 })
                 .then(async (response) => {
                     const json = await response.json();
+                    console.log(json);
                     if (!response.ok) {
+                        console.log('response not ok',response);
+                        // Handle email verification redirect case
+                        if (json.redirect) {
+                            showNotification(json.message || 'Please verify your email address.', 'info');
+                            setTimeout(() => {
+                                window.location.href = json.redirect;
+                            }, 2000);
+                            return;
+                        }
+
                         if (json.errors) {
                             Object.values(json.errors).flat().forEach(msg => showNotification(msg, 'error'));
                         } else if (json.message) {

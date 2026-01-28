@@ -13,6 +13,7 @@ class EmailVerificationController extends Controller
      */
     public function show(Request $request)
     {
+        // dd($request->user());
         return $request->user()->hasVerifiedEmail()
                     ? redirect()->intended(route('client.dashboard'))
                     : view('auth.verify-email');
