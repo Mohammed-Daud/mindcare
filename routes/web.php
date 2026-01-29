@@ -89,16 +89,18 @@ Route::post('/password/email', [\App\Http\Controllers\PasswordResetController::c
 
 
 // Direct Password Reset Routes (for when email is not working)
-Route::get('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'showForm'])->name('password.direct');
-Route::post('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'generateLink'])->name('password.direct.generate');
-Route::post('/password/direct-reset/update', [\App\Http\Controllers\DirectPasswordResetController::class, 'resetPassword'])->name('password.direct.reset');
+// Route::get('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'showForm'])->name('password.direct');
+
+// Route::post('/password/direct-reset', [\App\Http\Controllers\DirectPasswordResetController::class, 'generateLink'])->name('password.direct.generate');
+// Route::post('/password/direct-reset/update', [\App\Http\Controllers\DirectPasswordResetController::class, 'resetPassword'])->name('password.direct.reset');
 
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 Route::get('/professionals', [App\Http\Controllers\ProfileController::class, 'professionals'])->name('professionals');
 Route::get('/professionals/{slug}', [App\Http\Controllers\ProfileController::class, 'show'])->name('professionals.show');
 
 // Professional Onboarding Routes (used for registration)
-Route::get('/professional/onboarding', [ProfessionalController::class, 'create'])->name('professionals.create');
+Route::get('/doctor/onboarding/step-1', [ProfessionalController::class, 'create'])->name('doctor.onboarding.step1');
+
 Route::post('/professional/onboarding', [ProfessionalController::class, 'store'])->name('professionals.store');
 Route::get('/professional/onboarding/success', [ProfessionalController::class, 'onboardingSuccess'])->name('professionals.onboarding.success');
 

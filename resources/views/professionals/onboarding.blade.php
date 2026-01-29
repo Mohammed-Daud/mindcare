@@ -1,452 +1,174 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Onboarding | MindCare</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
-    <style>
-        .onboarding-section {
-            padding: 150px 0 80px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-        }
-        .onboarding-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .onboarding-header {
-            background-color: var(--primary);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .onboarding-header h1 {
-            color: white;
-            margin-bottom: 10px;
-        }
-        .onboarding-body {
-            padding: 40px;
-        }
-        .form-group {
-            margin-bottom: 25px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--secondary);
-            font-weight: 500;
-        }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        .form-control:focus {
-            border-color: var(--accent);
-            outline: none;
-        }
-        .custom-file {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-        .custom-file-input {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 38px;
-            margin: 0;
-            opacity: 0;
-        }
-        .custom-file-label {
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            z-index: 1;
-            height: 38px;
-            padding: 8px 12px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        /* Phone input styling */
-        .iti {
-            width: 100%;
-        }
-        .phone-input-container {
-            display: flex;
-        }
-        .phone-input-container .iti {
-            flex: 1;
-        }
-        .text-muted {
-            color: #6c757d;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .invalid-feedback {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .btn-block {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-        }
-        .mt-3 {
-            margin-top: 1rem;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .text-center a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        .text-center a:hover {
-            text-decoration: underline;
-        }
-
-        /* Language section styling */
-        .language-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .language-item .form-control {
-            flex: 1;
-        }
-        .language-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-        .btn-add-language {
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn-remove-language {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    @include('partials.header')
-
-    <!-- Onboarding Section -->
-    <section class="onboarding-section">
-        <div class="container">
-            <div class="onboarding-container">
-                <div class="onboarding-header">
-                    <h1>Professional Onboarding..</h1>
-                    <p>Join our team of mental health professionals</p>
+<html class="light" lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <title>{{ config('app.name') }} - Doctor Onboarding</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary": "#13b6ec",
+                            "primary-hover": "#0ea5d6",
+                            "background-light": "#f8fbfc",
+                            "background-dark": "#101d22",
+                            "surface-light": "#ffffff",
+                            "surface-dark": "#1a2c33",
+                            "text-main-light": "#0d181b",
+                            "text-main-dark": "#e0e6e8",
+                            "text-secondary-light": "#4c869a",
+                            "text-secondary-dark": "#94aab2",
+                            "border-light": "#cfe1e7",
+                            "border-dark": "#2c4048",
+                        },
+                        fontFamily: {
+                            "display": ["Lexend", "sans-serif"],
+                            "body": ["Noto Sans", "sans-serif"],
+                        },
+                        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    },
+                },
+            }
+        </script>
+        <style>
+            body { font-family: 'Lexend', 'Noto Sans', sans-serif; }
+        </style>
+    </head>
+    <body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark min-h-screen flex flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark px-10 py-4 bg-surface-light dark:bg-surface-dark sticky top-0 z-50">
+            <div class="flex items-center gap-4">
+                <div class="size-8 text-primary">
+                    <svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
+                    </svg>
                 </div>
-                <div class="onboarding-body">
-                    <form action="{{ route('professionals.store') }}" method="post" enctype="multipart/form-data">
-                        @csrf
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="first_name">First Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" required>
-                                    @error('first_name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                <h2 class="text-xl font-bold leading-tight tracking-[-0.015em] text-text-main-light dark:text-text-main-dark">
+                    {{ config('app.name') }}
+                </h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hidden sm:block">Already have an account?</span>
+                <a class="text-sm font-bold text-primary hover:text-primary-hover" href="{{ route('doctor.onboarding.step1') }}">Log in</a>
+                <button class="ml-4 flex items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-sm font-bold leading-normal hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <span class="material-symbols-outlined text-[18px] mr-2">help</span>
+                    <span class="truncate">Help</span>
+                </button>
+                <a class="ml-4 flex items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-sm font-bold leading-normal hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="{{ route('home') }}">
+                    <span class="material-symbols-outlined text-[18px] mr-2">home</span>
+                    <span class="truncate">Home</span>
+                </a>
+            </div>
+        </header>
+        <main class="flex-1 flex flex-col lg:flex-row">
+            <div class="flex-1 flex justify-center py-10 px-4 sm:px-10 lg:px-20 overflow-y-auto">
+                <div class="w-full max-w-[540px] flex flex-col gap-8">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex gap-6 justify-between items-center">
+                            <p class="text-text-main-light dark:text-text-main-dark text-sm font-bold uppercase tracking-wider">Step 1 of 3: Account Creation</p>
+                            <span class="text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium">Next: Credentials</span>
+                        </div>
+                        <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-2 overflow-hidden">
+                            <div class="h-full rounded-full bg-primary" style="width: 33%;"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <h1 class="text-text-main-light dark:text-text-main-dark tracking-tight text-3xl md:text-4xl font-bold leading-tight">Start Your Practice</h1>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark text-base font-normal leading-relaxed">
+                            Create your secure account to begin treating patients. Your data is encrypted and protected.
+                        </p>
+                    </div>
+                    <form class="flex flex-col gap-6" onsubmit="event.preventDefault();">
+                        <label class="flex flex-col gap-2">
+                            <span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal">Professional Email Address</span>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark text-[20px]">mail</span>
+                                <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-4 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="dr.lastname@example.com" required="" type="email"/>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="last_name">Last Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" required>
-                                    @error('last_name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="flex flex-col gap-2">
+                                <span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal">Create Password</span>
+                                <div class="relative group">
+                                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark text-[20px]">lock</span>
+                                    <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-10 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="••••••••" required="" type="password"/>
+                                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors" type="button">
+                                    <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                                    </button>
                                 </div>
+                            </label>
+                            <label class="flex flex-col gap-2">
+                                <span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal">Confirm Password</span>
+                                <div class="relative">
+                                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark text-[20px]">lock_reset</span>
+                                    <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-4 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="••••••••" required="" type="password"/>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="bg-primary/5 dark:bg-primary/10 p-3 rounded-lg border border-primary/10 dark:border-primary/20 flex gap-3 items-start">
+                            <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">info</span>
+                            <div class="text-xs text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
+                                Password must be at least 8 characters long and include a number, a symbol, and an uppercase letter to meet HIPAA security standards.
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                        <label class="flex gap-3 items-start cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark checked:bg-primary checked:border-primary transition-all" type="checkbox"/>
+                                <span class="material-symbols-outlined absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 text-[16px] pointer-events-none">check</span>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <div class="phone-input-container">
-                                        <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}">
-                                        <input type="hidden" name="country_code" id="country_code" value="{{ old('country_code', '+91') }}">
-                                    </div>
-                                    @error('phone')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    @error('country_code')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="specialization">Specialization</label>
-                            <input type="text" class="form-control @error('specialization') is-invalid @enderror" id="specialization" name="specialization" value="{{ old('specialization') }}">
-                            @error('specialization')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="qualification">Qualification</label>
-                            <input type="text" class="form-control @error('qualification') is-invalid @enderror" id="qualification" name="qualification" value="{{ old('qualification') }}">
-                            @error('qualification')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="license_number">License Number</label>
-                                    <input type="text" class="form-control @error('license_number') is-invalid @enderror" id="license_number" name="license_number" value="{{ old('license_number') }}">
-                                    @error('license_number')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="license_expiry_date">License Expiry Date</label>
-                                    <input type="date" class="form-control @error('license_expiry_date') is-invalid @enderror" id="license_expiry_date" name="license_expiry_date" value="{{ old('license_expiry_date') }}">
-                                    @error('license_expiry_date')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="bio">Professional Bio</label>
-                            <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="4">{{ old('bio') }}</textarea>
-                            @error('bio')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label>Languages Known</label>
-                            <div id="languages-container">
-                                @if(old('languages'))
-                                    @foreach(old('languages') as $index => $language)
-                                        <div class="language-item">
-                                            <input type="text" class="form-control" name="languages[]" placeholder="Language" value="{{ $language }}">
-                                            <select class="form-control" name="proficiency[]">
-                                                @foreach($proficiencyLevels as $value => $label)
-                                                    <option value="{{ $value }}" {{ old('proficiency.'.$index) == $value ? 'selected' : '' }}>{{ $label }}</option>
-                                                @endforeach
-                                            </select>
-                                            <button type="button" class="btn-remove-language" onclick="removeLanguage(this)">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="language-item">
-                                        <input type="text" class="form-control" name="languages[]" placeholder="Language">
-                                        <select class="form-control" name="proficiency[]">
-                                            @foreach($proficiencyLevels as $value => $label)
-                                                <option value="{{ $value }}">{{ $label }}</option>
-                                            @endforeach
-                                        </select>
-                                        <button type="button" class="btn-remove-language" onclick="removeLanguage(this)">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="language-controls">
-                                <button type="button" class="btn-add-language" onclick="addLanguage()">
-                                    <i class="fas fa-plus"></i> Add Another Language
-                                </button>
-                            </div>
-                            @error('languages.*')
-                                <span class="invalid-feedback d-block" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                            @error('proficiency.*')
-                                <span class="invalid-feedback d-block" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="profile_photo">Profile Photo</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input @error('profile_photo') is-invalid @enderror" id="profile_photo" name="profile_photo">
-                                        <label class="custom-file-label" for="profile_photo">Choose file</label>
-                                    </div>
-                                    @error('profile_photo')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    <small class="text-muted">Accepted formats: JPEG, PNG, JPG, GIF. Max size: 2MB</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="cv">CV/Resume</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input @error('cv') is-invalid @enderror" id="cv" name="cv">
-                                        <label class="custom-file-label" for="cv">Choose file</label>
-                                    </div>
-                                    @error('cv')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    <small class="text-muted">Accepted formats: PDF, DOC, DOCX. Max size: 2MB</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-block">Submit Application</button>
+                            <span class="text-sm text-text-secondary-light dark:text-text-secondary-dark leading-normal select-none group-hover:text-text-main-light dark:group-hover:text-text-main-dark transition-colors">
+                            I agree to the <a class="text-primary underline decoration-primary/30 hover:decoration-primary" href="#">Terms of Service</a> and <a class="text-primary underline decoration-primary/30 hover:decoration-primary" href="#">Privacy Policy</a>.
+                            </span>
+                        </label>
+                        <button class="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover text-white h-12 px-6 text-base font-bold leading-normal tracking-[0.015em] shadow-sm hover:shadow-md transition-all" type="submit">
+                        Create Secure Account
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        </button>
+                        <div class="flex justify-center items-center gap-2 mt-2">
+                            <span class="material-symbols-outlined text-green-600 text-[18px]">verified_user</span>
+                            <span class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">HIPAA Compliant &amp; Secure</span>
                         </div>
                     </form>
-
-                    <div class="mt-3 text-center">
-                        <p>Already have an account? <a href="{{ route('professional.login') }}">Login</a></p>
+                </div>
+            </div>
+            <div class="hidden lg:flex lg:w-[45%] xl:w-[40%] bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark relative overflow-hidden flex-col justify-between p-12">
+                <div class="absolute inset-0 z-0 opacity-40 dark:opacity-20 bg-gradient-to-br from-primary/10 via-background-light to-primary/5 pointer-events-none"></div>
+                <div class="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl pointer-events-none"></div>
+                <div class="relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wide mb-6">
+                        Trusted by 5000+ Psychiatrists
+                    </div>
+                    <h3 class="text-3xl font-bold text-text-main-light dark:text-text-main-dark mb-4 leading-snug">
+                        Reinventing how you connect with patients.
+                    </h3>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark text-lg leading-relaxed">
+                        "PsychiatryPortal has transformed my private practice. The onboarding was seamless, and the secure environment gives my patients peace of mind."
+                    </p>
+                </div>
+                <div class="relative z-10 mt-auto">
+                    <div class="flex items-center gap-4">
+                        <div class="h-12 w-12 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border-2 border-white dark:border-slate-600 shadow-sm relative" data-alt="Portrait of a smiling doctor in a white coat">
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-slate-600 dark:to-slate-700 flex items-center justify-center text-primary dark:text-white font-bold text-lg">JS</div>
+                        </div>
+                        <div>
+                            <p class="text-text-main-light dark:text-text-main-dark font-bold text-sm">Dr. Julia Sarah</p>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark text-xs">Clinical Psychiatrist, MD</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-8 border-t border-border-light dark:border-border-dark flex justify-between items-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
+                        <span>© {{ date('Y') }} {{ config('app.name') }}.</span>
+                        <div class="flex gap-4">
+                            <a class="hover:text-primary" href="#">Privacy</a>
+                            <a class="hover:text-primary" href="#">Terms</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    @include('partials.footer')
-
-    <script src="{{ asset('js/script.js') }}"></script>
-    <script>
-        // Display the name of the file selected
-        document.querySelectorAll(".custom-file-input").forEach(function(input) {
-            input.addEventListener("change", function() {
-                var fileName = this.value.split("\\").pop();
-                this.nextElementSibling.innerHTML = fileName;
-            });
-        });
-
-        // Initialize the international telephone input
-        document.addEventListener('DOMContentLoaded', function() {
-            var phoneInput = document.querySelector("#phone");
-            var countryCodeInput = document.querySelector("#country_code");
-
-            var iti = window.intlTelInput(phoneInput, {
-                initialCountry: "in", // Set India as default
-                separateDialCode: true,
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
-                preferredCountries: ["in", "us", "gb", "ca", "au"]
-            });
-
-            // Set the initial country code value
-            countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
-
-            // Update the country code when the user changes it
-            phoneInput.addEventListener("countrychange", function() {
-                countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
-            });
-
-            // Handle form submission to ensure the country code is included
-            document.querySelector("form").addEventListener("submit", function() {
-                countryCodeInput.value = "+" + iti.getSelectedCountryData().dialCode;
-            });
-        });
-
-        // Functions for handling languages
-        function addLanguage() {
-            const container = document.getElementById('languages-container');
-            const languageItems = container.querySelectorAll('.language-item');
-
-            // Clone the first language item
-            const newItem = languageItems[0].cloneNode(true);
-
-            // Clear the values
-            newItem.querySelector('input[name="languages[]"]').value = '';
-
-            // Add the new item to the container
-            container.appendChild(newItem);
-        }
-
-        function removeLanguage(button) {
-            const container = document.getElementById('languages-container');
-            const languageItems = container.querySelectorAll('.language-item');
-
-            // Don't remove if it's the only one
-            if (languageItems.length > 1) {
-                button.closest('.language-item').remove();
-            } else {
-                // If it's the last one, just clear the values
-                const item = button.closest('.language-item');
-                item.querySelector('input[name="languages[]"]').value = '';
-                item.querySelector('select[name="proficiency[]"]').selectedIndex = 0;
-            }
-        }
-    </script>
-</body>
+        </main>
+    </body>
 </html>
