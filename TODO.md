@@ -12,3 +12,4 @@
             to is case me already register dikhata hai. login karne pe verify pe redirect karta hai. verify pe back to login hai uspe click karne se home pe ja raha hai
 - [] register karte hi login ho jayega email verify page dikhane ke liye to maan liya verify nahi kiya fir se login pe aya to verify email page dikhao
 - [] password/reset
+- [] 'password' => 'required|string|min:8|max:128|regex:/^(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/', set some central location
