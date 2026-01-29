@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
@@ -63,9 +64,13 @@ class ClientController extends Controller
         // Send verification email using Laravel's built-in verification
         $user->sendEmailVerificationNotification();
 
+        // Log in the user automatically
+        Auth::login($user);
+
         return response()->json([
             'success' => true,
             'message' => 'Registration successful! Please check your email to verify your account.',
+            'redirect' => route('verification.notice'),
             'data' => [
                 'user_id' => $user->id,
                 'email' => $user->email,

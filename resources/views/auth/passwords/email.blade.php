@@ -113,7 +113,7 @@
                         <div class="text-center">
                             <a class="inline-flex items-center gap-1.5 text-secondary hover:text-primary dark:text-gray-400 dark:hover:text-primary text-sm font-semibold transition-colors duration-200 group" href="{{ route('login') }}">
                             <span class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                            Remember your password? Log in
+                                Remember your password? Log in
                             </a>
                         </div>
                     </div>

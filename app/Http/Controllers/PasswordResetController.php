@@ -43,75 +43,31 @@ class PasswordResetController extends Controller
 
         Log::info("Password reset requested for email: {$email}");
 
-        // Check if the email exists in any of our user tables
-        // set user type based
-        if ($request->user_type == 'user') {
-            $userType = 'user';
-            $userFound = User::where('email', $email)->exists();
-            Log::info("Found user with email: {$email}");
-        } elseif ( $request->user_type == 'professional' ) {
-            $userType = 'professional';
-            $userFound = Professional::where('email', $email)->exists();
-            Log::info("Found professional with email: {$email}");
-        } elseif ( $request->user_type == 'client' ) {
-            $userType = 'client';
-            $userFound = Client::where('email', $email)->exists();
-            Log::info("Found client with email: {$email}");
-        }
+        $userFound = User::where('email', $email)->exists();
 
         // Only proceed if we found a user
         if ($userFound) {
             try {
                 // Generate a token
                 $token = Str::random(64);
-                Log::info("Generated token for {$email}: {$token}");
-
-                // Store the token in the database
-                try {
-                    PasswordResetToken::updateOrCreate(
-                        ['email' => $email],
-                        [
-                            'token' => $token,
-                            'user_type' => $userType,
-                            'created_at' => now()
-                        ]
-                    );
-                } catch (\Exception $e) {
-                    // If user_type column doesn't exist, try without it
-                    if (strpos($e->getMessage(), 'user_type') !== false) {
-                        Log::warning("user_type column not found, using fallback method");
-                        PasswordResetToken::updateOrCreate(
-                            ['email' => $email],
-                            [
-                                'token' => $token,
-                                'created_at' => now()
-                            ]
-                        );
-                    } else {
-                        throw $e;
-                    }
-                }
-                Log::info("Stored token in database for {$email}");
+                PasswordResetToken::updateOrCreate(
+                    ['email' => $email],
+                    [
+                        'token' => $token,
+                        'created_at' => now()
+                    ]
+                );
 
                 // Create the reset URL with properly encoded email
                 $resetUrl = url("/password/reset/{$token}?email=" . urlencode($email) . "&usertype=" . $userType);
-                Log::info("Reset URL for {$email}: {$resetUrl}");
-
-                // Log mail configuration
-                Log::info("Mail configuration: Driver=" . config('mail.default') .
-                          ", Host=" . config('mail.mailers.smtp.host') .
-                          ", Port=" . config('mail.mailers.smtp.port') .
-                          ", From=" . config('mail.from.address'));
 
                 // Send the email with error handling
                 try {
                     // Create the mailable instance
                     $mailable = new PasswordReset($resetUrl, $userType);
-                    Log::info("Created mailable for {$email}");
 
                     // Send the email
                     Mail::to($email)->send($mailable);
-                    Log::info("Password reset email sent to {$email} as {$userType}");
 
                     // For debugging, let's also log the token to make it easier to test
                     Log::info("For testing purposes, reset token for {$email} is: {$token}");

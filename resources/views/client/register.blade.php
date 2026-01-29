@@ -362,9 +362,13 @@
                         // Reset password strength meter
                         strengthBars.forEach(bar => bar.classList.add('hidden'));
 
-                        // Redirect to login page after 2 seconds
+                        // Redirect to email verification page after 2 seconds
                         setTimeout(() => {
-                            window.location.href = APP_URL + '/client/login';
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                window.location.href = APP_URL + '/email/verify';
+                            }
                         }, 2000);
                     } else {
                         // Handle server-side validation errors

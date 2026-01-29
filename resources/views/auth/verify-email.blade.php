@@ -113,9 +113,9 @@
                             <p class="text-xs text-slate-500 dark:text-slate-400">Your data is encrypted.</p>
                         </div>
                     </div>
-                    <a class="group flex items-center text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[#111718] dark:hover:text-white transition-colors" href="#">
-                    Return to Sign In
-                    <span class="material-symbols-outlined ml-1 transition-transform group-hover:translate-x-1" style="font-size: 18px;">arrow_forward</span>
+                    <a class="group flex items-center text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[#111718] dark:hover:text-white transition-colors" href="{{ route('login') }}">
+                        Return to Sign In
+                        <span class="material-symbols-outlined ml-1 transition-transform group-hover:translate-x-1" style="font-size: 18px;">arrow_forward</span>
                     </a>
                 </div>
             </div>
