@@ -90,7 +90,7 @@
                                 <label class="flex flex-col w-full">
                                     <p class="text-text-main dark:text-gray-200 text-base font-medium leading-normal pb-2">Primary Specializations</p>
                                     <div class="relative">
-                                        <select class="form-input flex w-full resize-none overflow-hidden rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-14 placeholder:text-text-sub p-[15px] text-base font-normal leading-normal appearance-none pr-10 cursor-pointer">
+                                        <select id="specialization-select" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-14 placeholder:text-text-sub p-[15px] text-base font-normal leading-normal appearance-none pr-10 cursor-pointer">
                                             <option disabled="" selected="" value="">Select specializations (e.g. Anxiety, PTSD)</option>
                                             <option value="anxiety">Anxiety Disorders</option>
                                             <option value="depression">Clinical Depression</option>
@@ -103,25 +103,8 @@
                                     </div>
                                 </label>
                                 <!-- Selected Chips -->
-                                <div class="flex gap-3 flex-wrap pt-1">
-                                    <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#e7f2f3] dark:bg-slate-700 pl-4 pr-3 transition-colors hover:bg-primary/20">
-                                        <p class="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Clinical Depression</p>
-                                        <button class="size-4 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-text-sub dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-[16px]">close</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#e7f2f3] dark:bg-slate-700 pl-4 pr-3 transition-colors hover:bg-primary/20">
-                                        <p class="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">Anxiety Disorders</p>
-                                        <button class="size-4 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-text-sub dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-[16px]">close</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#e7f2f3] dark:bg-slate-700 pl-4 pr-3 transition-colors hover:bg-primary/20">
-                                        <p class="text-text-main dark:text-gray-200 text-sm font-medium leading-normal">PTSD</p>
-                                        <button class="size-4 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-text-sub dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-[16px]">close</span>
-                                        </button>
-                                    </div>
+                                <div id="specialization-chips" class="flex gap-3 flex-wrap pt-1">
+
                                 </div>
                             </div>
                             <!-- License & Experience Grid -->
@@ -144,17 +127,21 @@
                                     <p class="text-text-main dark:text-gray-200 text-base font-medium leading-normal">Education</p>
                                 </div>
                                 <div class="flex flex-col gap-3">
-                                    <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-start">
-                                        <input class="form-input w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-12 placeholder:text-text-sub/70 px-4 text-base" placeholder="Degree (e.g. MD Psychiatry)" type="text"/>
-                                        <input class="form-input w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-12 placeholder:text-text-sub/70 px-4 text-base" placeholder="University / Institution" type="text"/>
-                                        <button class="h-12 w-12 flex items-center justify-center rounded-lg border border-border-color dark:border-slate-600 text-text-sub hover:bg-background-light dark:hover:bg-slate-700 hover:text-red-500 transition-colors">
-                                        <span class="material-symbols-outlined">delete</span>
-                                        </button>
+                                    <div class="flex flex-col gap-3" id="education-rows">
+                                        <div class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-start education-row">
+                                            <input class="form-input w-full rounded-lg h-12 px-4" placeholder="Degree (e.g. MD Psychiatry)" type="text"/>
+                                            <input class="form-input w-full rounded-lg h-12 px-4" placeholder="University / Institution" type="text"/>
+                                            <button class="delete-education h-12 w-12 flex items-center justify-center rounded-lg border text-text-sub hover:text-red-500">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button class="flex items-center gap-2 text-primary hover:text-primary-dark font-medium text-sm self-start mt-1">
-                                    <span class="material-symbols-outlined text-[20px]">add_circle</span>
-                                    Add another qualification
+
+                                    <button id="add-education" class="flex items-center gap-2 text-primary font-medium text-sm mt-1">
+                                        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                                        Add another qualification
                                     </button>
+
                                 </div>
                             </div>
                             <!-- Bio -->
@@ -163,8 +150,8 @@
                                     <p class="text-text-main dark:text-gray-200 text-base font-medium leading-normal">Professional Biography</p>
                                     <span class="text-xs text-text-sub">Min 150 characters</span>
                                 </div>
-                                <textarea class="form-input flex w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 min-h-[140px] placeholder:text-text-sub/70 p-[15px] text-base font-normal leading-normal resize-y" placeholder="Share your approach to mental health care, your philosophy, and what patients can expect during a session..."></textarea>
-                                <p class="text-xs text-text-sub mt-2 text-right">0/1000</p>
+                                <textarea id="bio" class="form-input flex w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 min-h-[140px] placeholder:text-text-sub/70 p-[15px] text-base font-normal leading-normal resize-y" placeholder="Share your approach to mental health care, your philosophy, and what patients can expect during a session..."></textarea>
+                                <p id="bio-count" class="text-xs text-text-sub mt-2 text-right">0/1000</p>
                             </label>
                         </div>
                         <!-- Actions -->
@@ -174,7 +161,7 @@
                             </button>
                             <div class="flex items-center gap-4">
                                 <span class="text-sm text-text-sub dark:text-gray-500 hidden sm:block italic">Draft saved automatically</span>
-                                <button class="flex items-center justify-center h-12 px-8 rounded-lg bg-primary hover:bg-primary-dark text-white dark:text-slate-900 font-bold shadow-md hover:shadow-lg transition-all transform active:scale-95">
+                                <button id="save-btn" class="flex items-center justify-center h-12 px-8 rounded-lg bg-primary hover:bg-primary-dark text-white dark:text-slate-900 font-bold shadow-md hover:shadow-lg transition-all transform active:scale-95">
                                 Save &amp; Continue
                                 </button>
                             </div>
@@ -210,4 +197,97 @@
         <!-- Background Decoration (Optional for subtle texture) -->
         <div class="fixed inset-0 pointer-events-none z-[-1] opacity-50" style="background-image: radial-gradient(#cfe5e7 1px, transparent 1px); background-size: 32px 32px;"></div>
     </body>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        /* ===== SPECIALIZATIONS ===== */
+        const select = document.getElementById('specialization-select');
+        const chips = document.getElementById('specialization-chips');
+        let selected = [];
+
+        const renderChips = () => {
+            chips.innerHTML = selected.map(s => `
+                <span class="flex items-center gap-2 bg-border-color px-3 py-1 rounded-lg text-sm">
+                    ${s}
+                    <button data-value="${s}" class="remove-chip">✕</button>
+                </span>
+            `).join('');
+        };
+
+        select.addEventListener('change', () => {
+            if (select.value && !selected.includes(select.value)) {
+                selected.push(select.value);
+                renderChips();
+            }
+            select.value = '';
+        });
+
+        chips.addEventListener('click', e => {
+            if (!e.target.classList.contains('remove-chip')) return;
+            selected = selected.filter(s => s !== e.target.dataset.value);
+            renderChips();
+        });
+
+        /* ===== EDUCATION ===== */
+        const educationRows = document.getElementById('education-rows');
+        const addEducation = document.getElementById('add-education');
+
+        const syncEducation = () => {
+            const rows = educationRows.querySelectorAll('.education-row');
+            rows.forEach(r => {
+                const del = r.querySelector('.delete-education');
+                del.disabled = rows.length === 1;
+                del.classList.toggle('opacity-40', rows.length === 1);
+            });
+        };
+
+        addEducation.addEventListener('click', () => {
+            const row = educationRows.firstElementChild.cloneNode(true);
+            row.querySelectorAll('input').forEach(i => i.value = '');
+            educationRows.appendChild(row);
+            syncEducation();
+        });
+
+        educationRows.addEventListener('click', e => {
+            if (e.target.closest('.delete-education') && educationRows.children.length > 1) {
+                e.target.closest('.education-row').remove();
+                syncEducation();
+            }
+        });
+
+        syncEducation();
+
+        /* ===== BIO ===== */
+        const bio = document.getElementById('bio');
+        const bioCount = document.getElementById('bio-count');
+
+        bio.addEventListener('input', () => {
+            const len = bio.value.length;
+            bioCount.textContent = `${len}/1000`;
+            bioCount.className =
+                len < 150 ? 'text-xs text-red-500 text-right'
+                : len > 900 ? 'text-xs text-yellow-500 text-right'
+                : 'text-xs text-text-sub text-right';
+        });
+
+        /* ===== SUBMIT ===== */
+        document.getElementById('save-btn').addEventListener('click', () => {
+            if (bio.value.length < 150) {
+                alert('Biography must be at least 150 characters.');
+                return;
+            }
+
+            const education = [...educationRows.children].map(r => {
+                const [d, i] = r.querySelectorAll('input');
+                return { degree: d.value, institution: i.value };
+            }).filter(e => e.degree || e.institution);
+
+            console.log({ selected, education, bio: bio.value });
+        });
+
+    });
+    </script>
+
+
 </html>
