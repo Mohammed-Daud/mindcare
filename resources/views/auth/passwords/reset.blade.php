@@ -169,6 +169,9 @@
         </div>
     </body>
     <script>
+        // Password requirements from centralized service
+        const passwordRequirements = @json(\App\Services\PasswordValidationService::getRequirements());
+
         document.addEventListener('DOMContentLoaded', function() {
             const passwordInput = document.getElementById('new-password');
             const confirmPasswordInput = document.getElementById('confirm-password');
@@ -189,27 +192,17 @@
                 icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
             });
 
-            // Password strength checker
+            // Password strength checker using centralized requirements
             function checkPasswordStrength(password) {
                 let strength = 0;
-                const checks = {
-                    length: password.length >= 8,
-                    number: /\d/.test(password),
-                    special: /[^a-zA-Z0-9]/.test(password),
-                    uppercase: /[A-Z]/.test(password)
-                };
 
-                // Update requirement indicators
-                updateRequirement('length', checks.length);
-                updateRequirement('number', checks.number);
-                updateRequirement('special', checks.special);
-                updateRequirement('uppercase', checks.uppercase);
-
-                // Calculate strength
-                if (checks.length) strength++;
-                if (checks.number) strength++;
-                if (checks.special) strength++;
-                if (checks.uppercase) strength++;
+                // Update requirement indicators based on centralized requirements
+                Object.keys(passwordRequirements).forEach(key => {
+                    const requirement = passwordRequirements[key];
+                    const passed = new RegExp(requirement.regex).test(password);
+                    updateRequirement(key, passed);
+                    if (passed) strength++;
+                });
 
                 // Update strength meter
                 updateStrengthMeter(strength);

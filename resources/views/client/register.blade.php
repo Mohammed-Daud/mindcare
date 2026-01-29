@@ -250,6 +250,9 @@
             // App URL from .env
             const APP_URL = "{{ config('app.url') }}";
 
+            // Password requirements from centralized service
+            const passwordRequirements = @json(\App\Services\PasswordValidationService::getRequirements());
+
             // Password visibility toggle
             const passwordInput = document.getElementById('password');
             const visibilityToggle = passwordInput.nextElementSibling;
@@ -261,24 +264,19 @@
                 visibilityIcon.textContent = type === 'password' ? 'visibility_off' : 'visibility';
             });
 
-            // Password strength checker
+            // Password strength checker using centralized requirements
             const strengthBars = document.querySelectorAll('.flex.gap-1.mt-1.h-1 > div > div');
             const strengthContainers = document.querySelectorAll('.flex.gap-1.mt-1.h-1 > div');
 
             function checkPasswordStrength(password) {
                 let strength = 0;
 
-                // Check minimum length (8 characters)
-                if (password.length >= 8) strength++;
-
-                // Check for number
-                if (/[0-9]/.test(password)) strength++;
-
-                // Check for symbol/special character
-                if (/[^a-zA-Z0-9]/.test(password)) strength++;
-
-                // Bonus points for longer passwords
-                if (password.length >= 12) strength++;
+                // Update strength based on centralized requirements
+                Object.keys(passwordRequirements).forEach(key => {
+                    const requirement = passwordRequirements[key];
+                    const passed = new RegExp(requirement.regex).test(password);
+                    if (passed) strength++;
+                });
 
                 return Math.min(strength, 4);
             }

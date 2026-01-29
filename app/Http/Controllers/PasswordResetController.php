@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PasswordReset;
-use App\Models\User;
-use App\Models\Professional;
-use App\Models\Client;
 use App\Models\PasswordResetToken;
+use App\Models\User;
+use App\Services\PasswordValidationService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use App\Mail\PasswordReset;
 
 class PasswordResetController extends Controller
 {
@@ -198,13 +198,8 @@ class PasswordResetController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|string|min:8|max:128|regex:/^(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/|confirmed',
-        ], [
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least 8 characters long.',
-            'password.regex' => 'Password must include at least one number and one special character.',
-            'password.confirmed' => 'Password confirmation does not match.',
-        ]);
+            'password' => PasswordValidationService::getRuleWithConfirmation(),
+        ], PasswordValidationService::getMessages());
 
         // Make sure to use the decoded email
         $email = $request->email;

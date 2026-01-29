@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\PasswordValidationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -36,18 +38,15 @@ class ClientController extends Controller
                 },
             ],
             'pronouns' => 'nullable|string|max:50',
-            'password' => 'required|string|min:8|max:128|regex:/^(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/',
+            'password' => PasswordValidationService::getRule(),
             'terms' => 'accepted'
-        ], [
+        ], array_merge(PasswordValidationService::getMessages(), [
             'fullname.required' => 'Full name is required.',
             'fullname.regex' => 'Full name should only contain letters and spaces.',
             'email.required' => 'Email address is required.',
             'email.email' => 'Please enter a valid email address.',
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least 8 characters long.',
-            'password.regex' => 'Password must include at least one number and one special character.',
             'terms.accepted' => 'You must agree to the Terms of Service and Privacy Policy.'
-        ]);
+        ]));
 
         // log validation result
         // Log::info('Client registration validation result:', $validated);
