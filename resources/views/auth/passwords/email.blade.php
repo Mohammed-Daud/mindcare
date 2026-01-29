@@ -6,7 +6,8 @@
     <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-        <title>Forgot Password - PsychConsult</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>Forgot Password - {{ config('app.name') }}</title>
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com" rel="preconnect"/>
         <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -86,7 +87,7 @@
                             </p>
                         </div>
                         <!-- Form Section -->
-                        <form action="#" class="flex flex-col gap-5 mt-2" onsubmit="event.preventDefault();">
+                        <form id="passwordResetForm" class="flex flex-col gap-5 mt-2" onsubmit="event.preventDefault();">
                             <div class="space-y-2">
                                 <label class="block text-sm font-semibold text-gray-900 dark:text-gray-200 ml-1" for="email">
                                 Email Address
@@ -95,12 +96,20 @@
                                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                         <span class="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">mail</span>
                                     </div>
-                                    <input class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" id="email" placeholder="name@example.com" required="" type="email"/>
+                                    <input class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" id="email" name="email" placeholder="name@example.com" required="" type="email"/>
                                 </div>
                             </div>
-                            <button class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-gray-900 font-bold py-3.5 px-4 rounded-lg shadow-md shadow-primary/20 transition-all duration-200 transform hover:-translate-y-0.5" type="submit">
-                            <span>Send Reset Instructions</span>
-                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            <button id="resetBtn" class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-gray-900 font-bold py-3.5 px-4 rounded-lg shadow-md shadow-primary/20 transition-all duration-200 transform hover:-translate-y-0.5" type="submit">
+                                <span id="btnText">
+                                    <span>Send Reset Instructions</span>
+                                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                </span>
+                                <div id="loadingSpinner" class="hidden ml-2">
+                                    <svg class="animate-spin h-5 w-5 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
                             </button>
                         </form>
                         <!-- Divider -->
@@ -135,6 +144,78 @@
             </div>
         </div>
     </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordResetForm = document.getElementById('passwordResetForm');
+            const resetBtn = document.getElementById('resetBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            passwordResetForm.addEventListener('submit', function() {
+                // Get form data
+                const formData = new FormData(passwordResetForm);
+                const email = formData.get('email');
+
+                // Show loading state
+                resetBtn.disabled = true;
+                btnText.innerHTML = `
+                    <span>Sending...</span>
+                    <span class="material-symbols-outlined text-sm">hourglass_empty</span>
+                `;
+                loadingSpinner.classList.remove('hidden');
+
+                fetch("{{ url('/password/email') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+                .then(async (response) => {
+                    const json = await response.json();
+                    console.log('Password reset response:', json);
+
+                    if (!response.ok) {
+                        if (json.errors) {
+                            Object.values(json.errors).flat().forEach(msg => showNotification(msg, 'error'));
+                        } else if (json.message) {
+                            showNotification(json.message, 'error');
+                        } else {
+                            showNotification('Failed to send password reset email. Please try again.', 'error');
+                        }
+                        throw new Error(json.message || 'Request failed');
+                    }
+                    return json;
+                })
+                .then((data) => {
+                    showNotification(data.message || 'Password reset instructions sent to your email!', 'success');
+
+                    // Clear form
+                    passwordResetForm.reset();
+                })
+                .catch((error) => {
+                    console.error('Password reset error:', error);
+                    if (error.message) {
+                        showNotification(error.message, 'error');
+                    } else {
+                        showNotification('Failed to send password reset email. Please try again.', 'error');
+                    }
+                })
+                .finally(() => {
+                    // Reset button state
+                    resetBtn.disabled = false;
+                    btnText.innerHTML = `
+                        <span>Send Reset Instructions</span>
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    `;
+                    loadingSpinner.classList.add('hidden');
+                });
+            });
+        });
+    </script>
+    <script src="{{ asset('js/functions.js') }}"></script>
 </html>
 
 <!-- <form method="POST" action="{{ url('/password/email') }}">

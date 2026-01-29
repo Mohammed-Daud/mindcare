@@ -37,16 +37,12 @@ class PasswordResetController extends Controller
         $request->validate(['email' => 'required|email']);
 
         $email = $request->email;
-        $userType = null;
-        $userFound = false;
-        $status = "Server error, please try again later.";
+        $user = User::where('email', $email)->first();
 
         Log::info("Password reset requested for email: {$email}");
 
-        $userFound = User::where('email', $email)->exists();
-
         // Only proceed if we found a user
-        if ($userFound) {
+        if ($user) {
             try {
                 // Generate a token
                 $token = Str::random(64);
@@ -59,12 +55,12 @@ class PasswordResetController extends Controller
                 );
 
                 // Create the reset URL with properly encoded email
-                $resetUrl = url("/password/reset/{$token}?email=" . urlencode($email) . "&usertype=" . $userType);
+                $resetUrl = url("/password/reset/{$token}?email=" . urlencode($email));
 
                 // Send the email with error handling
                 try {
                     // Create the mailable instance
-                    $mailable = new PasswordReset($resetUrl, $userType);
+                    $mailable = new PasswordReset($resetUrl, $user);
 
                     // Send the email
                     Mail::to($email)->send($mailable);
@@ -72,26 +68,53 @@ class PasswordResetController extends Controller
                     // For debugging, let's also log the token to make it easier to test
                     Log::info("For testing purposes, reset token for {$email} is: {$token}");
 
-                    $status = "We have emailed your password reset link!";
+                    // Return JSON response for AJAX requests
+                    if ($request->expectsJson()) {
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'We have emailed your password reset link!'
+                        ]);
+                    }
+
+                    return back()->with('status', 'We have emailed your password reset link!');
 
                 } catch (\Exception $e) {
                     Log::error("Failed to send password reset email: " . $e->getMessage());
-                    Log::error("Stack trace: " . $e->getTraceAsString());
+
+                    if ($request->expectsJson()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Failed to send password reset email. Please try again.'
+                        ], 500);
+                    }
+
                     return back()->withErrors(['email' => 'Failed to send password reset email: ' . $e->getMessage()]);
                 }
             } catch (\Exception $e) {
                 Log::error("Password reset error: " . $e->getMessage());
-                Log::error("Stack trace: " . $e->getTraceAsString());
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'An error occurred while processing your request.'
+                    ], 500);
+                }
+
                 return back()->withErrors(['email' => 'An error occurred: ' . $e->getMessage()]);
             }
         } else {
             Log::info("No user found with email: {$email}");
-            $status = "No user found with email: {$email}";
+
+            // For security reasons, we always show success message even if email doesn't exist
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'If an account with that email exists, we have sent a password reset link!'
+                ]);
+            }
+
+            return back()->with('status', 'If an account with that email exists, we have sent a password reset link!');
         }
-        // For security reasons, we always show success message even if email doesn't exist
-
-
-        return back()->with('status', $status);
     }
 
     /**
@@ -147,7 +170,7 @@ class PasswordResetController extends Controller
             // dd();
 
             // Check if the token is expired (60 minutes)
-            if (Carbon::parse($resetToken->created_at)->addMinutes(60)->isPast()) {
+            if (Carbon::parse($resetToken->created_at)->addMinutes(config('auth.passwords.users.expire'))->isPast()) {
                 Log::warning("Expired reset token: {$token} for email: {$email}, created at: {$resetToken->created_at}");
                 return redirect()->route('password.request')
                     ->withErrors(['email' => 'Password reset token has expired.']);

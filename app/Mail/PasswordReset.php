@@ -8,21 +8,22 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\User;
 
 class PasswordReset extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $resetUrl;
-    public $userType;
+    public $user;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($resetUrl, $userType = 'user')
+    public function __construct($resetUrl, User $user)
     {
         $this->resetUrl = $resetUrl;
-        $this->userType = $userType;
+        $this->user = $user;
     }
 
     /**
@@ -31,7 +32,7 @@ class PasswordReset extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset Your Password - MindCare',
+            subject: 'Reset Your Password - ' . config('app.name'),
         );
     }
 
@@ -44,7 +45,7 @@ class PasswordReset extends Mailable
             markdown: 'emails.password-reset',
             with: [
                 'resetUrl' => $this->resetUrl,
-                'userType' => $this->userType,
+                'user' => $this->user
             ],
         );
     }
