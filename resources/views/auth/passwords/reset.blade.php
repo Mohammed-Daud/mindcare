@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-        <title>Reset Password - PsychConsult</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>Reset Password - {{ config('app.name') }}</title>
         <link href="https://fonts.googleapis.com" rel="preconnect"/>
         <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
@@ -72,7 +73,7 @@
                                 Create a secure password to protect your account and maintain your privacy.
                             </p>
                         </div>
-                        <form action="#" class="flex flex-col gap-6" onsubmit="event.preventDefault();">
+                        <form id="passwordResetForm" class="flex flex-col gap-6" onsubmit="event.preventDefault();">
                             <input type="hidden" name="token" value="{{ $token }}">
                             <input type="hidden" name="email" value="{{ $email }}">
                             <div class="space-y-2">
@@ -83,32 +84,41 @@
                                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                         <span class="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">lock</span>
                                     </div>
-                                    <input class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" id="new-password" placeholder="Create new password" required="" type="password"/>
-                                    <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" type="button">
+                                    <input class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" id="new-password" name="password" placeholder="Create new password" required="" type="password" minlength="8" maxlength="128" pattern="(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}" title="Password must be at least 8 characters long and include at least one number and one special character"/>
+                                    <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" type="button" id="togglePassword">
                                     <span class="material-symbols-outlined">visibility</span>
                                     </button>
                                 </div>
-                                <div class="mt-3 grid grid-cols-4 gap-2">
-                                    <div class="h-1.5 bg-primary rounded-full"></div>
-                                    <div class="h-1.5 bg-primary rounded-full"></div>
-                                    <div class="h-1.5 bg-primary rounded-full"></div>
-                                    <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                                <!-- Password Strength Meter -->
+                                <div class="mt-3 grid grid-cols-4 gap-2" id="strengthMeter">
+                                    <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                        <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                                    </div>
+                                    <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                        <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                                    </div>
+                                    <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                        <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                                    </div>
+                                    <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                                        <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                                    </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-y-2 mt-4 ml-1">
-                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400" id="req-length">
+                                        <span class="material-symbols-outlined text-sm text-gray-300 dark:text-gray-600" id="check-length">radio_button_unchecked</span>
                                         <span>At least 8 characters</span>
                                     </div>
-                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400" id="req-number">
+                                        <span class="material-symbols-outlined text-sm text-gray-300 dark:text-gray-600" id="check-number">radio_button_unchecked</span>
                                         <span>Includes a number</span>
                                     </div>
-                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400" id="req-special">
+                                        <span class="material-symbols-outlined text-sm text-gray-300 dark:text-gray-600" id="check-special">radio_button_unchecked</span>
                                         <span>Special character</span>
                                     </div>
-                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400">
-                                        <span class="material-symbols-outlined text-sm text-gray-300 dark:text-gray-600">radio_button_unchecked</span>
+                                    <div class="flex items-center gap-2 text-xs text-secondary dark:text-gray-400" id="req-uppercase">
+                                        <span class="material-symbols-outlined text-sm text-gray-300 dark:text-gray-600" id="check-uppercase">radio_button_unchecked</span>
                                         <span>Uppercase letter</span>
                                     </div>
                                 </div>
@@ -121,12 +131,20 @@
                                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                         <span class="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">lock_person</span>
                                     </div>
-                                    <input class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" id="confirm-password" placeholder="Confirm your password" required="" type="password"/>
+                                    <input class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" id="confirm-password" name="password_confirmation" placeholder="Confirm your password" required="" type="password"/>
                                 </div>
                             </div>
-                            <button class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-gray-900 font-bold py-4 px-4 rounded-lg shadow-md shadow-primary/20 transition-all duration-200 transform hover:-translate-y-0.5 mt-2" type="submit">
-                            <span>Update Password</span>
-                            <span class="material-symbols-outlined">verified_user</span>
+                            <button id="resetBtn" class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-gray-900 font-bold py-4 px-4 rounded-lg shadow-md shadow-primary/20 transition-all duration-200 transform hover:-translate-y-0.5 mt-2" type="submit">
+                                <span id="btnText">
+                                    <span>Update Password</span>
+                                    <span class="material-symbols-outlined">verified_user</span>
+                                </span>
+                                <div id="loadingSpinner" class="hidden ml-2">
+                                    <svg class="animate-spin h-5 w-5 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
                             </button>
                         </form>
                         <div class="text-center">
@@ -150,6 +168,165 @@
             </div>
         </div>
     </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('new-password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordResetForm = document.getElementById('passwordResetForm');
+            const resetBtn = document.getElementById('resetBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const strengthMeter = document.getElementById('strengthMeter');
+            const strengthBars = strengthMeter.querySelectorAll('.bg-red-400');
+
+            // Password visibility toggle
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                const icon = this.querySelector('span');
+                icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+            });
+
+            // Password strength checker
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                const checks = {
+                    length: password.length >= 8,
+                    number: /\d/.test(password),
+                    special: /[^a-zA-Z0-9]/.test(password),
+                    uppercase: /[A-Z]/.test(password)
+                };
+
+                // Update requirement indicators
+                updateRequirement('length', checks.length);
+                updateRequirement('number', checks.number);
+                updateRequirement('special', checks.special);
+                updateRequirement('uppercase', checks.uppercase);
+
+                // Calculate strength
+                if (checks.length) strength++;
+                if (checks.number) strength++;
+                if (checks.special) strength++;
+                if (checks.uppercase) strength++;
+
+                // Update strength meter
+                updateStrengthMeter(strength);
+            }
+
+            function updateRequirement(type, passed) {
+                const checkIcon = document.getElementById(`check-${type}`);
+                const reqElement = document.getElementById(`req-${type}`);
+
+                if (passed) {
+                    checkIcon.textContent = 'check_circle';
+                    checkIcon.className = 'material-symbols-outlined text-sm text-green-500';
+                    reqElement.querySelector('span:last-child').className = 'text-xs text-green-500 dark:text-green-400';
+                } else {
+                    checkIcon.textContent = 'radio_button_unchecked';
+                    checkIcon.className = 'material-symbols-outlined text-sm text-gray-300 dark:text-gray-600';
+                    reqElement.querySelector('span:last-child').className = 'text-xs text-secondary dark:text-gray-400';
+                }
+            }
+
+            function updateStrengthMeter(strength) {
+                // Reset all bars
+                strengthBars.forEach(bar => {
+                    bar.classList.add('hidden');
+                    bar.className = 'w-full h-full bg-red-400 rounded-full hidden';
+                });
+
+                // Show active bars with appropriate colors
+                const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
+                for (let i = 0; i < strength && i < 4; i++) {
+                    strengthBars[i].classList.remove('hidden');
+                    strengthBars[i].className = `w-full h-full ${colors[strength - 1]} rounded-full`;
+                }
+            }
+
+            // Listen for password input
+            passwordInput.addEventListener('input', function() {
+                checkPasswordStrength(this.value);
+            });
+
+            // Form submission with AJAX
+            passwordResetForm.addEventListener('submit', function() {
+                // Get form data
+                const formData = new FormData(passwordResetForm);
+                const data = {
+                    token: formData.get('token'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    password_confirmation: formData.get('password_confirmation')
+                };
+
+                // Show loading state
+                resetBtn.disabled = true;
+                btnText.innerHTML = `
+                    <span>Updating...</span>
+                    <span class="material-symbols-outlined">hourglass_empty</span>
+                `;
+                loadingSpinner.classList.remove('hidden');
+
+                fetch("{{ url('/password/reset') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(async (response) => {
+                    const json = await response.json();
+                    console.log('Password reset response:', json);
+
+                    if (!response.ok) {
+                        if (json.errors) {
+                            Object.values(json.errors).flat().forEach(msg => showNotification(msg, 'error'));
+                        } else if (json.message) {
+                            showNotification(json.message, 'error');
+                        } else {
+                            showNotification('Failed to reset password. Please try again.', 'error');
+                        }
+                        throw new Error(json.message || 'Request failed');
+                    }
+                    return json;
+                })
+                .then((data) => {
+                    showNotification(data.message || 'Password reset successful!', 'success');
+
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = '{{ route("login") }}';
+                        }
+                    }, 2000);
+                })
+                .catch((error) => {
+                    console.error('Password reset error:', error);
+                    if (error.message) {
+                        showNotification(error.message, 'error');
+                    } else {
+                        showNotification('Failed to reset password. Please try again.', 'error');
+                    }
+                })
+                .finally(() => {
+                    // Reset button state
+                    resetBtn.disabled = false;
+                    btnText.innerHTML = `
+                        <span>Update Password</span>
+                        <span class="material-symbols-outlined">verified_user</span>
+                    `;
+                    loadingSpinner.classList.add('hidden');
+                });
+            });
+        });
+    </script>
+    <script src="{{ asset('js/functions.js') }}"></script>
 </html>
 
 <!-- <form method="POST" action="{{ url('/password/reset') }}">

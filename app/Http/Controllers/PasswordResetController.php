@@ -198,7 +198,12 @@ class PasswordResetController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
+            'password' => 'required|string|min:8|max:128|regex:/^(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/|confirmed',
+        ], [
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters long.',
+            'password.regex' => 'Password must include at least one number and one special character.',
+            'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
         // Make sure to use the decoded email
@@ -208,9 +213,19 @@ class PasswordResetController extends Controller
         try {
             // Verify that the token exists for this email
             $resetToken = PasswordResetToken::where('email', $email)->first();
+
             // Compare the token using hash_equals to prevent timing attacks
             if (!$resetToken) {
                 Log::warning("No token found in database for email: {$email} during reset");
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid password reset token.',
+                        'errors' => ['email' => ['Invalid password reset token.']]
+                    ], 422);
+                }
+
                 return back()->withErrors(['email' => 'Invalid password reset token.']);
             }
 
@@ -219,56 +234,80 @@ class PasswordResetController extends Controller
 
             if (!hash_equals($resetToken->token, $token)) {
                 Log::warning("Token mismatch for email: {$email} during reset");
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid password reset token.',
+                        'errors' => ['email' => ['Invalid password reset token.']]
+                    ], 422);
+                }
+
                 return back()->withErrors(['email' => 'Invalid password reset token.']);
             }
 
-            // Check if the token is expired (60 minutes)
-            if (Carbon::parse($resetToken->created_at)->addMinutes(60)->isPast()) {
+            // Check if the token is expired
+            if (Carbon::parse($resetToken->created_at)->addMinutes(config('auth.passwords.users.expire'))->isPast()) {
+                Log::warning("Expired reset token: {$token} for email: {$email}, created at: {$resetToken->created_at}");
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Password reset token has expired.',
+                        'errors' => ['email' => ['Password reset token has expired.']]
+                    ], 422);
+                }
+
                 return back()->withErrors(['email' => 'Password reset token has expired.']);
             }
 
-            $passwordUpdated = false;
-
-            // Try to update password in each user type table
-            // First check if it's a regular user
-
-            switch ($resetToken->user_type) {
-                case 'client':
-                    $user = Client::where('email', $email)->first();
-                    break;
-                case 'professional':
-                    $user = Professional::where('email', $email)->first();
-                    break;
-                default:
-                    $user = User::where('email', $email)->first();
-                    break;
-            }
+            // Find the user and update password
+            $user = User::where('email', $email)->first();
 
             if ($user) {
                 $user->password = Hash::make($request->password);
                 $user->save();
-                $passwordUpdated = true;
-                Log::info("Password reset successful for {$resetToken->user_type}: {$email}");
-            }
+                Log::info("Password reset successful for user: {$email}");
 
+                // Delete the token
+                $resetToken->delete();
 
-            // Delete the token
-            $resetToken->delete();
+                // Return JSON response for AJAX requests
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Your password has been reset successfully!',
+                        'redirect' => route('login')
+                    ]);
+                }
 
-            if (!$passwordUpdated) {
-                Log::warning("Password reset token used but no matching user found for email: {$email}");
-            }
-            if ($resetToken->user_type == 'client') {
                 return redirect()->route('login')->with('message', 'Your password has been reset successfully!');
-            } elseif ($resetToken->user_type == 'professional') {
-                return redirect()->route('professional.login')->with('message', 'Your password has been reset successfully!');
             } else {
-                return redirect()->route('admin.login')->with('message', 'Your password has been reset successfully!');
+                Log::warning("Password reset token used but no matching user found for email: {$email}");
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'User not found.',
+                        'errors' => ['email' => ['User not found.']]
+                    ], 422);
+                }
+
+                return back()->withErrors(['email' => 'User not found.']);
             }
 
         } catch (\Exception $e) {
-            Log::error("Password reset error: " . $e->getMessage());
-            return back()->withErrors(['email' => 'An error occurred while resetting your password. Please try again.']);
+            Log::error("Error resetting password: " . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while resetting your password.',
+                    'errors' => ['email' => ['An error occurred while resetting your password.']]
+                ], 500);
+            }
+
+            return back()->withErrors(['email' => 'An error occurred while resetting your password.']);
         }
     }
 }
