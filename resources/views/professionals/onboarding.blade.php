@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>{{ config('app.name') }} - Doctor Onboarding</title>
         <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -88,7 +89,7 @@
                             <span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal">Professional Email Address</span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark text-[20px]">mail</span>
-                                <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-4 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="dr.lastname@example.com" required="" type="email"/>
+                                <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-4 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="dr.lastname@example.com" required="" type="email" name="email"/>
                             </div>
                         </label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -104,9 +105,12 @@
                             </label>
                             <label class="flex flex-col gap-2">
                                 <span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal">Confirm Password</span>
-                                <div class="relative">
+                                <div class="relative group">
                                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark text-[20px]">lock_reset</span>
-                                    <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-4 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="••••••••" required="" type="password"/>
+                                    <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-10 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="••••••••" required="" type="password" id="password_confirmation" name="password_confirmation"/>
+                                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors" type="button">
+                                    <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                                    </button>
                                 </div>
                             </label>
                         </div>
@@ -131,22 +135,25 @@
                                 Password must be at least 8 characters long and include a number, a symbol, and an uppercase letter to meet HIPAA security standards.
                             </div>
                         </div>
-                        <script>
-                            // Password requirements from centralized service
-                            const passwordRequirements = @json(\App\Services\PasswordValidationService::getRequirements());
-                        </script>
+
                         <label class="flex gap-3 items-start cursor-pointer group">
                             <div class="relative flex items-center">
-                                <input class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark checked:bg-primary checked:border-primary transition-all" type="checkbox"/>
+                                <input class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark checked:bg-primary checked:border-primary transition-all" type="checkbox" id="terms" name="terms" required/>
                                 <span class="material-symbols-outlined absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 text-[16px] pointer-events-none">check</span>
                             </div>
                             <span class="text-sm text-text-secondary-light dark:text-text-secondary-dark leading-normal select-none group-hover:text-text-main-light dark:group-hover:text-text-main-dark transition-colors">
                             I agree to the <a class="text-primary underline decoration-primary/30 hover:decoration-primary" href="#">Terms of Service</a> and <a class="text-primary underline decoration-primary/30 hover:decoration-primary" href="#">Privacy Policy</a>.
                             </span>
                         </label>
-                        <button class="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover text-white h-12 px-6 text-base font-bold leading-normal tracking-[0.015em] shadow-sm hover:shadow-md transition-all" type="submit">
-                        Create Secure Account
-                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        <button class="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-hover text-white h-12 px-6 text-base font-bold leading-normal tracking-[0.015em] shadow-sm hover:shadow-md transition-all" type="submit" id="submitBtn">
+                        <span id="btnText">Create Secure Account</span>
+                        <span id="btnIcon" class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        <div id="loadingSpinner" class="hidden">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
                         </button>
                         <div class="flex justify-center items-center gap-2 mt-2">
                             <span class="material-symbols-outlined text-green-600 text-[18px]">verified_user</span>
@@ -190,13 +197,133 @@
             </div>
         </main>
         <script>
+            // App URL from .env
+            const APP_URL = "{{ config('app.url') }}";
+
+            // Password requirements from centralized service
+            const passwordRequirements = @json(\App\Services\PasswordValidationService::getRequirements());
+
             document.addEventListener('DOMContentLoaded', function() {
                 const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('password_confirmation');
                 const strengthBars = document.querySelectorAll('.flex.gap-1.mt-2.h-1 > div > div');
 
-                // Initialize password strength checker
+                // Initialize password strength checker for both password fields
                 initPasswordStrengthChecker(passwordInput, {
                     strengthBars: strengthBars
+                });
+
+                // Initialize password visibility toggle for confirm password
+                const confirmVisibilityToggle = confirmPasswordInput.parentElement.querySelector('button[type="button"]');
+                if (confirmVisibilityToggle) {
+                    const confirmVisibilityIcon = confirmVisibilityToggle.querySelector('span');
+
+                    confirmVisibilityToggle.addEventListener('click', function() {
+                        const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                        confirmPasswordInput.setAttribute('type', type);
+                        confirmVisibilityIcon.textContent = type === 'password' ? 'visibility_off' : 'visibility';
+                    });
+                }
+
+                // Form submission with AJAX
+                const form = document.querySelector('form');
+                const submitBtn = document.getElementById('submitBtn');
+                const btnText = document.getElementById('btnText');
+                const btnIcon = document.getElementById('btnIcon');
+                const loadingSpinner = document.getElementById('loadingSpinner');
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Check if form is valid
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    btnText.textContent = 'Creating Account...';
+                    btnIcon.classList.add('hidden');
+                    loadingSpinner.classList.remove('hidden');
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+                    // Get form data
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData.entries());
+
+                    // Send AJAX request
+                    fetch(APP_URL + '/professional/onboarding', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle success
+                        if (data.success) {
+                            // Show success message
+                            showNotification(data.message, 'success');
+
+                            // Clear form
+                            form.reset();
+
+                            // Reset password strength meter
+                            strengthBars.forEach(bar => bar.classList.add('hidden'));
+
+                            // Redirect to step 2 after 2 seconds
+                            setTimeout(() => {
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                }
+                            }, 2000);
+                        } else {
+                            // Handle server-side validation errors
+                            showNotification(data.message || 'Registration failed. Please try again.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error:', error);
+
+                        // Parse error response if available
+                        if (error.response) {
+                            error.response.json().then(data => {
+                                if (data.errors) {
+                                    // Show validation errors
+                                    const errorMessages = Object.values(data.errors).flat();
+                                    errorMessages.forEach(message => {
+                                        showNotification(message, 'error');
+                                    });
+                                } else if (data.message) {
+                                    showNotification(data.message, 'error');
+                                } else {
+                                    showNotification('Registration failed. Please try again.', 'error');
+                                }
+                            }).catch(() => {
+                                showNotification('Network error. Please check your connection and try again.', 'error');
+                            });
+                        } else if (error.message) {
+                            // Handle network errors or other exceptions
+                            showNotification(error.message, 'error');
+                        } else {
+                            showNotification('Registration failed. Please try again.', 'error');
+                        }
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'Create Secure Account';
+                        btnIcon.classList.remove('hidden');
+                        loadingSpinner.classList.add('hidden');
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    });
                 });
             });
         </script>

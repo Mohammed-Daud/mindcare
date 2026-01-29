@@ -99,7 +99,8 @@ Route::get('/professionals', [App\Http\Controllers\ProfileController::class, 'pr
 Route::get('/professionals/{slug}', [App\Http\Controllers\ProfileController::class, 'show'])->name('professionals.show');
 
 // Professional Onboarding Routes (used for registration)
-Route::get('/doctor/onboarding/step-1', [ProfessionalController::class, 'create'])->name('doctor.onboarding.step1');
+Route::get('/doctor/onboarding/step-1', [ProfessionalController::class, 'create'])->name('doctor.onboarding.step1')->middleware(['guest']);
+Route::get('/doctor/onboarding/step-2', [ProfessionalController::class, 'doctorProfessionalDetails'])->name('doctor.onboarding.step2')->middleware(['auth']);
 
 Route::post('/professional/onboarding', [ProfessionalController::class, 'store'])->name('professionals.store');
 Route::get('/professional/onboarding/success', [ProfessionalController::class, 'onboardingSuccess'])->name('professionals.onboarding.success');

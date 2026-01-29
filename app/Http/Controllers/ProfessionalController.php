@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Professional;
 use App\Models\ProfessionalLanguage;
 use App\Models\Appointment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -44,112 +45,57 @@ class ProfessionalController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
                 function ($attribute, $value, $fail) {
-                    if (\App\Models\User::where('email', $value)->exists() ||
-                        \App\Models\Client::where('email', $value)->exists() ||
-                        \App\Models\Professional::where('email', $value)->exists()) {
+                    if (\App\Models\User::where('email', $value)->exists()) {
                         $fail('This email address is already registered.');
                     }
                 },
             ],
-            'country_code' => 'required|string|max:5',
-            'phone' => 'nullable|string|max:20',
-            'bio' => 'nullable|string',
-            'specialization' => 'nullable|string|max:255',
-            'qualification' => 'nullable|string|max:255',
-            'license_number' => 'nullable|string|max:255|unique:professionals',
-            'license_expiry_date' => 'nullable|date',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'password' => 'required|string|min:8|confirmed',
+            'terms' => 'accepted',
         ]);
-        
-        // Check if the combination of country_code and phone already exists
-        if ($request->phone) {
-            $existingProfessional = Professional::where('country_code', $request->country_code)
-                ->where('phone', $request->phone)
-                ->first();
-                
-            if ($existingProfessional) {
-                return back()->withErrors(['phone' => 'The phone number with this country code already exists.'])
-                    ->withInput();
-            }
-        }
 
         try {
-            $professional = new Professional();
-            $professional->first_name = $request->first_name;
-            $professional->last_name = $request->last_name;
-            $professional->email = $request->email;
-            $professional->country_code = $request->country_code;
-            $professional->phone = $request->phone;
-            $professional->is_phone_verified = false; // Default to not verified
-            $professional->bio = $request->bio;
-            $professional->specialization = $request->specialization;
-            $professional->qualification = $request->qualification;
-            $professional->license_number = $request->license_number;
-            $professional->license_expiry_date = $request->license_expiry_date;
-            $professional->status = 'pending';
+            // Create User record for professional
+            $user = \App\Models\User::create([
+                'name' => $request->email, // Temporary name, will be updated in step 2
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_type' => \App\Models\User::TYPE_PROFESSIONAL,
+                'status' => \App\Models\User::STATUS_INACTIVE,
+            ]);
 
-            // Handle profile photo upload
-            if ($request->hasFile('profile_photo')) {
-                $profilePhoto = $request->file('profile_photo');
-                $profilePhotoName = time() . '_' . $profilePhoto->getClientOriginalName();
-                $profilePhoto->storeAs('public/professionals/photos', $profilePhotoName);
-                $professional->profile_photo = 'professionals/photos/' . $profilePhotoName;
-            }
+            // Send email verification notification
+            $user->sendEmailVerificationNotification();
 
-            // Handle CV upload
-            if ($request->hasFile('cv')) {
-                $cv = $request->file('cv');
-                $cvName = time() . '_' . $cv->getClientOriginalName();
-                $cv->storeAs('public/professionals/cvs', $cvName);
-                $professional->cv = 'professionals/cvs/' . $cvName;
-            }
+            // Log in the user
+            Auth::login($user);
 
-            $professional->save();
-            
-            // Save languages if provided
-            if ($request->has('languages') && is_array($request->languages)) {
-                foreach ($request->languages as $index => $language) {
-                    if (!empty($language) && isset($request->proficiency[$index]) && !empty($request->proficiency[$index])) {
-                        $professional->languages()->create([
-                            'language' => $language,
-                            'proficiency' => $request->proficiency[$index]
-                        ]);
-                    }
-                }
-            }
-
-            // Send welcome email to professional
-            try {
-                Mail::to($professional->email)->send(new ProfessionalWelcomeEmail($professional));
-                Log::info('Welcome email sent successfully to ' . $professional->email);
-            } catch (\Exception $e) {
-                Log::error('Failed to send welcome email: ' . $e->getMessage());
-            }
-
-            // Send notification email to admin
-            try {
-                Mail::to(config('mail.from.address'))->send(new AdminNotificationEmail($professional));
-                Log::info('Admin notification email sent successfully');
-            } catch (\Exception $e) {
-                Log::error('Failed to send admin notification email: ' . $e->getMessage());
-            }
-
-            return redirect()->route('professionals.onboarding.success')
-                ->with('success', 'Your application has been submitted successfully. We will review it and get back to you soon.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Account created successfully! Please check your email for verification.',
+                'redirect' => route('doctor.onboarding.step2')
+            ]);
 
         } catch (\Exception $e) {
-            Log::error('Failed to create professional: ' . $e->getMessage());
-            return back()->with('error', 'An error occurred while submitting your application. Please try again.');
+            Log::error('Failed to create professional user: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while creating your account. Please try again.'
+            ], 500);
         }
+    }
+
+
+    // below are old
+    public function doctorProfessionalDetails(Request $request){
+        return view('professionals.doctor-professional-details');
     }
 
     /**
@@ -192,7 +138,7 @@ class ProfessionalController extends Controller
         try {
             // Generate a random password
             $password = Str::random(10);
-            
+
             // Update professional status and set password
             $professional->status = 'approved';
             $professional->password = Hash::make($password);
@@ -283,14 +229,14 @@ class ProfessionalController extends Controller
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
-        
+
         // Check if the combination of country_code and phone already exists for other professionals
         if ($request->phone) {
             $existingProfessional = Professional::where('country_code', $request->country_code)
                 ->where('phone', $request->phone)
                 ->where('id', '!=', $professional->id)
                 ->first();
-                
+
             if ($existingProfessional) {
                 return back()->withErrors(['phone' => 'The phone number with this country code already exists.'])
                     ->withInput();
@@ -301,12 +247,12 @@ class ProfessionalController extends Controller
             $professional->first_name = $request->first_name;
             $professional->last_name = $request->last_name;
             $professional->country_code = $request->country_code;
-            
+
             // If phone number changed, set is_phone_verified to false
             if ($professional->phone != $request->phone) {
                 $professional->is_phone_verified = false;
             }
-            
+
             $professional->phone = $request->phone;
             $professional->bio = $request->bio;
             $professional->specialization = $request->specialization;
@@ -320,7 +266,7 @@ class ProfessionalController extends Controller
                 if ($professional->profile_photo) {
                     Storage::delete('public/' . $professional->profile_photo);
                 }
-                
+
                 $profilePhoto = $request->file('profile_photo');
                 $profilePhotoName = time() . '_' . $profilePhoto->getClientOriginalName();
                 $profilePhoto->storeAs('public/professionals/photos', $profilePhotoName);
@@ -333,7 +279,7 @@ class ProfessionalController extends Controller
                 if ($professional->cv) {
                     Storage::delete('public/' . $professional->cv);
                 }
-                
+
                 $cv = $request->file('cv');
                 $cvName = time() . '_' . $cv->getClientOriginalName();
                 $cv->storeAs('public/professionals/cvs', $cvName);
@@ -341,12 +287,12 @@ class ProfessionalController extends Controller
             }
 
             $professional->save();
-            
+
             // Update languages
             if ($request->has('languages') && is_array($request->languages)) {
                 // Delete existing languages
                 $professional->languages()->delete();
-                
+
                 // Add new languages
                 foreach ($request->languages as $index => $language) {
                     if (!empty($language) && isset($request->proficiency[$index]) && !empty($request->proficiency[$index])) {
@@ -404,64 +350,64 @@ class ProfessionalController extends Controller
 
         return redirect('/');
     }
-    
+
     /**
      * Display the professional's appointments.
      */
     public function appointments()
     {
         $professional = auth()->guard('professional')->user();
-        
+
         $appointments = Appointment::where('professional_id', $professional->id)
             ->with('client')
             ->orderBy('start_time', 'desc')
             ->paginate(10);
-            
+
         return view('professional.appointments.index', compact('appointments'));
     }
-    
+
     /**
      * Display the specified appointment.
      */
     public function showAppointment(Appointment $appointment)
     {
         $professional = auth()->guard('professional')->user();
-        
+
         // Check if the appointment belongs to the authenticated professional
         if ($appointment->professional_id !== $professional->id) {
             abort(403);
         }
-        
+
         return view('professional.appointments.show', compact('appointment'));
     }
-    
+
     /**
      * Update the status of an appointment.
      */
     public function updateAppointmentStatus(Request $request, Appointment $appointment)
     {
         $professional = auth()->guard('professional')->user();
-        
+
         // Check if the appointment belongs to the authenticated professional
         if ($appointment->professional_id !== $professional->id) {
             abort(403);
         }
-        
+
         $request->validate([
             'status' => 'required|in:confirmed,cancelled,completed',
         ]);
-        
+
         $appointment->status = $request->status;
-        
+
         if ($request->status === 'cancelled') {
             // Add any cancellation logic here
         } elseif ($request->status === 'completed') {
             // Add any completion logic here
         }
-        
+
         $appointment->save();
-        
+
         return redirect()->route('professional.appointments.show', $appointment)
             ->with('success', 'Appointment status updated successfully.');
     }
-} 
+}
