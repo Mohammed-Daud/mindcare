@@ -253,55 +253,14 @@
             // Password requirements from centralized service
             const passwordRequirements = @json(\App\Services\PasswordValidationService::getRequirements());
 
-            // Password visibility toggle
-            const passwordInput = document.getElementById('password');
-            const visibilityToggle = passwordInput.nextElementSibling;
-            const visibilityIcon = visibilityToggle.querySelector('span');
+            document.addEventListener('DOMContentLoaded', function() {
+                const passwordInput = document.getElementById('password');
+                const strengthBars = document.querySelectorAll('.flex.gap-1.mt-1.h-1 > div > div');
 
-            visibilityToggle.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                visibilityIcon.textContent = type === 'password' ? 'visibility_off' : 'visibility';
-            });
-
-            // Password strength checker using centralized requirements
-            const strengthBars = document.querySelectorAll('.flex.gap-1.mt-1.h-1 > div > div');
-            const strengthContainers = document.querySelectorAll('.flex.gap-1.mt-1.h-1 > div');
-
-            function checkPasswordStrength(password) {
-                let strength = 0;
-
-                // Update strength based on centralized requirements
-                Object.keys(passwordRequirements).forEach(key => {
-                    const requirement = passwordRequirements[key];
-                    const passed = new RegExp(requirement.regex).test(password);
-                    if (passed) strength++;
+                // Initialize password strength checker with reusable function
+                initPasswordStrengthChecker(passwordInput, {
+                    strengthBars: strengthBars
                 });
-
-                return Math.min(strength, 4);
-            }
-
-            function updateStrengthMeter(strength) {
-                // Reset all bars
-                strengthBars.forEach(bar => bar.classList.add('hidden'));
-                strengthContainers.forEach(container => {
-                    container.querySelector('div').className = 'w-full h-full bg-red-400 rounded-full hidden';
-                });
-
-                // Colors for different strength levels
-                const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
-
-                // Update bars based on strength
-                for (let i = 0; i < strength; i++) {
-                    const bar = strengthBars[i];
-                    bar.classList.remove('hidden');
-                    bar.className = `w-full h-full ${colors[strength - 1]} rounded-full`;
-                }
-            }
-
-            passwordInput.addEventListener('input', function() {
-                const strength = checkPasswordStrength(this.value);
-                updateStrengthMeter(strength);
             });
 
             // Form submission with AJAX

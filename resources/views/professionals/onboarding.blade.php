@@ -96,7 +96,7 @@
                                 <span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal">Create Password</span>
                                 <div class="relative group">
                                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark text-[20px]">lock</span>
-                                    <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-10 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="••••••••" required="" type="password"/>
+                                    <input class="form-input flex w-full rounded-lg text-text-main-light dark:text-text-main-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 pl-12 pr-10 placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 text-base font-normal transition-all" placeholder="••••••••" required="" type="password" id="password" name="password"/>
                                     <button class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors" type="button">
                                     <span class="material-symbols-outlined text-[20px]">visibility_off</span>
                                     </button>
@@ -110,12 +110,31 @@
                                 </div>
                             </label>
                         </div>
+                        <!-- Password Strength Meter -->
+                        <div class="flex gap-1 mt-2 h-1">
+                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-full">
+                                <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                            </div>
+                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-full">
+                                <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                            </div>
+                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-full">
+                                <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                            </div>
+                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-full">
+                                <div class="w-full h-full bg-red-400 rounded-full hidden"></div>
+                            </div>
+                        </div>
                         <div class="bg-primary/5 dark:bg-primary/10 p-3 rounded-lg border border-primary/10 dark:border-primary/20 flex gap-3 items-start">
                             <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">info</span>
                             <div class="text-xs text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
                                 Password must be at least 8 characters long and include a number, a symbol, and an uppercase letter to meet HIPAA security standards.
                             </div>
                         </div>
+                        <script>
+                            // Password requirements from centralized service
+                            const passwordRequirements = @json(\App\Services\PasswordValidationService::getRequirements());
+                        </script>
                         <label class="flex gap-3 items-start cursor-pointer group">
                             <div class="relative flex items-center">
                                 <input class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark checked:bg-primary checked:border-primary transition-all" type="checkbox"/>
@@ -170,5 +189,17 @@
                 </div>
             </div>
         </main>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const passwordInput = document.getElementById('password');
+                const strengthBars = document.querySelectorAll('.flex.gap-1.mt-2.h-1 > div > div');
+
+                // Initialize password strength checker
+                initPasswordStrengthChecker(passwordInput, {
+                    strengthBars: strengthBars
+                });
+            });
+        </script>
+        <script src="{{ asset('js/functions.js') }}"></script>
     </body>
 </html>

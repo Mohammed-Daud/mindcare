@@ -183,64 +183,18 @@
             const strengthMeter = document.getElementById('strengthMeter');
             const strengthBars = strengthMeter.querySelectorAll('.bg-red-400');
 
-            // Password visibility toggle
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
+            // Requirement checkboxes configuration
+            const requirementCheckboxes = {
+                length: true,
+                number: true,
+                special: true,
+                uppercase: true
+            };
 
-                const icon = this.querySelector('span');
-                icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
-            });
-
-            // Password strength checker using centralized requirements
-            function checkPasswordStrength(password) {
-                let strength = 0;
-
-                // Update requirement indicators based on centralized requirements
-                Object.keys(passwordRequirements).forEach(key => {
-                    const requirement = passwordRequirements[key];
-                    const passed = new RegExp(requirement.regex).test(password);
-                    updateRequirement(key, passed);
-                    if (passed) strength++;
-                });
-
-                // Update strength meter
-                updateStrengthMeter(strength);
-            }
-
-            function updateRequirement(type, passed) {
-                const checkIcon = document.getElementById(`check-${type}`);
-                const reqElement = document.getElementById(`req-${type}`);
-
-                if (passed) {
-                    checkIcon.textContent = 'check_circle';
-                    checkIcon.className = 'material-symbols-outlined text-sm text-green-500';
-                    reqElement.querySelector('span:last-child').className = 'text-xs text-green-500 dark:text-green-400';
-                } else {
-                    checkIcon.textContent = 'radio_button_unchecked';
-                    checkIcon.className = 'material-symbols-outlined text-sm text-gray-300 dark:text-gray-600';
-                    reqElement.querySelector('span:last-child').className = 'text-xs text-secondary dark:text-gray-400';
-                }
-            }
-
-            function updateStrengthMeter(strength) {
-                // Reset all bars
-                strengthBars.forEach(bar => {
-                    bar.classList.add('hidden');
-                    bar.className = 'w-full h-full bg-red-400 rounded-full hidden';
-                });
-
-                // Show active bars with appropriate colors
-                const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
-                for (let i = 0; i < strength && i < 4; i++) {
-                    strengthBars[i].classList.remove('hidden');
-                    strengthBars[i].className = `w-full h-full ${colors[strength - 1]} rounded-full`;
-                }
-            }
-
-            // Listen for password input
-            passwordInput.addEventListener('input', function() {
-                checkPasswordStrength(this.value);
+            // Initialize password strength checker with reusable function
+            initPasswordStrengthChecker(passwordInput, {
+                strengthBars: strengthBars,
+                requirementCheckboxes: requirementCheckboxes
             });
 
             // Form submission with AJAX

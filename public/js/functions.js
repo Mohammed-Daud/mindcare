@@ -39,3 +39,107 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
+// Password validation functions
+function initPasswordStrengthChecker(passwordInput, options = {}) {
+    const {
+        strengthBars = null,
+        requirementCheckboxes = null,
+        onStrengthChange = null
+    } = options;
+
+    if (!passwordInput) return;
+
+    // Password visibility toggle
+    const visibilityToggle = passwordInput.parentElement.querySelector('button[type="button"]');
+    if (visibilityToggle) {
+        const visibilityIcon = visibilityToggle.querySelector('span');
+
+        visibilityToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            visibilityIcon.textContent = type === 'password' ? 'visibility_off' : 'visibility';
+        });
+    }
+
+    // Password strength checker
+    function checkPasswordStrength(password) {
+        let strength = 0;
+
+        // Update strength based on centralized requirements
+        if (typeof passwordRequirements !== 'undefined') {
+            Object.keys(passwordRequirements).forEach(key => {
+                const requirement = passwordRequirements[key];
+                const passed = new RegExp(requirement.regex).test(password);
+                if (passed) strength++;
+
+                // Update requirement checkboxes if available
+                if (requirementCheckboxes && requirementCheckboxes[key]) {
+                    updateRequirement(key, passed);
+                }
+            });
+        } else {
+            // Fallback basic strength check
+            if (password.length >= 8) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+        }
+
+        return Math.min(strength, 4);
+    }
+
+    function updateRequirement(type, passed) {
+        if (!requirementCheckboxes || !requirementCheckboxes[type]) return;
+
+        const checkIcon = document.getElementById(`check-${type}`);
+        const reqElement = document.getElementById(`req-${type}`);
+
+        if (checkIcon && reqElement) {
+            if (passed) {
+                checkIcon.textContent = 'check_circle';
+                checkIcon.className = 'material-symbols-outlined text-sm text-green-500';
+                reqElement.querySelector('span:last-child').className = 'text-xs text-green-500 dark:text-green-400';
+            } else {
+                checkIcon.textContent = 'radio_button_unchecked';
+                checkIcon.className = 'material-symbols-outlined text-sm text-gray-300 dark:text-gray-600';
+                reqElement.querySelector('span:last-child').className = 'text-xs text-secondary dark:text-gray-400';
+            }
+        }
+    }
+
+    function updateStrengthMeter(strength) {
+        if (!strengthBars) return;
+
+        // Reset all bars
+        strengthBars.forEach(bar => {
+            bar.classList.add('hidden');
+            bar.className = 'w-full h-full bg-red-400 rounded-full hidden';
+        });
+
+        // Colors for different strength levels
+        const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
+
+        // Update bars based on strength
+        for (let i = 0; i < strength; i++) {
+            const bar = strengthBars[i];
+            bar.classList.remove('hidden');
+            bar.className = `w-full h-full ${colors[strength - 1]} rounded-full`;
+        }
+    }
+
+    // Listen for password input
+    passwordInput.addEventListener('input', function() {
+        const strength = checkPasswordStrength(this.value);
+        updateStrengthMeter(strength);
+
+        if (onStrengthChange) {
+            onStrengthChange(strength);
+        }
+    });
+
+    return {
+        checkStrength: checkPasswordStrength,
+        updateMeter: updateStrengthMeter
+    };
+}
+
