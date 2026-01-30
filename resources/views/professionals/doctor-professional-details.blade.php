@@ -46,6 +46,25 @@
             }
             }
         </style>
+        <style>
+            .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            .step-connector {
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            width: 2px;
+            height: calc(100% - 24px);
+            background-color: #e2e8f0;
+            }
+            .dark .step-connector {
+            background-color: #334155;
+            }
+        </style>
     </head>
     <body class="bg-background-light dark:bg-background-dark text-text-main dark:text-gray-100 font-display transition-colors duration-200">
         <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">

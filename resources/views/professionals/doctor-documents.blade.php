@@ -75,10 +75,33 @@
                         <a class="text-sm font-semibold hover:text-primary transition-colors dark:text-gray-300" href="#">Support</a>
                     </nav>
                     <div class="flex items-center gap-4 border-l border-gray-200 dark:border-gray-700 pl-6">
-                        <button class="group flex items-center gap-2">
-                            <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-offset-2 ring-primary/20 dark:ring-offset-background-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjIzKUDyPD7g3zNpgzElG5bECohc9p8hbsPIurVql8L0spKKCijK4fleu0ZMpQ1epMryNNKXoXMg0DP5BJYmog_JGAZ0ee2JlSQ63-GR5AdMk_SC80PnFUd3k1IFeRDwAi6-x4NdCJmt4YB_Fh6BJk7pUROcUGQ-x3IcQ7k6QRmwQCN4BnUblpkIONNue48pIxnd7M9KlTgCllFhMRLS74efdxT4eFboMHOvfAu9qU5w33AZvoOsg6UJzhF5ysQBeiY81C18aBBfuY");'></div>
-                            <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">expand_more</span>
-                        </button>
+                        <div class="relative">
+                            <button id="userMenuButton" class="group flex items-center gap-2">
+                                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-offset-2 ring-primary/20 dark:ring-offset-background-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjIzKUDyPD7g3zNpgzElG5bECohc9p8hbsPIurVql8L0spKKCijK4fleu0ZMpQ1epMryNNKXoXMg0DP5BJYmog_JGAZ0ee2JlSQ63-GR5AdMk_SC80PnFUd3k1IFeRDwAi6-x4NdCJmt4YB_Fh6BJk7pUROcUGQ-x3IcQ7k6QRmwQCN4BnUblpkIONNue48pIxnd7M9KlTgCllFhMRLS74efdxT4eFboMHOvfAu9qU5w33AZvoOsg6UJzhF5ysQBeiY81C18aBBfuY");'></div>
+                                <span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-transform duration-200" id="menuArrow">expand_more</span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 py-1 z-50">
+                                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">account_circle</span>
+                                    Profile
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">settings</span>
+                                    Settings
+                                </a>
+                                <hr class="my-1 border-gray-200 dark:border-slate-700">
+                                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">help</span>
+                                    Help & Support
+                                </a>
+                                <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                                    Sign Out
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -239,4 +262,43 @@
             </main>
         </div>
     </body>
+    <script>
+        // User dropdown menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userDropdown = document.getElementById('userDropdown');
+            const menuArrow = document.getElementById('menuArrow');
+
+            // Toggle dropdown
+            userMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isHidden = userDropdown.classList.contains('hidden');
+
+                if (isHidden) {
+                    userDropdown.classList.remove('hidden');
+                    menuArrow.style.transform = 'rotate(180deg)';
+                } else {
+                    userDropdown.classList.add('hidden');
+                    menuArrow.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.add('hidden');
+                    menuArrow.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Close dropdown when clicking on menu items
+            const menuItems = userDropdown.querySelectorAll('a');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    userDropdown.classList.add('hidden');
+                    menuArrow.style.transform = 'rotate(0deg)';
+                });
+            });
+        });
+    </script>
 </html>
