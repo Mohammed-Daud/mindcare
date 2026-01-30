@@ -64,7 +64,7 @@ class ProfessionalController extends Controller
                     'success' => false,
                     'message' => 'This email is already registered. Please use your previously created password. Redirecting to login...',
                     'redirect' => route('login', [
-                        'user_type' => \App\Models\User::TYPE_PROFESSIONAL,
+                        'user_type' => \App\Models\User::TYPE_DOCTOR,
                         'email' => $request->email
                     ])
                 ]);
@@ -75,8 +75,8 @@ class ProfessionalController extends Controller
                 'name' => $request->email, // Temporary name, will be updated in step 2
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'user_type' => \App\Models\User::TYPE_PROFESSIONAL,
-                'status' => \App\Models\User::STATUS_INACTIVE,
+                'user_type' => \App\Models\User::TYPE_DOCTOR,
+                'status' => \App\Models\User::STATUS_DOCTOR_PROFILE_INCOMPLETE,
             ]);
 
             // Send email verification notification

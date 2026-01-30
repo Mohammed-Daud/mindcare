@@ -54,10 +54,18 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        $role = $request->input('role', 'patient'); // Default to patient if not specified
+        $role = $request->input('role', 'patient');
 
-        // First find the user to check email verification before attempting auth
-        $user = User::where('email', $request->email)->first();
+        $user = User::where([
+            'email' => $request->email,
+            'user_type' => $role
+        ])->first();
+
+        // if(!$user){
+        //     throw ValidationException::withMessages([
+        //         'email' => ['The provided credentials do not match our records.'],
+        //     ]);
+        // }
 
         // if ($user && !$user->hasVerifiedEmail()) {
         //     // If AJAX request, return JSON with redirect URL
@@ -73,10 +81,13 @@ class AuthController extends Controller
         //     return redirect()->route('verification.notice');
         // }
 
-        // Use default Laravel authentication
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $request->session()->regenerate();
+
+            if ($user->user_type === User::TYPE_DOCTOR && $user->status == User::STATUS_DOCTOR_PROFILE_INCOMPLETE) {
+                return redirect()->route('doctor.onboarding.step2');
+            }
 
             if ($user && !$user->hasVerifiedEmail()) {
                 // If AJAX request, return JSON with redirect URL
@@ -92,7 +103,7 @@ class AuthController extends Controller
             }
 
             // For professionals, check if approved
-            // if ($user->user_type === User::TYPE_PROFESSIONAL && $user->status !== User::STATUS_ACTIVE) {
+            // if ($user->user_type === User::TYPE_DOCTOR && $user->status !== User::STATUS_ACTIVE) {
             //     Auth::logout();
             //     return response()->json([
             //         'success' => false,
@@ -111,7 +122,7 @@ class AuthController extends Controller
             } elseif ($user->user_type === User::TYPE_CLIENT) {
                 $redirect = route('client.dashboard');
                 $userRole = 'patient';
-            } elseif ($user->user_type === User::TYPE_PROFESSIONAL) {
+            } elseif ($user->user_type === User::TYPE_DOCTOR) {
                 $redirect = route('professional.dashboard');
                 $userRole = 'doctor';
             }

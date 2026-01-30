@@ -159,21 +159,21 @@
                                 <div class="grid grid-cols-3 gap-2 p-1 bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark">
                                     <!-- Patient Role -->
                                     <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                        <input {{ $user_type != \App\Models\User::TYPE_PROFESSIONAL ? 'checked' : '' }} class="peer sr-only" name="role" type="radio" value="patient"/>
+                                        <input {{ $user_type != \App\Models\User::TYPE_DOCTOR ? 'checked' : '' }} class="peer sr-only" name="role" type="radio" value="{{ \App\Models\User::TYPE_CLIENT }}"/>
                                         <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
                                         <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">favorite</span>
                                         <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Patient</span>
                                     </label>
                                     <!-- Doctor Role -->
                                     <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                        <input {{ $user_type == \App\Models\User::TYPE_PROFESSIONAL ? 'checked' : '' }} class="peer sr-only" name="role" type="radio" value="doctor"/>
+                                        <input {{ $user_type == \App\Models\User::TYPE_DOCTOR ? 'checked' : '' }} class="peer sr-only" name="role" type="radio" value="{{ \App\Models\User::TYPE_DOCTOR }}"/>
                                         <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
                                         <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">stethoscope</span>
                                         <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Doctor</span>
                                     </label>
                                     <!-- Admin Role -->
                                     <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                        <input class="peer sr-only" name="role" type="radio" value="admin"/>
+                                        <input class="peer sr-only" name="role" type="radio" value="{{ \App\Models\User::TYPE_SUPER_ADMIN }}"/>
                                         <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
                                         <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">admin_panel_settings</span>
                                         <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Admin</span>

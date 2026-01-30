@@ -15,12 +15,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     // User Type Constants
     const TYPE_SUPER_ADMIN = 101;
-    const TYPE_PROFESSIONAL = 201;
+    const TYPE_DOCTOR = 201;
     const TYPE_CLIENT = 301;
 
     // Status Constants
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
+    const STATUS_DOCTOR_PROFILE_INCOMPLETE = 2;
 
     /**
      * The attributes that are mass assignable.
