@@ -56,36 +56,31 @@ class AuthController extends Controller
 
         $role = $request->input('role', 'patient');
 
-        $user = User::where([
-            'email' => $request->email,
-            'user_type' => $role
-        ])->first();
+        // Add user_type to credentials for authentication
+        $credentials['user_type'] = $role;
 
-        // if(!$user){
-        //     throw ValidationException::withMessages([
-        //         'email' => ['The provided credentials do not match our records.'],
-        //     ]);
-        // }
-
-        // if ($user && !$user->hasVerifiedEmail()) {
-        //     // If AJAX request, return JSON with redirect URL
-        //     if ($request->expectsJson()) {
-        //         return response()->json([
-        //             'success' => false,
-        //             'message' => 'Please verify your email address before logging in.',
-        //             'redirect' => route('verification.notice')
-        //         ], 422);
-        //     }
-
-        //     // For non-AJAX requests, redirect directly
-        //     return redirect()->route('verification.notice');
-        // }
-
+        // Use default Laravel authentication with user_type
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $request->session()->regenerate();
 
+            // Check for incomplete doctor profile
             if ($user->user_type === User::TYPE_DOCTOR && $user->status == User::STATUS_DOCTOR_PROFILE_INCOMPLETE) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Login successful! Please complete your profile.',
+                        'redirect' => route('doctor.onboarding.step2'),
+                        'user' => [
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'email' => $user->email,
+                            'role' => 'doctor',
+                            'user_type' => $user->user_type,
+                            'status' => $user->status
+                        ]
+                    ]);
+                }
                 return redirect()->route('doctor.onboarding.step2');
             }
 
@@ -116,16 +111,16 @@ class AuthController extends Controller
             $redirect = '/';
             $userRole = 'user';
 
-            if ($user->user_type === User::TYPE_SUPER_ADMIN) {
-                $redirect = route('admin.dashboard');
-                $userRole = 'admin';
-            } elseif ($user->user_type === User::TYPE_CLIENT) {
-                $redirect = route('client.dashboard');
-                $userRole = 'patient';
-            } elseif ($user->user_type === User::TYPE_DOCTOR) {
-                $redirect = route('professional.dashboard');
-                $userRole = 'doctor';
-            }
+            // if ($user->user_type === User::TYPE_SUPER_ADMIN) {
+            //     $redirect = route('admin.dashboard');
+            //     $userRole = 'admin';
+            // } elseif ($user->user_type === User::TYPE_CLIENT) {
+            //     $redirect = route('client.dashboard');
+            //     $userRole = 'patient';
+            // } elseif ($user->user_type === User::TYPE_DOCTOR) {
+            //     $redirect = route('professional.dashboard');
+            //     $userRole = 'doctor';
+            // }
 
             return response()->json([
                 'success' => true,
