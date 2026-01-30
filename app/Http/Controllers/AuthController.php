@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PasswordReset;
+use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Professional;
-use App\Models\PasswordResetToken;
+use App\Services\RedirectService;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -64,76 +63,12 @@ class AuthController extends Controller
             $user = Auth::user();
             $request->session()->regenerate();
 
-            // Check for incomplete doctor profile
-            if ($user->user_type === User::TYPE_DOCTOR && $user->status == User::STATUS_DOCTOR_PROFILE_INCOMPLETE) {
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Login successful! Please complete your profile.',
-                        'redirect' => route('doctor.onboarding.step2'),
-                        'user' => [
-                            'id' => $user->id,
-                            'name' => $user->name,
-                            'email' => $user->email,
-                            'role' => 'doctor',
-                            'user_type' => $user->user_type,
-                            'status' => $user->status
-                        ]
-                    ]);
-                }
-                return redirect()->route('doctor.onboarding.step2');
+            // Use centralized redirection
+            if ($request->expectsJson()) {
+                return response()->json(RedirectService::getRedirectData($user));
             }
 
-            if ($user && !$user->hasVerifiedEmail()) {
-                // If AJAX request, return JSON with redirect URL
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Verify your email address.',
-                        'redirect' => route('verification.notice')
-                    ], 422);
-                }
-                // For non-AJAX requests, redirect directly
-                return redirect()->route('verification.notice');
-            }
-
-            // For professionals, check if approved
-            // if ($user->user_type === User::TYPE_DOCTOR && $user->status !== User::STATUS_ACTIVE) {
-            //     Auth::logout();
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Your account is not yet approved. Please wait for admin approval.',
-            //         'errors' => ['email' => ['Your account is not yet approved. Please wait for admin approval.']]
-            //     ], 422);
-            // }
-
-            // Determine redirect based on user type
-            $redirect = '/';
-            $userRole = 'user';
-
-            // if ($user->user_type === User::TYPE_SUPER_ADMIN) {
-            //     $redirect = route('admin.dashboard');
-            //     $userRole = 'admin';
-            // } elseif ($user->user_type === User::TYPE_CLIENT) {
-            //     $redirect = route('client.dashboard');
-            //     $userRole = 'patient';
-            // } elseif ($user->user_type === User::TYPE_DOCTOR) {
-            //     $redirect = route('professional.dashboard');
-            //     $userRole = 'doctor';
-            // }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful!',
-                'redirect' => $redirect,
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $userRole,
-                    'user_type' => $user->user_type
-                ]
-            ]);
+            return redirect(RedirectService::getRedirectRoute($user));
         }
 
         // If authentication failed
@@ -152,7 +87,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::guard('professional')->logout();
+        // Auth::guard('professional')->logout();
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
@@ -161,36 +96,9 @@ class AuthController extends Controller
         return redirect('/');
     }
 
-    public function showProfessionalLoginForm()
-    {
-        if (auth()->guard('client')->check()) {
-            return redirect()->route('client.dashboard');
-        }
-        if (auth()->guard('professional')->check()) {
-            return redirect()->route('professional.dashboard');
-        }
-        if (auth()->guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
-        }
-        return view('auth.professional.login');
-    }
 
-    public function professionalLogin(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
 
-        if (auth()->guard('professional')->attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('professional.dashboard'));
-        }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
-    }
 
     /**
      * Send a reset link to the given user.

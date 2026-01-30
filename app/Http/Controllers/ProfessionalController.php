@@ -102,10 +102,15 @@ class ProfessionalController extends Controller
     }
 
 
-    // below are old
+
     public function doctorProfessionalDetails(Request $request){
         return view('professionals.doctor-professional-details');
     }
+
+    public function saveProfessionalDetails(Request $request){
+
+    }
+    // below are old
 
     /**
      * Display the success page after onboarding.

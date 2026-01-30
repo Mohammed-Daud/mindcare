@@ -100,14 +100,13 @@ Route::get('/professionals/{slug}', [App\Http\Controllers\ProfileController::cla
 
 // Professional Onboarding Routes (used for registration)
 Route::get('/doctor/onboarding/step-1', [ProfessionalController::class, 'create'])->name('doctor.onboarding.step1')->middleware(['guest']);
-Route::get('/doctor/onboarding/step-2', [ProfessionalController::class, 'doctorProfessionalDetails'])->name('doctor.onboarding.step2')->middleware(['auth']);
-
 Route::post('/professional/onboarding', [ProfessionalController::class, 'store'])->name('professionals.store');
+
+Route::get('/doctor/onboarding/step-2', [ProfessionalController::class, 'doctorProfessionalDetails'])->name('doctor.onboarding.step2')->middleware(['auth']);
+Route::post('saveProfessionalDetails', [ProfessionalController::class, 'saveProfessionalDetails'])->name('doctor.onboarding.professionalDetails')->middleware(['auth']);
+
 Route::get('/professional/onboarding/success', [ProfessionalController::class, 'onboardingSuccess'])->name('professionals.onboarding.success');
 
-// Professional Authentication Routes
-Route::get('/professional/login', [AuthController::class, 'showProfessionalLoginForm'])->name('professional.login');
-Route::post('/professional/login', [AuthController::class, 'professionalLogin'])->name('professional.login.submit');
 
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

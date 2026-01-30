@@ -307,7 +307,11 @@
                 })
                 .then((data) => {
                     if (data.success && data.redirect) {
-                        window.location.href = data.redirect;
+                        showNotification(data.message || 'Redirecting...', 'info');
+                        setTimeout(() => {
+                            window.location.href = data.redirect;
+                        }, 2000);
+                        return;
                     }
                 })
                 .catch((error) => {
