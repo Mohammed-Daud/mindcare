@@ -108,17 +108,105 @@ class ProfessionalController extends Controller
     }
 
     public function saveProfessionalDetails(Request $request){
+        $isSaveForLater = $request->input('save_for_later') == '1';
 
+        // Adjust validation based on save mode
+        $rules = [
+            'medical_license_id' => 'required|string|max:255',
+            'years_of_experience' => 'required|integer|min:0|max:70',
+            'professional_biography' => 'nullable|string|min:150|max:1000',
+            'specializations' => 'required|array|min:1',
+            'specializations.*' => 'required|string|in:anxiety,depression,ptsd,bipolar',
+            'education' => 'required|array|min:1',
+            'education.*.degree' => 'required|string|max:255',
+            'education.*.university' => 'required|string|max:255',
+        ];
+
+        // For save for later, make less strict validation
+        if ($isSaveForLater) {
+            $rules['medical_license_id'] = 'nullable|string|max:255';
+            $rules['years_of_experience'] = 'nullable|integer|min:0|max:70';
+            $rules['professional_biography'] = 'nullable|string|max:1000';
+            $rules['specializations'] = 'nullable|array';
+            $rules['education'] = 'nullable|array';
+        }
+
+        $request->validate($rules);
+
+        try {
+            $user = auth()->user();
+
+            // Create or update professional details
+            $professionalDetail = $user->professionalDetail()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'medical_license_id' => $request->medical_license_id,
+                    'years_of_experience' => $request->years_of_experience,
+                    'professional_biography' => $request->professional_biography,
+                ]
+            );
+
+            // Clear existing specializations and education (only if new data provided)
+            if ($request->has('specializations') && is_array($request->specializations)) {
+                $professionalDetail->specializations()->delete();
+            }
+            if ($request->has('education') && is_array($request->education)) {
+                $professionalDetail->education()->delete();
+            }
+
+            // Save specializations
+            if ($request->has('specializations') && is_array($request->specializations)) {
+                foreach ($request->specializations as $specialization) {
+                    if (!empty($specialization)) {
+                        $professionalDetail->specializations()->create([
+                            'specialization' => $specialization,
+                        ]);
+                    }
+                }
+            }
+
+            // Save education
+            if ($request->has('education') && is_array($request->education)) {
+                foreach ($request->education as $edu) {
+                    if (!empty($edu['degree']) && !empty($edu['university'])) {
+                        $professionalDetail->education()->create([
+                            'degree' => $edu['degree'],
+                            'university' => $edu['university'],
+                        ]);
+                    }
+                }
+            }
+
+
+
+            $message = $isSaveForLater
+                ? 'Your progress has been saved. You can continue later.'
+                : 'Professional details saved successfully!';
+
+            $redirect = $isSaveForLater ? null : route('doctor.onboarding.step3');
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'redirect' => $redirect
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to save professional details: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving your details. Please try again.'
+            ], 500);
+        }
+    }
+
+    public function doctorDocs(Request $request){
+        return view('professionals.doctor-documents');
     }
     // below are old
 
-    /**
-     * Display the success page after onboarding.
-     */
-    public function onboardingSuccess()
-    {
-        return view('professionals.onboarding-success');
-    }
+
 
     /**
      * Display a listing of professionals for admin.

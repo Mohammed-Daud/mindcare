@@ -104,6 +104,7 @@ Route::post('/professional/onboarding', [ProfessionalController::class, 'store']
 
 Route::get('/doctor/onboarding/step-2', [ProfessionalController::class, 'doctorProfessionalDetails'])->name('doctor.onboarding.step2')->middleware(['auth']);
 Route::post('saveProfessionalDetails', [ProfessionalController::class, 'saveProfessionalDetails'])->name('doctor.onboarding.professionalDetails')->middleware(['auth']);
+Route::get('/doctor/onboarding/step-3', [ProfessionalController::class, 'doctorDocs'])->name('doctor.onboarding.step3')->middleware(['auth']);
 
 Route::get('/professional/onboarding/success', [ProfessionalController::class, 'onboardingSuccess'])->name('professionals.onboarding.success');
 

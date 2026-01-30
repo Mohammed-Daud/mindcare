@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Doctor Onboarding: Professional Details</title>
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Noto+Sans:wght@400..700&amp;display=swap" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -161,7 +162,8 @@
                             </p>
                         </div>
                         <!-- Form Card -->
-                        <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 md:p-8 shadow-sm border border-[#e7f2f3] dark:border-slate-700 flex flex-col gap-6">
+                        <form id="professionalDetailsForm" method="POST" action="{{ route('doctor.onboarding.professionalDetails') }}" class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 md:p-8 shadow-sm border border-[#e7f2f3] dark:border-slate-700 flex flex-col gap-6">
+                            @csrf
                             <!-- Specializations -->
                             <div class="flex flex-col gap-3">
                                 <label class="flex flex-col w-full">
@@ -188,14 +190,16 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <label class="flex flex-col w-full">
                                     <div class="flex items-center gap-2 pb-2">
-                                        <p class="text-text-main dark:text-gray-200 text-base font-medium leading-normal">Medical License ID</p>
+                                        <p class="text-text-main dark:text-gray-200 text-base font-medium leading-normal">
+                                            Medical License ID
+                                        </p>
                                         <span class="material-symbols-outlined text-text-sub text-[18px]" title="Your license number is encrypted">lock</span>
                                     </div>
-                                    <input class="form-input flex w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-14 placeholder:text-text-sub/70 p-[15px] text-base font-normal leading-normal" placeholder="e.g. MD-12345-NY" type="text"/>
+                                    <input class="form-input flex w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-14 placeholder:text-text-sub/70 p-[15px] text-base font-normal leading-normal" placeholder="e.g. MD-12345-NY" name="medical_license_id" type="text"/>
                                 </label>
                                 <label class="flex flex-col w-full">
                                     <p class="text-text-main dark:text-gray-200 text-base font-medium leading-normal pb-2">Years of Experience</p>
-                                    <input class="form-input flex w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-14 placeholder:text-text-sub/70 p-[15px] text-base font-normal leading-normal" placeholder="e.g. 8" type="number"/>
+                                    <input class="form-input flex w-full rounded-lg text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-color dark:border-slate-600 bg-background-light dark:bg-slate-800 h-14 placeholder:text-text-sub/70 p-[15px] text-base font-normal leading-normal" placeholder="e.g. 8" type="number" name="years_of_experience"/>
                                 </label>
                             </div>
                             <!-- Education -->
@@ -232,23 +236,28 @@
                             </label>
                         </div>
                         <!-- Actions Buttons -->
-
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 pb-12">
                             <div class="flex items-center gap-4 w-full sm:w-auto">
                                 <!-- <button class="flex flex-1 sm:flex-none items-center justify-center h-12 px-6 rounded-lg border border-[#cfe5e7] dark:border-slate-600 bg-transparent text-text-sub dark:text-gray-300 font-bold hover:bg-[#e7f2f3] dark:hover:bg-slate-800 transition-all">
                                     Back
                                 </button> -->
-                                <button class="flex flex-1 sm:flex-none items-center justify-center h-12 px-6 rounded-lg border border-[#cfe5e7] dark:border-slate-600 bg-white dark:bg-slate-800 text-text-main dark:text-white font-bold hover:shadow-md transition-all">
+                                <button type="button" id="saveForLaterBtn" class="flex flex-1 sm:flex-none items-center justify-center h-12 px-6 rounded-lg border border-[#cfe5e7] dark:border-slate-600 bg-white dark:bg-slate-800 text-text-main dark:text-white font-bold hover:shadow-md transition-all">
                                     Save for later
                                 </button>
                             </div>
                             <div class="flex items-center gap-4 w-full sm:w-auto">
-                                <button class="flex w-full sm:w-auto items-center justify-center h-12 px-10 rounded-lg bg-primary hover:bg-primary-dark text-white dark:text-slate-900 font-bold shadow-md hover:shadow-lg transition-all transform active:scale-95">
-                                    Save &amp; Continue
+                                <button type="submit" id="saveBtn" class="flex w-full sm:w-auto items-center justify-center h-12 px-10 rounded-lg bg-primary hover:bg-primary-dark text-white dark:text-slate-900 font-bold shadow-md hover:shadow-lg transition-all transform active:scale-95">
+                                    <span id="btnText">Save &amp; Continue</span>
+                                    <div id="loadingSpinner" class="hidden ml-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
                                 </button>
                             </div>
                         </div>
-                    </div>
+                        </form>
 
                 </main>
                 <div class="hidden xl:flex flex-col w-80 shrink-0 gap-6">
@@ -350,21 +359,214 @@
                 : 'text-xs text-text-sub text-right';
         });
 
-        /* ===== SUBMIT ===== */
-        document.getElementById('save-btn').addEventListener('click', () => {
-            if (bio.value.length < 150) {
-                alert('Biography must be at least 150 characters.');
+        /* ===== FORM SUBMISSION ===== */
+        const form = document.getElementById('professionalDetailsForm');
+        const saveBtn = document.getElementById('saveBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Check if form is valid
+            if (!form.checkValidity()) {
+                form.reportValidity();
                 return;
             }
 
-            const education = [...educationRows.children].map(r => {
-                const [d, i] = r.querySelectorAll('input');
-                return { degree: d.value, institution: i.value };
-            }).filter(e => e.degree || e.institution);
+            // Validate biography length
+            if (bio.value.length > 0 && bio.value.length < 150) {
+                showNotification('Biography must be at least 150 characters if provided.', 'error');
+                return;
+            }
 
-            console.log({ selected, education, bio: bio.value });
+            // Validate specializations
+            if (selected.length === 0) {
+                showNotification('Please select at least one specialization.', 'error');
+                return;
+            }
+
+            // Collect education data
+            const education = [...educationRows.children].map(r => {
+                const inputs = r.querySelectorAll('input');
+                return {
+                    degree: inputs[0].value,
+                    university: inputs[1].value
+                };
+            }).filter(e => e.degree.trim() && e.university.trim());
+
+            if (education.length === 0) {
+                showNotification('Please add at least one education qualification.', 'error');
+                return;
+            }
+
+            // Show loading state
+            saveBtn.disabled = true;
+            btnText.textContent = 'Saving...';
+            loadingSpinner.classList.remove('hidden');
+            saveBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            // Prepare form data
+            const formData = new FormData(form);
+
+            // Add specializations and education arrays
+            formData.delete('specializations');
+            formData.delete('education');
+
+            selected.forEach(spec => {
+                formData.append('specializations[]', spec);
+            });
+
+            education.forEach((edu, index) => {
+                formData.append(`education[${index}][degree]`, edu.degree);
+                formData.append(`education[${index}][university]`, edu.university);
+            });
+
+            // Convert to object for JSON
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert arrays back
+            data.specializations = selected;
+            data.education = education;
+
+            // Send AJAX request
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showNotification(data.message, 'success');
+
+                    // Redirect after delay
+                    setTimeout(() => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    }, 2000);
+                } else {
+                    // Handle server-side validation errors
+                    if (data.errors) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        errorMessages.forEach(message => {
+                            showNotification(message, 'error');
+                        });
+                    } else if (data.message) {
+                        showNotification(data.message, 'error');
+                    } else {
+                        showNotification('Failed to save details. Please try again.', 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Network error. Please check your connection and try again.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                saveBtn.disabled = false;
+                btnText.textContent = 'Save & Continue';
+                loadingSpinner.classList.add('hidden');
+                saveBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            });
+        });
+
+        /* ===== SAVE FOR LATER ===== */
+        const saveForLaterBtn = document.getElementById('saveForLaterBtn');
+
+        saveForLaterBtn.addEventListener('click', function() {
+            // Show loading state
+            const originalText = saveForLaterBtn.textContent;
+            saveForLaterBtn.disabled = true;
+            saveForLaterBtn.textContent = 'Saving...';
+            saveForLaterBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            // Collect form data (same as main form but with save_for_later flag)
+            const formData = new FormData(form);
+
+            // Add save_for_later flag
+            formData.append('save_for_later', '1');
+
+            // Add specializations and education arrays
+            selected.forEach(spec => {
+                formData.append('specializations[]', spec);
+            });
+
+            const education = [...educationRows.children].map(r => {
+                const inputs = r.querySelectorAll('input');
+                return {
+                    degree: inputs[0].value,
+                    university: inputs[1].value
+                };
+            }).filter(e => e.degree.trim() && e.university.trim());
+
+            education.forEach((edu, index) => {
+                formData.append(`education[${index}][degree]`, edu.degree);
+                formData.append(`education[${index}][university]`, edu.university);
+            });
+
+            // Convert to object for JSON
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert arrays back
+            data.specializations = selected;
+            data.education = education;
+
+            // Send AJAX request
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+
+                    // For save for later, don't redirect immediately
+                    // Just show success and keep user on the page
+                } else {
+                    // Handle server-side validation errors
+                    if (data.errors) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        errorMessages.forEach(message => {
+                            showNotification(message, 'error');
+                        });
+                    } else if (data.message) {
+                        showNotification(data.message, 'error');
+                    } else {
+                        showNotification('Failed to save progress. Please try again.', 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Network error. Please check your connection and try again.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                saveForLaterBtn.disabled = false;
+                saveForLaterBtn.textContent = originalText;
+                saveForLaterBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            });
         });
 
     });
     </script>
+    <script src="{{ asset('js/functions.js') }}"></script>
 </html>
