@@ -159,14 +159,14 @@
                                 <div class="grid grid-cols-3 gap-2 p-1 bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark">
                                     <!-- Patient Role -->
                                     <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                        <input checked="" class="peer sr-only" name="role" type="radio" value="patient"/>
+                                        <input {{ $user_type != \App\Models\User::TYPE_PROFESSIONAL ? 'checked' : '' }} class="peer sr-only" name="role" type="radio" value="patient"/>
                                         <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
                                         <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">favorite</span>
                                         <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Patient</span>
                                     </label>
                                     <!-- Doctor Role -->
                                     <label class="group cursor-pointer relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200 hover:bg-white dark:hover:bg-white/5">
-                                        <input class="peer sr-only" name="role" type="radio" value="doctor"/>
+                                        <input {{ $user_type == \App\Models\User::TYPE_PROFESSIONAL ? 'checked' : '' }} class="peer sr-only" name="role" type="radio" value="doctor"/>
                                         <div class="absolute inset-0 bg-white dark:bg-[#2a3c3e] rounded-lg shadow-sm scale-95 opacity-0 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-200 border border-transparent peer-checked:border-primary/30"></div>
                                         <span class="material-symbols-outlined relative z-10 text-text-muted peer-checked:text-primary mb-1 transition-colors">stethoscope</span>
                                         <span class="relative z-10 text-sm font-semibold text-text-muted peer-checked:text-text-main dark:peer-checked:text-white transition-colors">Doctor</span>
@@ -187,7 +187,7 @@
                                     <div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">
                                         <span class="material-symbols-outlined" style="font-size: 20px;">mail</span>
                                     </div>
-                                    <input class="w-full rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-11 pr-4 py-3.5 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-text-muted/60" placeholder="name@example.com" type="email" name="email" required autocomplete="email" autofocus/>
+                                    <input value="{{ $email ?? '' }}" class="w-full rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-11 pr-4 py-3.5 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-text-muted/60" placeholder="name@example.com" type="email" name="email" required autocomplete="email" autofocus/>
                                 </div>
                             </label>
                             <label class="flex flex-col gap-2">

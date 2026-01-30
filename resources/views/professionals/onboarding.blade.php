@@ -284,8 +284,16 @@
                                 }
                             }, 2000);
                         } else {
-                            // Handle server-side validation errors
-                            showNotification(data.message || 'Registration failed. Please try again.', 'error');
+                            // Handle case where email already exists - redirect to login
+                            if (data.redirect && !data.success) {
+                                showNotification(data.message, 'info');
+                                setTimeout(() => {
+                                    window.location.href = data.redirect;
+                                }, 2000);
+                            } else {
+                                // Handle other server-side validation errors
+                                showNotification(data.message || 'Registration failed. Please try again.', 'error');
+                            }
                         }
                     })
                     .catch(error => {

@@ -18,20 +18,25 @@ class AuthController extends Controller
     /**
      * Show the login form.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
-        if (Auth::guard('client')->check()) {
-            return redirect()->route('client.dashboard');
-        }
-        if (Auth::guard('professional')->check()) {
-            return redirect()->route('professional.dashboard');
-        }
-        if (Auth::guard('web')->check()) {
-            return redirect('/admin/dashboard');
-        }
-        return view('auth.login');
+        // if (Auth::guard('client')->check()) {
+        //     return redirect()->route('client.dashboard');
+        // }
+        // if (Auth::guard('professional')->check()) {
+        //     return redirect()->route('professional.dashboard');
+        // }
+        // if (Auth::guard('web')->check()) {
+        //     return redirect('/admin/dashboard');
+        // }
+
+        return view('auth.login', [
+            'user_type' => $request->query('user_type'),
+            'email' => $request->query('email')
+        ]);
     }
 
     /**

@@ -35,8 +35,9 @@ class ProfessionalController extends Controller
      */
     public function create()
     {
-        $proficiencyLevels = ProfessionalLanguage::getProficiencyLevels();
-        return view('professionals.onboarding', compact('proficiencyLevels'));
+        // $proficiencyLevels = ProfessionalLanguage::getProficiencyLevels();
+        // return view('professionals.onboarding', compact('proficiencyLevels'));
+        return view('professionals.onboarding');
     }
 
     /**
@@ -50,17 +51,25 @@ class ProfessionalController extends Controller
                 'string',
                 'email',
                 'max:255',
-                function ($attribute, $value, $fail) {
-                    if (\App\Models\User::where('email', $value)->exists()) {
-                        $fail('This email address is already registered.');
-                    }
-                },
             ],
             'password' => 'required|string|min:8|confirmed',
             'terms' => 'accepted',
         ]);
 
         try {
+            // Check if email already exists
+            $existingUser = \App\Models\User::where('email', $request->email)->first();
+            if ($existingUser) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This email is already registered. Please use your previously created password. Redirecting to login...',
+                    'redirect' => route('login', [
+                        'user_type' => \App\Models\User::TYPE_PROFESSIONAL,
+                        'email' => $request->email
+                    ])
+                ]);
+            }
+
             // Create User record for professional
             $user = \App\Models\User::create([
                 'name' => $request->email, // Temporary name, will be updated in step 2
